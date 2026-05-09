@@ -1,0 +1,63 @@
+/* styles.css — GLOBAL file, not any component css */
+
+ /* styles.scss */
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
+/* 
+:root {
+  --navy:        #002237;
+  --navy-mid:    #003452;
+  --navy-light:  #0a4a6e;
+  --orange:      #F37500;
+  --orange-dark: #d46300;
+  --orange-glow: rgba(243, 117, 0, 0.18);
+  --cream:       #FDE9C4;
+  --cream-soft:  #fef5e7;
+  --border:      rgba(0, 34, 55, 0.12);
+  --radius-sm:   6px;
+  --radius-md:   12px;
+  --radius-lg:   18px;
+  --transition:  0.25s cubic-bezier(0.4, 0, 0.2, 1);
+} */
+
+body {
+  background-color: #f9f7f2;
+  color: #1a1a2e;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode {
+  background-color: #0f0f1a;
+  color: #eaeaea;
+}
+
+body.dark-mode .card-title {
+  color: #eaeaea;
+}
+
+body.dark-mode .card-description {
+  color: #9a9aaa;
+}
+
+body.dark-mode .product-card {
+  background-color: #1a1a2e;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.dark-mode .card-image-wrapper {
+  background: #12121f;
+}
+
+body.dark-mode .app-header {
+  background: #0a0a14;
+}
+
+body.dark-mode .stk.ok {
+  background: rgba(39, 174, 96, 0.2);
+  color: #5de098;
+}
+
+body.dark-mode .stk.out {
+  background: rgba(192, 57, 43, 0.2);
+  color: #e87070;
+}

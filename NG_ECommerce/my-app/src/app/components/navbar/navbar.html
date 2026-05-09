@@ -1,0 +1,35 @@
+<nav class="navbar">
+  <!-- Logo -->
+  <a routerLink="/home" class="logo">
+    <span class="logo-icon">🌿</span>
+    FreshBasket
+  </a>
+
+  <!-- ❌ GUEST -->
+  <div *ngIf="!authService.isLoggedIn()" class="nav-links guest">
+    <a routerLink="/login">Sign in</a>
+    <a routerLink="/register">Get started</a>
+  </div>
+
+  <!-- ✅ LOGGED IN -->
+  <div *ngIf="authService.isLoggedIn()" class="nav-links">
+    <a routerLink="/home">Home</a>
+    <a routerLink="/products">Products</a>
+    <a routerLink="/cart" class="cart-link">
+      🛒 Cart <span class="cart-badge">{{ cartItemCount }}</span>
+    </a>
+    <a routerLink="/profile">Profile</a>
+
+    <!-- 🛡️ ADMIN ONLY -->
+    <ng-container *ngIf="authService.isAdmin()">
+      <div class="nav-divider"></div>
+      <div class="admin-links">
+        <a routerLink="/users">👥 Users</a>
+        <a routerLink="/dashboard">📊 Dashboard</a>
+      </div>
+    </ng-container>
+
+    <div class="nav-divider"></div>
+    <button class="btn-logout" (click)="logout()">Logout</button>
+  </div>
+</nav>

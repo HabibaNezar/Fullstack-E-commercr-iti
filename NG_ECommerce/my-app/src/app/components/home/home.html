@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FreshBasket — Home</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=Barlow+Condensed:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="home.css" />
+  </head>
+  <body class="home-page">
+    <!-- ═══ HERO ═══ -->
+    <section class="hero">
+      <div class="hero-bg-dots"></div>
+      <div class="hero-inner">
+        <!-- Left -->
+        <div class="hero-content">
+          <p class="hero-eyebrow">🌿 Organic · Farm-fresh · Delivered daily</p>
+          <h1 class="hero-headline">
+            Your freshest<br />
+            <span class="hero-highlight">groceries,</span><br />
+            delivered today
+          </h1>
+
+          <div class="hero-stats">
+            <div class="hstat">
+              <span class="hstat-val">2,400+</span><span class="hstat-lbl">Products</span>
+            </div>
+            <div class="hstat-sep"></div>
+            <div class="hstat">
+              <span class="hstat-val">98%</span><span class="hstat-lbl">Organic</span>
+            </div>
+            <div class="hstat-sep"></div>
+            <div class="hstat">
+              <span class="hstat-val">4.9 ★</span><span class="hstat-lbl">Rating</span>
+            </div>
+            <div class="hstat-sep"></div>
+            <div class="hstat">
+              <span class="hstat-val">24h</span><span class="hstat-lbl">Delivery</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PRODUCTS COMPONENT ═══ -->
+    <app-master-products></app-master-products>
+
+    <script>
+      function setFilter(el) {
+        document.querySelectorAll('.pill').forEach((p) => p.classList.remove('pill--active'));
+        el.classList.add('pill--active');
+      }
+      function handleSub(e) {
+        e.preventDefault();
+        document.getElementById('sub-success').style.display = 'block';
+        document.getElementById('sub-email').value = '';
+      }
+    </script>
+  </body>
+</html>
