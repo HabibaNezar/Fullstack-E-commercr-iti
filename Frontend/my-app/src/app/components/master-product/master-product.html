@@ -1,33 +1,52 @@
-<div class="container mt-4">
-  <!-- You PROJECT content INTO the card component -->
+<!-- master-products.component.html -->
+<div class="master-products-page">
+  <!-- ── CATEGORY FILTER CHIPS ── -->
+  <div class="category-filter">
+    <p class="category-filter-label">Browse by Category</p>
+    <div class="category-chips">
+      <!-- ALL chip -->
+      <button
+        class="chip"
+        [class.active]="selectedCategory === 'All'"
+        (click)="selectedCategory = 'All'"
+      >
+        All
+      </button>
 
-  <!-- Filter Dropdown -->
-  <div class="mb-3 d-flex align-items-center gap-3">
-    <label class="form-label mb-0 fw-bold">Filter by Category:</label>
-
-    <select class="form-select w-auto" [(ngModel)]="selectedCategory">
-      <option value="All">All</option>
-      <option *ngFor="let cat of catList" [value]="cat.name">
+      <!-- Per-category chips -->
+      <button
+        *ngFor="let cat of catList"
+        class="chip"
+        [class.active]="selectedCategory === cat.name"
+        (click)="selectedCategory = cat.name"
+      >
         {{ cat.name }}
-      </option>
-    </select>
+      </button>
+    </div>
   </div>
 
-  <!-- Add Product Button -->
-  @if (isAdmin()) {
-    <button class="btn btn-primary mb-3" (click)="addProduct()">Add New Product</button>
-  }
+  <!-- ── TOOLBAR ── -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      @if (isAdmin()) {
+        <button class="add-product-btn" (click)="addProduct()">
+          <i class="ti ti-plus" aria-hidden="true"></i> Add Product
+        </button>
+      }
+    </div>
+  </div>
 
-  <!-- Product Form -->
-  <div *ngIf="currentProduct.id !== 0 || isEditMode" class="card mb-3">
-    <div class="card-header">
+  <!-- ── PRODUCT FORM ── -->
+  <div *ngIf="currentProduct.id !== 0 || isEditMode" class="form-card">
+    <div class="form-card-header">
       <h5>{{ isEditMode ? 'Edit Product' : 'Add New Product' }}</h5>
     </div>
-    <div class="card-body">
+    <div class="form-card-body">
       <form #productForm="ngForm">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="mb-3">
+        <div class="form-grid">
+          <!-- LEFT COLUMN -->
+          <div>
+            <div class="form-group">
               <label for="title" class="form-label">Title</label>
               <input
                 type="text"
@@ -35,19 +54,21 @@
                 id="title"
                 [(ngModel)]="currentProduct.title"
                 name="title"
+                placeholder="Product title"
                 required
               />
             </div>
-            <div class="mb-3">
+            <div class="form-group">
               <label for="description" class="form-label">Description</label>
               <textarea
                 class="form-control"
                 id="description"
                 [(ngModel)]="currentProduct.description"
                 name="description"
+                placeholder="Short description"
               ></textarea>
             </div>
-            <div class="mb-3">
+            <div class="form-group">
               <label for="category" class="form-label">Category</label>
               <select
                 class="form-select"
@@ -58,7 +79,7 @@
                 <option *ngFor="let cat of catList" [value]="cat.name">{{ cat.name }}</option>
               </select>
             </div>
-            <div class="mb-3">
+            <div class="form-group">
               <label for="price" class="form-label">Price</label>
               <input
                 type="number"
@@ -66,10 +87,11 @@
                 id="price"
                 [(ngModel)]="currentProduct.price"
                 name="price"
+                placeholder="0.00"
                 required
               />
             </div>
-            <div class="mb-3">
+            <div class="form-group">
               <label for="stock" class="form-label">Stock</label>
               <input
                 type="number"
@@ -77,11 +99,14 @@
                 id="stock"
                 [(ngModel)]="currentProduct.stock"
                 name="stock"
+                placeholder="0"
               />
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="mb-3">
+
+          <!-- RIGHT COLUMN -->
+          <div>
+            <div class="form-group">
               <label for="brand" class="form-label">Brand</label>
               <input
                 type="text"
@@ -89,9 +114,10 @@
                 id="brand"
                 [(ngModel)]="currentProduct.brand"
                 name="brand"
+                placeholder="Brand name"
               />
             </div>
-            <div class="mb-3">
+            <div class="form-group">
               <label for="rating" class="form-label">Rating</label>
               <input
                 type="number"
@@ -100,9 +126,10 @@
                 id="rating"
                 [(ngModel)]="currentProduct.rating"
                 name="rating"
+                placeholder="0.0 – 5.0"
               />
             </div>
-            <div class="mb-3">
+            <div class="form-group">
               <label for="discountPercentage" class="form-label">Discount %</label>
               <input
                 type="number"
@@ -110,9 +137,10 @@
                 id="discountPercentage"
                 [(ngModel)]="currentProduct.discountPercentage"
                 name="discountPercentage"
+                placeholder="0"
               />
             </div>
-            <div class="mb-3">
+            <div class="form-group">
               <label for="thumbnail" class="form-label">Thumbnail URL</label>
               <input
                 type="text"
@@ -120,24 +148,31 @@
                 id="thumbnail"
                 [(ngModel)]="currentProduct.thumbnail"
                 name="thumbnail"
+                placeholder="https://..."
               />
             </div>
           </div>
         </div>
-        <button
-          type="button"
-          class="btn btn-success"
-          (click)="saveProduct()"
-          [disabled]="!productForm.valid"
-        >
-          Save
-        </button>
-        <button type="button" class="btn btn-secondary ms-2" (click)="cancelEdit()">Cancel</button>
+
+        <!-- FORM ACTIONS -->
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn-save"
+            (click)="saveProduct()"
+            [disabled]="!productForm.valid"
+          >
+            <i class="ti ti-device-floppy" aria-hidden="true"></i> Save
+          </button>
+          <button type="button" class="btn-cancel" (click)="cancelEdit()">
+            <i class="ti ti-x" aria-hidden="true"></i> Cancel
+          </button>
+        </div>
       </form>
     </div>
   </div>
 
-  <!-- Child Component -->
+  <!-- ── CHILD PRODUCTS COMPONENT ── -->
   <app-products
     [selectedCategory]="selectedCategory"
     (totalPrice)="RecievedTotalPrice($event)"
