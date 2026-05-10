@@ -1,1 +1,257 @@
 /* master-product css */
+/* ═══════════════════════════════════════════
+   master-products.component.css
+   ═══════════════════════════════════════════ */
+
+/* ── PAGE WRAPPER ── */
+.master-products-page {
+  /* max-width: 1280px; */
+  margin: 0 auto;
+  padding: 0 5vw;
+}
+
+/* ════════════════════════
+   CATEGORY FILTER — icon chips
+════════════════════════ */
+.category-filter {
+  margin-bottom: 36px;
+}
+
+.category-filter-label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--clr-muted);
+  margin-bottom: 14px;
+}
+
+.category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--clr-border);
+  font-family: var(--font-body);
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--clr-text-3);
+  cursor: pointer;
+  transition: all .2s var(--ease-out);
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  white-space: nowrap;
+}
+
+.chip-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.chip:hover {
+  border-color: var(--clr-accent);
+  color: var(--clr-text-3);
+  background: var(--clr-accent-soft);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px var(--shadow-hover);
+}
+
+.chip.active {
+  background: var(--clr-accent);
+  border-color: var(--clr-brand);
+  color: var(--clr-brand);
+  box-shadow: 0 6px 20px var(--shadow-active);
+  transform: translateY(-2px);
+}
+
+/* ════════════════════════
+   TOOLBAR ROW
+════════════════════════ */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.add-product-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--clr-accent);
+  color: varf(--clr-cta-soft);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: .92rem;
+  padding: 10px 22px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--clr-brand);
+  cursor: pointer;
+  box-shadow: var(--shadow-btn);
+  transition: background .2s, box-shadow .2s, transform .15s;
+}
+.add-product-btn:hover {
+  background: var(--clr-accent-hover);
+  box-shadow: 0 8px 28px var(--shadow-hover);
+  transform: translateY(-1px);
+}
+
+/* ════════════════════════
+   PRODUCT FORM CARD
+════════════════════════ */
+.form-card {
+  background: var(--clr-surface);
+  border: 1.5px solid var(--clr-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  margin-bottom: 36px;
+  overflow: hidden;
+}
+
+.form-card-header {
+  background: linear-gradient(135deg, var(--clr-hero-from), var(--clr-hero-to));
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--clr-border);
+}
+
+.form-card-header h5 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  color: var(--clr-text);
+  margin: 0;
+}
+
+.form-card-body {
+  padding: 28px;
+}
+
+/* two-column form grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 32px;
+}
+@media (max-width: 640px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
+
+/* form groups */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-size: .82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: var(--clr-muted);
+  margin-bottom: 6px;
+}
+
+.form-control,
+.form-select {
+  width: 100%;
+  background: var(--clr-bg);
+  border: 1.5px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  font-family: var(--font-body);
+  font-size: .95rem;
+  color: var(--clr-text);
+  transition: border-color .2s, box-shadow .2s;
+  outline: none;
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--clr-accent);
+  box-shadow: 0 0 0 3px rgba(255,124,0,.15);
+  background: #fff;
+}
+.form-control::placeholder { color: var(--clr-muted); opacity: .7; }
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23ff7c00' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 38px;
+}
+
+/* form action buttons */
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.btn-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--clr-accent);
+  color: #fff;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: .92rem;
+  padding: 10px 24px;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-btn);
+  transition: background .2s, box-shadow .2s, transform .15s;
+}
+.btn-save:hover:not(:disabled) {
+  background: #e06b00;
+  box-shadow: 0 8px 28px rgba(255,124,0,.40);
+  transform: translateY(-1px);
+}
+.btn-save:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: var(--clr-muted);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: .92rem;
+  padding: 10px 22px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--clr-border);
+  cursor: pointer;
+  transition: all .2s;
+}
+.btn-cancel:hover {
+  border-color: var(--clr-muted);
+  color: var(--clr-text);
+  background: rgba(0,0,0,.04);
+}

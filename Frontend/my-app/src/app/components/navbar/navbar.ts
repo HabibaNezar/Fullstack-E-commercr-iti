@@ -50,4 +50,8 @@ export class Navbar {
   logout(): void {
     this.authService.logout();
   }
+
+  isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
+  }
 }
