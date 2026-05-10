@@ -5,7 +5,7 @@ import { IUser } from '../../models/iuser';
 
 @Injectable({ providedIn: 'root' })
 export class LoginService {
-  private apiUrl = 'http://localhost:3000/users';
+  private apiUrl = 'http://localhost:3001/users';
 
   constructor(private http: HttpClient) {}
 
