@@ -26,7 +26,7 @@
 
 .cart-count {
   font-size: 13px;
-  color: #888;
+  color: var(--clr-text-3);
 }
 
 /* ── Items ── */
@@ -51,7 +51,7 @@
 }
 
 .cart-item:hover {
-  border-color: #bbb;
+  border-color: var(--clr-text-3);
 }
 
 .item-image {
@@ -63,7 +63,7 @@
   align-items: center;
   justify-content: center;
   font-size: 22px;
-  color: #aaa;
+  color: var(--clr-text-3);
   flex-shrink: 0;
 }
 
@@ -78,6 +78,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--clr-text-3);
 }
 
 .item-qty {
@@ -87,7 +88,7 @@
   border-radius: 999px;
   padding: 2px 10px;
   font-size: 12px;
-  color: #666;
+  color: var(--clr-text-3);
   margin-top: 4px;
 }
 
@@ -95,6 +96,7 @@
   font-size: 15px;
   font-weight: 500;
   white-space: nowrap;
+  color: var(--clr-text-3);
 }
 
 /* ── Summary ── */
@@ -109,7 +111,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 14px;
-  color: #666;
+  color: var(--clr-text-3);
   padding: 4px 0;
 }
 
@@ -119,7 +121,7 @@
   padding-top: 12px;
   font-size: 16px;
   font-weight: 500;
-  color: #111;
+  color: var(--clr-text-3);
 }
 
 /* ── Actions ── */
@@ -135,7 +137,7 @@
   border-radius: 8px;
   background: transparent;
   font-size: 14px;
-  color: #666;
+  color: var(--clr-text-3);
   cursor: pointer;
   font-family: 'DM Sans', sans-serif;
   transition: background 0.15s;
@@ -149,7 +151,7 @@
   border: none;
   border-radius: 8px;
   background: #2C2C2A;
-  color: #F1EFE8;
+  color: var(--clr-light);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -171,13 +173,13 @@
 
 .empty-icon {
   font-size: 40px;
-  color: #ccc;
+  color: var(--clr-text-3);
   margin-bottom: 1rem;
 }
 
 .empty-text {
   font-size: 15px;
-  color: #888;
+  color: var(--clr-text-3);
 }
 
 .item-controls {
@@ -198,7 +200,7 @@
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  color: #555;
+  color: var(--clr-text-3);
   transition: background 0.15s;
 }
 
@@ -211,6 +213,7 @@
   text-align: center;
   font-size: 14px;
   font-weight: 500;
+  color: var(--clr-text-3);
 }
 
 .remove-btn {
