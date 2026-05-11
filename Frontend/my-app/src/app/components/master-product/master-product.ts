@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { Products } from '../products/products';
 import { FormsModule } from '@angular/forms';
 import { ICategory } from '../../models/icategory';
@@ -14,93 +14,105 @@ import { AuthService } from '../../services/AuthServices/auth-service';
   templateUrl: './master-product.html',
   styleUrl: './master-product.css',
 })
-export class MasterProducts {
+export class MasterProducts implements AfterViewInit {
 
   selectedCategory: string = 'All';
+  maxPrice: number = 1000;
+  searchQuery: string = '';           
   totalparentPrice: number = 0;
   catList: ICategory[] = [];
 
-  // Form for add/edit
   isEditMode: boolean = false;
   currentProduct: IProduct = this.getEmptyProduct();
 
-  //* Same service injection — Angular gives the SAME instance
-  constructor(private productService: ProductService, private authService: AuthService) {
+  catOpen: boolean = false;
+  priceOpen: boolean = false;
+
+  @ViewChild(Products) productsChild!: Products;
+
+  constructor(
+    private productService: ProductService,
+    private authService: AuthService
+  ) {
     this.catList = this.productService.getCategories();
   }
 
-  RecievedTotalPrice(data: number): void {
-    this.totalparentPrice = data;
+  ngAfterViewInit(): void {
+    console.log('Filtered products count:', this.productsChild.filteredProducts.length);
   }
 
-  @ViewChild(Products) productsChild!: Products;
-  ngAfterViewInit(): void {
-    // At this point the child component is ready
-    // You can now directly read or call anything on it
-    console.log('Products child component:', this.productsChild);
-    console.log('Filtered list from child:', this.productsChild.filteredList);
+  // ✅ Clears all three filters at once
+  clearAll(): void {
+    this.selectedCategory = 'All';
+    this.maxPrice = 1000;
+    this.searchQuery = '';
+    this.catOpen = false;
+    this.priceOpen = false;
+  }
+
+  // ✅ True when any filter is active — drives "Clear all" visibility
+  get hasActiveFilters(): boolean {
+    return this.selectedCategory !== 'All'
+      || this.maxPrice < 1000
+     ;
+  }
+
+  RecievedTotalPrice(price: number): void {
+    this.totalparentPrice = price;
   }
 
   getEmptyProduct(): IProduct {
     return {
-      id: 0,
-      title: '',
-      description: '',
-      category: '',
-      price: 0,
-      discountPercentage: 0,
-      rating: 0,
-      stock: 0,
-      tags: [],
-      brand: '',
-      sku: '',
-      weight: 0,
+      id: 0, title: '', description: '', category: '', price: 0,
+      discountPercentage: 0, rating: 0, stock: 0, tags: [], brand: '',
+      sku: '', weight: 0,
       dimensions: { width: 0, height: 0, depth: 0 },
-      warrantyInformation: '',
-      shippingInformation: '',
-      availabilityStatus: 'In Stock',
-      reviews: [],
-      returnPolicy: '',
+      warrantyInformation: '', shippingInformation: '',
+      availabilityStatus: 'In Stock', reviews: [], returnPolicy: '',
       minimumOrderQuantity: 1,
-      meta: { createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), barcode: '', qrCode: '' },
-      images: [],
-      thumbnail: ''
+      meta: {
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        barcode: '', qrCode: ''
+      },
+      images: [], thumbnail: ''
     };
   }
 
-  addProduct() {
+  addProduct(): void {
     this.isEditMode = false;
     this.currentProduct = this.getEmptyProduct();
   }
 
-  editProduct(product: IProduct) {
+  editProduct(product: IProduct): void {
     this.isEditMode = true;
     this.currentProduct = { ...product };
   }
 
-  saveProduct() {
+  saveProduct(): void {
     if (this.isEditMode) {
       this.productService.updateProduct(this.currentProduct.id, this.currentProduct);
     } else {
       this.productService.createProduct(this.currentProduct);
     }
-    this.currentProduct = this.getEmptyProduct();
-    this.isEditMode = false;
-    // Refresh the child
-    this.productsChild.applyFilter();
+    this.resetForm();
   }
 
-  cancelEdit() {
-    this.currentProduct = this.getEmptyProduct();
-    this.isEditMode = false;
+  cancelEdit(): void {
+    this.resetForm();
   }
 
-  deleteProduct(id: number) {
+  deleteProduct(id: number): void {
     if (confirm('Are you sure you want to delete this product?')) {
       this.productService.deleteProduct(id);
-      this.productsChild.applyFilter();
     }
   }
-  isAdmin(): boolean {
-    return this.authService.isAdmin(); }
+
+  isAdmin(): boolean { return this.authService.isAdmin(); }
+  isLoggedIn(): boolean { return this.authService.isLoggedIn(); }
+
+  private resetForm(): void {
+    this.currentProduct = this.getEmptyProduct();
+    this.isEditMode = false;
+  }
 }
