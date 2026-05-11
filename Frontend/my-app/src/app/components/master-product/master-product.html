@@ -1,27 +1,114 @@
 <!-- master-products.component.html -->
 <div class="master-products-page">
-  <!-- ── CATEGORY FILTER CHIPS ── -->
-  <div class="category-filter">
-    <p class="category-filter-label">Browse by Category</p>
-    <div class="category-chips">
-      <!-- ALL chip -->
-      <button
-        class="chip"
-        [class.active]="selectedCategory === 'All'"
-        (click)="selectedCategory = 'All'"
-      >
-        All
-      </button>
+  <!-- ── FILTER BAR ── -->
+  <div class="filter-bar-wrap">
+    <p class="filter-bar-label">Browse by Filter</p>
 
-      <!-- Per-category chips -->
-      <button
-        *ngFor="let cat of catList"
-        class="chip"
-        [class.active]="selectedCategory === cat.name"
-        (click)="selectedCategory = cat.name"
-      >
-        {{ cat.name }}
-      </button>
+    <div class="filter-bar-row">
+      <!-- ── LEFT: pill toggles ── -->
+      <div class="filter-bar">
+        <!-- Category toggle -->
+        <div class="filter-pill-group">
+          <button
+            class="filter-pill"
+            [class.active]="catOpen"
+            (click)="catOpen = !catOpen; priceOpen = false"
+          >
+            <i class="ti ti-tag" aria-hidden="true"></i>
+            Category
+            <span *ngIf="selectedCategory !== 'All'" class="filter-badge">
+              {{ selectedCategory }}
+            </span>
+            <i class="ti ti-chevron-down chev" aria-hidden="true"></i>
+          </button>
+          <div class="filter-panel" *ngIf="catOpen">
+            <p class="panel-label">Category</p>
+            <div class="cat-list">
+              <div
+                class="cat-item"
+                [class.sel]="selectedCategory === 'All'"
+                (click)="selectedCategory = 'All'; catOpen = false"
+              >
+                <span class="dot"></span> All
+              </div>
+              <div
+                class="cat-item"
+                *ngFor="let cat of catList"
+                [class.sel]="selectedCategory === cat.name"
+                (click)="selectedCategory = cat.name; catOpen = false"
+              >
+                <span class="dot"></span> {{ cat.name }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="pill-divider"></div>
+
+        <!-- Price toggle -->
+        <div class="filter-pill-group">
+          <button
+            class="filter-pill"
+            [class.active]="priceOpen"
+            (click)="priceOpen = !priceOpen; catOpen = false"
+          >
+            <i class="ti ti-currency-dollar" aria-hidden="true"></i>
+            Price
+            <span *ngIf="maxPrice < 1000" class="filter-badge">
+              ≤ {{ maxPrice | currency: 'USD' : 'symbol' : '1.0-0' }}
+            </span>
+            <i class="ti ti-chevron-down chev" aria-hidden="true"></i>
+          </button>
+          <div class="filter-panel price-panel" *ngIf="priceOpen">
+            <p class="panel-label">Max Price</p>
+            <div class="price-row">
+              <span class="price-sub">Up to</span>
+              <span class="price-val">{{ maxPrice | currency: 'USD' : 'symbol' : '1.0-0' }}</span>
+            </div>
+            <input type="range" min="1" max="1000" step="1" [(ngModel)]="maxPrice" />
+            <div class="price-minmax"><span>$1</span><span>$1,000</span></div>
+            <button class="panel-reset" (click)="maxPrice = 1000">
+              <i class="ti ti-refresh" aria-hidden="true"></i> Reset price
+            </button>
+          </div>
+        </div>
+
+        <!-- Clear all — only when a filter is active -->
+        <button class="filter-reset-all" *ngIf="hasActiveFilters" (click)="clearAll()">
+          <i class="ti ti-x" aria-hidden="true"></i> Clear all
+        </button>
+      </div>
+
+      <!-- ── RIGHT: search bar ── -->
+      @if (isLoggedIn()) {
+        <div class="nav-search">
+          <input type="text" placeholder="Search products..." [(ngModel)]="searchQuery" />
+          <button class="nav-search-btn" aria-label="Search">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+          </button>
+          <!-- ✅ Clear search "x" — only when typing -->
+          <button
+            class="nav-search-clear"
+            *ngIf="searchQuery"
+            (click)="searchQuery = ''"
+            aria-label="Clear search"
+          >
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+      }
     </div>
   </div>
 
@@ -175,9 +262,11 @@
   <!-- ── CHILD PRODUCTS COMPONENT ── -->
   <app-products
     [selectedCategory]="selectedCategory"
+    [maxPrice]="maxPrice"
     (totalPrice)="RecievedTotalPrice($event)"
     (editProduct)="editProduct($event)"
     (deleteProduct)="deleteProduct($event)"
+    [searchQuery]="searchQuery"
   >
   </app-products>
 </div>
