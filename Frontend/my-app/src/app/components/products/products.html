@@ -1,6 +1,6 @@
 <section class="products-section">
   <div class="cards-grid">
-    @for (p of filteredList; track p.id) {
+    @for (p of filteredProducts; track p.id) {
       <div class="product-card" [class.out-of-stock]="p.stock === 0">
         <!-- Image -->
         <div class="card-image-wrapper">
