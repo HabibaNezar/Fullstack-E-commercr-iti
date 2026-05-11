@@ -14,6 +14,7 @@ import { AuthService } from '../../services/AuthServices/auth-service';
   templateUrl: './master-product.html',
   styleUrl: './master-product.css',
 })
+// check 
 export class MasterProducts {
 
   selectedCategory: string = 'All';
