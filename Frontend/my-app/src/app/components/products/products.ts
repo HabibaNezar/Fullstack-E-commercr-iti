@@ -17,68 +17,56 @@ import { Router } from '@angular/router';
   styleUrl: './products.css',
   standalone: true
 })
-export class Products implements OnChanges {
+export class Products {  // ✅ no longer needs OnChanges
 
-  // ⬇️ Receives selected category NAME from parent
   @Input() selectedCategory: string = 'All';
+  @Input() maxPrice: number = 1000;
+  @Input() searchQuery: string = '';       
 
-  // ⬆️ Sends total price up to parent
+
   @Output() totalPrice = new EventEmitter<number>();
-
-  // ⬆️ Sends edit and delete events
   @Output() editProduct = new EventEmitter<IProduct>();
   @Output() deleteProduct = new EventEmitter<number>();
 
-  filteredList: IProduct[] = [];
+  products: IProduct[] = [];  // ✅ raw list, never touched after load
 
-  // ✅ Inject the service — Angular provides it automatically
-  constructor(private productService: ProductService, private CartService: CartService, private authService: AuthService, private router: Router) {
-    this.applyFilter();
+  constructor(
+    private productService: ProductService,
+    private CartService: CartService,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.products = this.productService.getProducts(); // load once
   }
 
-  // Runs every time @Input() changes (parent sends new category)
-  ngOnChanges(): void {
-    this.applyFilter();
+
+  get filteredProducts(): IProduct[] {
+    const query = this.searchQuery.trim().toLowerCase();
+    return this.products.filter(p => {
+      const matchesCategory =
+        this.selectedCategory === 'All' || p.category === this.selectedCategory;
+      const matchesPrice = p.price <= this.maxPrice;
+      const matchesSearch =
+        query === '' ||
+        p.title.toLowerCase().includes(query) ||
+        p.brand?.toLowerCase().includes(query) ||
+        p.category.toLowerCase().includes(query);
+      return matchesCategory && matchesPrice && matchesSearch;
+    });
   }
-
-  applyFilter(): void {
-    const all = this.productService.products;
-
-    this.filteredList = this.selectedCategory === 'All'
-      ? [...all]
-      : all.filter(p => p.category === this.selectedCategory);
-
-    // Emit total price up to parent
-    const total = this.filteredList.reduce((sum, p) => sum + p.price, 0);
-    this.totalPrice.emit(total);
-  }
-
+  // ✅ Getter for inStockCount based on filtered result
   get inStockCount(): number {
-    return this.filteredList.filter(p => p.stock > 0).length;
+    return this.filteredProducts.filter(p => p.stock > 0).length;
   }
 
-  onEdit(product: IProduct) {
-    this.editProduct.emit(product);
-  }
-
-  onDelete(id: number) {
-    this.deleteProduct.emit(id);
-  }
+  onEdit(product: IProduct) { this.editProduct.emit(product); }
+  onDelete(id: number) { this.deleteProduct.emit(id); }
 
   onAddToCart(product: IProduct) {
-    // Use the Cart service to add the product to the cart
     this.CartService.addToCart(product);
-    console.log('Current cart items:', this.CartService.getItems());
   }
 
-  isAdmin(): boolean {
-    return this.authService.isAdmin();
-  }
-
-  isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();
-  }
-goToLogin() {
-  this.router.navigate(['/login']);
-}
+  isAdmin(): boolean { return this.authService.isAdmin(); }
+  isLoggedIn(): boolean { return this.authService.isLoggedIn(); }
+  goToLogin() { this.router.navigate(['/login']); }
 }
