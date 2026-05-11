@@ -1,105 +1,71 @@
+<!-- navbar.component.html -->
 <nav class="navbar">
   <!-- LOGO -->
   <a routerLink="/home" class="logo">ShopHub</a>
 
-  <!-- CATEGORIES -->
-  @if (authService.isLoggedIn()) {
-    <div class="nav-categories">
-      <a routerLink="/home">Home</a>
-    </div>
-  }
+  <!-- CATEGORIES (visible on desktop — like image) -->
+  <div *ngIf="authService.isLoggedIn()" class="nav-categories">
+    <!-- <button class="cat-drop">Categories</button>
+    <a routerLink="/products/deals">Deals</a>
+    <a routerLink="/products/new">What's New</a>
+    <a routerLink="/products/delivery">Delivery</a> -->
+    <a routerLink="/home">Home</a>
+  </div>
 
-  <!-- SEARCH BAR -->
-  @if (isLoggedIn()) {
-    <div class="nav-search">
-      <input type="text" placeholder="Search Product..." />
+  <!-- ❌ GUEST -->
+  <div *ngIf="!authService.isLoggedIn()" class="nav-links guest">
+    <a routerLink="/login">Sign in</a>
+    <a routerLink="/register">Get started</a>
+  </div>
 
-      <button class="nav-search-btn" aria-label="Search">
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.5"
-          stroke-linecap="round"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <path d="m21 21-4.35-4.35" />
-        </svg>
-      </button>
-    </div>
-  }
+  <!-- ✅ LOGGED IN -->
+  <div *ngIf="authService.isLoggedIn()" class="nav-links">
+    <!-- <a routerLink="/products">Products</a> -->
 
-  <!-- GUEST -->
-  @if (!authService.isLoggedIn()) {
-    <div class="nav-links guest">
-      <a routerLink="/login">Sign in</a>
-      <a routerLink="/register">Get started</a>
-    </div>
-  }
+    <!-- Cart as icon button -->
+    <a routerLink="/cart" class="cart-link" aria-label="Cart">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      >
+        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+        <line x1="3" y1="6" x2="21" y2="6" />
+        <path d="M16 10a4 4 0 0 1-8 0" />
+      </svg>
+      <span class="cart-badge">{{ cartItemCount }}</span>
+    </a>
 
-  <!-- LOGGED IN -->
-  @if (authService.isLoggedIn()) {
-    <div class="nav-links">
+    <!-- Profile as icon button -->
+    <a routerLink="/profile" class="profile-link" aria-label="Account">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      >
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+    </a>
 
-      <!-- Orders -->
-      <a routerLink="/my-orders" class="nav-orders-link">
-        📦 My Orders
-      </a>
-
-      <!-- Cart -->
-      <a routerLink="/cart" class="cart-link" aria-label="Cart">
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-        >
-          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <path d="M16 10a4 4 0 0 1-8 0" />
-        </svg>
-
-        <span class="cart-badge">
-          {{ cartItemCount }}
-        </span>
-      </a>
-
-      <!-- Profile -->
-      <a routerLink="/profile" class="profile-link" aria-label="Account">
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-        >
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-          <circle cx="12" cy="7" r="4" />
-        </svg>
-      </a>
-
-      <!-- ADMIN -->
-      @if (authService.isAdmin()) {
-        <div class="nav-divider"></div>
-
-        <div class="admin-links">
-          <a routerLink="/users">👥 Users</a>
-          <a routerLink="/dashboard">📊 Dashboard</a>
-        </div>
-      }
-
+    <!-- 🛡️ ADMIN ONLY -->
+    <ng-container *ngIf="authService.isAdmin()">
       <div class="nav-divider"></div>
+      <div class="admin-links">
+        <a routerLink="/users">👥 Users</a>
+        <a routerLink="/dashboard">📊 Dashboard</a>
+      </div>
+    </ng-container>
 
-      <button class="btn-logout" (click)="logout()">
-        Logout
-      </button>
-    </div>
-  }
+    <div class="nav-divider"></div>
+    <button class="btn-logout" (click)="logout()">Logout</button>
+  </div>
 </nav>
