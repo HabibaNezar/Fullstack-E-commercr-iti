@@ -1,3 +1,4 @@
+<!-- cart.html — updated: Checkout button now routes to /checkout -->
 <div class="cart-container">
   <div *ngIf="cartItems.length === 0" class="cart-empty">
     <div class="empty-icon"><i class="ti ti-shopping-bag"></i></div>
@@ -59,7 +60,11 @@
       <button class="btn-clear" (click)="clearCart()">
         <i class="ti ti-trash"></i> Clear cart
       </button>
-      <button class="btn-checkout"><i class="ti ti-lock"></i> Checkout</button>
+
+      <!-- ✅ Updated: navigates to /checkout instead of doing nothing -->
+      <button class="btn-checkout" routerLink="/checkout">
+        <i class="ti ti-lock"></i> Checkout
+      </button>
     </div>
   </div>
 </div>

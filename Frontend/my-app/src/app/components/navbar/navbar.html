@@ -1,18 +1,13 @@
-<!-- navbar.component.html -->
 <nav class="navbar">
   <!-- LOGO -->
   <a routerLink="/home" class="logo">ShopHub</a>
 
-  <!-- CATEGORIES (visible on desktop — like image) -->
+  <!-- CATEGORIES -->
   <div *ngIf="authService.isLoggedIn()" class="nav-categories">
-    <!-- <button class="cat-drop">Categories</button>
-    <a routerLink="/products/deals">Deals</a>
-    <a routerLink="/products/new">What's New</a>
-    <a routerLink="/products/delivery">Delivery</a> -->
     <a routerLink="/home">Home</a>
   </div>
 
-  <!-- SEARCH BAR (center) -->
+  <!-- SEARCH BAR -->
   @if (isLoggedIn()) {
     <div class="nav-search">
       <input type="text" placeholder="Search Product..." />
@@ -41,9 +36,10 @@
 
   <!-- ✅ LOGGED IN -->
   <div *ngIf="authService.isLoggedIn()" class="nav-links">
-    <!-- <a routerLink="/products">Products</a> -->
+    <!-- 📦 My Orders — visible to all logged-in users -->
+    <a routerLink="/my-orders" class="nav-orders-link"> 📦 My Orders </a>
 
-    <!-- Cart as icon button -->
+    <!-- Cart -->
     <a routerLink="/cart" class="cart-link" aria-label="Cart">
       <svg
         width="18"
@@ -61,7 +57,7 @@
       <span class="cart-badge">{{ cartItemCount }}</span>
     </a>
 
-    <!-- Profile as icon button -->
+    <!-- Profile -->
     <a routerLink="/profile" class="profile-link" aria-label="Account">
       <svg
         width="18"
