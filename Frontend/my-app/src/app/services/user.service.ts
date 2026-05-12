@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class UsersService {
 
-  private apiUrl = 'http://localhost:3000/users';
+  private apiUrl = 'http://localhost:3001/users';
 
   constructor(private http: HttpClient) {}
 
@@ -27,7 +27,7 @@ export class UsersService {
   }
 
   // DELETE — remove user
-  deleteUser(id: number): Observable<void> {
+  deleteUser(id: any): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
-}
+  }

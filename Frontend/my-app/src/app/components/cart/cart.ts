@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CartService } from "../../services/cart.service";
 import { CommonModule } from '@angular/common';
 import { DecimalPipe } from "../../pipes/decimal-pipe";
+import { WishlistService } from '../../services/wishlist.service';
+import { AuthService } from '../../services/AuthServices/auth-service';
+import { Router } from '@angular/router';
+import { IProduct } from '../../models/iproduct';
 
 @Component({
   selector: 'app-cart',
@@ -13,7 +17,12 @@ export class Cart implements OnInit {
 
   cartItems: any[] = [];
 
-  constructor(public cartService: CartService) {}
+  constructor(
+    public cartService: CartService,
+    private wishlistService: WishlistService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.cartItems = this.cartService.getItems();
@@ -25,24 +34,38 @@ export class Cart implements OnInit {
 
   increment(productId: number) {
     this.cartService.incrementItem(productId);
-    // 👇 sync local array after removal
     this.cartItems = this.cartService.getItems();
   }
 
   decrement(productId: number) {
     this.cartService.decrementItem(productId);
-    // 👇 sync local array after removal
     this.cartItems = this.cartService.getItems();
   }
 
   remove(productId: number) {
     this.cartService.removeItem(productId);
-    // 👇 sync local array after removal
     this.cartItems = this.cartService.getItems();
   }
 
   clearCart() {
     this.cartService.clearCart();
     this.cartItems = [];
+  }
+
+  // 💖 Wishlist logic
+  toggleWishlist(productId: number) {
+    if (!this.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.wishlistService.toggleWishlist(productId).subscribe();
+  }
+
+  isInWishlist(productId: number): boolean {
+    return this.wishlistService.isInWishlist(productId);
+  }
+
+  isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
   }
 }

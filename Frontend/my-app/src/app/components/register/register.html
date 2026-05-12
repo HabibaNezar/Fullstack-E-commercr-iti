@@ -87,8 +87,9 @@
             <div class="select-wrap">
               <select id="role" class="role-select" formControlName="role">
                 <option value="">Select a role…</option>
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
+                <option value="Customer">Customer</option>
+                <option value="Seller">Seller</option>
+                <option value="Admin">Admin</option>
               </select>
             </div>
             <span class="field-error" *ngIf="f['role'].invalid && f['role'].touched">
