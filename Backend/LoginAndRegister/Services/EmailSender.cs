@@ -30,8 +30,7 @@ namespace LoginAndRegister.Services
             await smtp.ConnectAsync(mailSettings["Host"], int.Parse(mailSettings["Port"]), SecureSocketOptions.StartTls);
 
             // هنا السحر بيحصل: mailSettings["Password"] هيجيب الـ Key من الـ Secrets اللي على جهازك
-            await smtp.AuthenticateAsync(mailSettings["Mail"], mailSettings["Password"]);
-
+            await smtp.AuthenticateAsync("aab3c5001@smtp-brevo.com", mailSettings["Password"]);
             await smtp.SendAsync(emailMessage);
             await smtp.DisconnectAsync(true);
         }
