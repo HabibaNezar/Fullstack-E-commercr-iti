@@ -36,7 +36,17 @@ namespace LoginAndRegister
             #region Email Confirmation
             // 1. ÊİÚíá äÙÇã ÇáÊæßäÒ İí ÇáÜ Identity
             builder.Services.AddIdentity<AppUser, IdentityRole>(options => {
-                options.SignIn.RequireConfirmedEmail = true; 
+                // 1. ÊİÚíá ÖÑæÑÉ ÊÃßíÏ ÇáÅíãíá ááÏÎæá
+                options.SignIn.RequireConfirmedEmail = true;
+
+                // 2. ÇáÓØÑ Ïå åæ ÇáÍá áãäÚ ÊßÑÇÑ ÇáÅíãíá İí ÇáÏÇÊÇÈíÒ
+                options.User.RequireUniqueEmail = true;
+
+                // 3.  ÅÚÏÇÏÇÊ ÇáÈÇÓæÑÏ 
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false; // ãÔ åíÌÈÑß Úáì ÑãæÒ ÕÚÈÉ
+                options.Password.RequireUppercase = false; // ãÔ åíÌÈÑß Úáì ÍÑæİ ßÈíÑÉ
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders(); 
