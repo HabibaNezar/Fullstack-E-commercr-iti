@@ -37,7 +37,9 @@ namespace LoginAndRegister.Controllers
             {
                 AppUser appUser = new()
                 {
-                    UserName = user.Name,
+                    UserName = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
                     Email = user.Email,
                     Address = user.Address,
                     PhoneNumber = user.PhoneNumber,
@@ -130,47 +132,51 @@ namespace LoginAndRegister.Controllers
                 {
                     if (await _userManager.CheckPasswordAsync(user, login.Password))
                     {
-                        // To Create Tokens
-                        var claims = new List<Claim>();
-                        claims.Add(new Claim(ClaimTypes.Name, user.UserName));
-                        claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
-                        claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+                        if (!await _userManager.IsEmailConfirmedAsync(user))
+                        {
+                            return BadRequest("Confirm Your Email First!");
+                        }
+
+                        var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(ClaimTypes.GivenName, user.FirstName), // تعديل: أضفناهم للقائمة مباشرة
+                    new Claim(ClaimTypes.Surname, user.LastName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                };
                         var roles = await _userManager.GetRolesAsync(user);
                         foreach (var role in roles)
                         {
                             claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
                         }
-                        if (!await _userManager.IsEmailConfirmedAsync(user))
-                        {
-                            return BadRequest("Confirm Your Email First !");
-                        }
-                        // Signing Credentials 
                         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
                         var sc = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-                        // Token :
                         var Token = new JwtSecurityToken(
                             claims: claims,
                             issuer: configuration["Jwt:Issuer"],
                             audience: configuration["Jwt:Audience"],
                             expires: DateTime.Now.AddHours(1),
                             signingCredentials: sc
-                            );
-                        var _token = new
+                        );
+                        // نرجع البيانات بشكل واضح ومباشر
+                        return Ok(new
                         {
                             Token = new JwtSecurityTokenHandler().WriteToken(Token),
-                            expiration = Token.ValidTo
-                        };
-                        return Ok(_token);
+                            Expiration = Token.ValidTo,
+                            FirstName = user.FirstName,
+                            LastName = user.LastName,
+                            Roles = roles
+                        });
                     }
                     else
                     {
-                        return Unauthorized();
+                        return Unauthorized("Invalid Password.");
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("", "User Name Is Invalid");
+                    ModelState.AddModelError("", "Email Is Invalid");
                 }
             }
             return BadRequest(ModelState);
