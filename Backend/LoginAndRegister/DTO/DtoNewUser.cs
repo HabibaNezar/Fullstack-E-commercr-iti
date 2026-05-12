@@ -5,7 +5,9 @@ namespace LoginAndRegister.DTO
     public class DtoNewUser
     {
         [Required]
-        public string Name { get; set; }
+        public string FirstName { get; set; }
+        [Required]
+        public string LastName { get; set; }
         [Required]
         public string Password { get; set; }
         public string Address { get; set; }

@@ -29,7 +29,7 @@ namespace LoginAndRegister.AppContext
                    .WithMany() 
                    .HasForeignKey(p => p.SellerId)
                    // فى السطر دا بقوله متعملش مسح تلقائى
-                   .OnDelete(DeleteBehavior.Cascade); 
+                   .OnDelete(DeleteBehavior.Restrict); 
         }
     }
 }
