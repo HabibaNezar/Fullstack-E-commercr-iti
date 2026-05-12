@@ -67,6 +67,56 @@
   border-radius: var(--radius-pill);
 }
 
+/* Favorite Heart Icon */
+.btn-favorite {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  padding: 0;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.2s ease;
+  color: #64748b;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-favorite i {
+  font-size: 1.2rem;
+  /* ⚡ Snappy color update */
+  transition: none;
+}
+
+.btn-favorite:hover {
+  transform: scale(1.1);
+  background: #ffffff;
+  color: #f43f5e;
+}
+
+.btn-favorite.is-favorite {
+  color: #f43f5e;
+  background: #ffffff;
+  border-color: rgba(244, 63, 94, 0.1);
+}
+
+.btn-favorite.is-favorite i {
+  animation: heartPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes heartPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
 /* category tag — amber brand */
 .card-category-tag {
   position: absolute;

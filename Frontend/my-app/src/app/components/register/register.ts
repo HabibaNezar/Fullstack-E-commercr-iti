@@ -111,7 +111,20 @@ export class Register implements OnInit {
     this.errorMsg  = '';
 
     const { firstName, lastName, email, password, role } = this.registerForm.value;
-    const newUser: IUser = { firstName, lastName, email, password, role };
+    const newUser: IUser = { 
+      firstName, 
+      lastName, 
+      email, 
+      password, 
+      role,
+      wishlist: [],
+      paymentDetails: {
+        cardNumber: '',
+        expiryDate: '',
+        cvv: '',
+        cardHolderName: ''
+      }
+    };
 
     this.authService.register(newUser,
       () => {

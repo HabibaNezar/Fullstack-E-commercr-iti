@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
 import { HighLight } from '../../directives/high-light';
 import { TruncateWordsPipe } from '../../pipes/truncate-words-pipe';
@@ -9,6 +9,8 @@ import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/AuthServices/auth-service';
 import { DecimalPipe } from "../../pipes/decimal-pipe";
 import { Router } from '@angular/router';
+import { WishlistService } from '../../services/wishlist.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-products',
@@ -17,7 +19,7 @@ import { Router } from '@angular/router';
   styleUrl: './products.css',
   standalone: true
 })
-export class Products {  // ✅ no longer needs OnChanges
+export class Products implements OnInit, OnDestroy {  // ✅ Added interfaces
 
   @Input() selectedCategory: string = 'All';
   @Input() maxPrice: number = 1000;
@@ -28,15 +30,29 @@ export class Products {  // ✅ no longer needs OnChanges
   @Output() editProduct = new EventEmitter<IProduct>();
   @Output() deleteProduct = new EventEmitter<number>();
 
-  products: IProduct[] = [];  // ✅ raw list, never touched after load
+  products: IProduct[] = [];
+  private userSub!: Subscription; // 🛰️ To track wishlist changes
 
   constructor(
     private productService: ProductService,
     private CartService: CartService,
     private authService: AuthService,
-    private router: Router
+    private wishlistService: WishlistService,
+    private router: Router,
+    private cdr: ChangeDetectorRef // 👈 needed for async updates
   ) {
-    this.products = this.productService.getProducts(); // load once
+    this.products = this.productService.getProducts(); 
+  }
+
+  ngOnInit(): void {
+    // 🔗 Listen for user/wishlist changes globally
+    this.userSub = this.authService.currentUser$.subscribe(() => {
+      this.cdr.detectChanges(); // Re-render hearts if wishlist changes elsewhere
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.userSub) this.userSub.unsubscribe();
   }
 
 
@@ -64,6 +80,18 @@ export class Products {  // ✅ no longer needs OnChanges
 
   onAddToCart(product: IProduct) {
     this.CartService.addToCart(product);
+  }
+
+  toggleWishlist(productId: number) {
+    if (!this.isLoggedIn()) {
+      this.goToLogin();
+      return;
+    }
+    this.wishlistService.toggleWishlist(productId).subscribe();
+  }
+
+  isInWishlist(productId: number): boolean {
+    return this.wishlistService.isInWishlist(productId);
   }
 
   isAdmin(): boolean { return this.authService.isAdmin(); }

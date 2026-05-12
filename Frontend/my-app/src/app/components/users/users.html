@@ -11,7 +11,11 @@
       <input [(ngModel)]="formUser.firstName" placeholder="First name" />
       <input [(ngModel)]="formUser.lastName" placeholder="Last name" />
       <input [(ngModel)]="formUser.email" placeholder="Email address" />
-      <input [(ngModel)]="formUser.role" placeholder="Role" class="full-width" />
+      <select [(ngModel)]="formUser.role" class="full-width">
+        <option value="Customer">Customer</option>
+        <option value="Seller">Seller</option>
+        <option value="Admin">Admin</option>
+      </select>
       <input [(ngModel)]="formUser.password" placeholder="Password" type="password" />
     </div>
     <div class="form-actions">
