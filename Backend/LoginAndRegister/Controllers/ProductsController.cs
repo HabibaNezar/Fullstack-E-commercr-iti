@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace LoginAndRegister.Controllers
 {
@@ -72,29 +73,45 @@ namespace LoginAndRegister.Controllers
 
         #region Get All Products 
         [HttpGet("Get_All_Products")]
-        public async Task<IActionResult> GetAllProducts()
+        public async Task<IActionResult> GetAllProducts([FromQuery] ProductFilterDto filterDto)
         {
-            // هنجيب كل المنتجات بالاقسام بتاعتها
-            var products = await _context.Products
-                .Include(p => p.Category).ToListAsync();
-            // جملة select دى بدل ماعمل foreach طويله وصعبه
-            // هنا بقوله عدى على كل منتج فى ال products 
-            // ضفهولى فى ProductViewDto جديد عشان ابعته لليوزر
-            var productDto = products.Select(p => new ProductViewDto
+            // اليوزر اول ما يدخل السطر بتاع AsQueryable هيعرض جدول المنتجات كله عادى 
+            // وكل جمل if هتكون ب false 
+            // اول ما اليوزر يكتب حاجه فى ال search هيعمل فلتره
+            // الطلب لسه بيجهز فما تنفذيش أي حاجة ولا تبعتي بيانات دلوقتي لحد ما أخلص إضافة الفلاتر
+            var Query = _context.Products.AsQueryable();
+            // الفلتره حسب الاسم 
+            if (!string.IsNullOrEmpty(filterDto.Search))
             {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                StockQuantity = p.StockQuantity,
-                CategoryName = p.Category.Name,
-                // اسم السيرفر + فولدر الصور + اسم الصورة
-                // الصوره فى الداتا بيز متخزنة (name+extension) 
-                // ولكن لم ابعتها لليوزر لازم ترجع URL كامل
-                ImageUrl = $"{Request.Scheme}://{Request.Host}/Images/{p.ImagePath}"
-            }).ToList();
-            // كل دا بقا حطه فى list وابعته
-            return Ok(productDto);
+                Query = Query.Where(p => p.Name.ToLower().Contains(filterDto.Search.ToLower()));
+            }
+            // الفلتره حسب ال categoryId 
+            if (filterDto.CategoryId.HasValue)
+            {
+                Query = Query.Where(p => p.CategoryId == filterDto.CategoryId);
+            }
+            // الفلتره حسب اقل سعر 
+            if (filterDto.MinPrice.HasValue)
+            {
+                Query = Query.Where(p => p.Price >= filterDto.MinPrice);
+            }
+            // الفلتره حسب اكبر سعر
+            if (filterDto.MaxPrice.HasValue)
+            {
+                Query = Query.Where(p => p.Price <= filterDto.MaxPrice);
+            }
+            // الترتيب 
+            if (!string.IsNullOrEmpty(filterDto.Sort))
+            {
+                Query = filterDto.Sort switch
+                {
+                    "priceAsc" => Query.OrderBy(p => p.Price),
+                    "priceDesc" => Query.OrderByDescending(p => p.Price),
+                    _ => Query.OrderBy(p => p.Name)
+                };
+            }
+            var products = await Query.ToListAsync();
+            return Ok(products);
         }
         #endregion
 
