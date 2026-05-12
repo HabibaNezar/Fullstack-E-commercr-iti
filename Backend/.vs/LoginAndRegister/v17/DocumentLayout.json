@@ -3,8 +3,8 @@
   "WorkspaceRootPath": "E:\\.net\\iti\\E-commerce Project\\Fullstack-E-commercr-iti\\Backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D9E0E295-0A95-4620-87F3-B5F0DFF60345}|LoginAndRegister\\LoginAndRegister.csproj|e:\\.net\\iti\\e-commerce project\\fullstack-e-commercr-iti\\backend\\loginandregister\\controllers\\acountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D9E0E295-0A95-4620-87F3-B5F0DFF60345}|LoginAndRegister\\LoginAndRegister.csproj|solutionrelative:loginandregister\\controllers\\acountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D9E0E295-0A95-4620-87F3-B5F0DFF60345}|LoginAndRegister\\LoginAndRegister.csproj|e:\\.net\\iti\\e-commerce project\\fullstack-e-commercr-iti\\backend\\loginandregister\\controllers\\sellercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9E0E295-0A95-4620-87F3-B5F0DFF60345}|LoginAndRegister\\LoginAndRegister.csproj|solutionrelative:loginandregister\\controllers\\sellercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -23,14 +23,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "AcountController.cs",
-              "DocumentMoniker": "E:\\.net\\iti\\E-commerce Project\\Fullstack-E-commercr-iti\\Backend\\LoginAndRegister\\Controllers\\AcountController.cs",
-              "RelativeDocumentMoniker": "LoginAndRegister\\Controllers\\AcountController.cs",
-              "ToolTip": "E:\\.net\\iti\\E-commerce Project\\Fullstack-E-commercr-iti\\Backend\\LoginAndRegister\\Controllers\\AcountController.cs",
-              "RelativeToolTip": "LoginAndRegister\\Controllers\\AcountController.cs",
-              "ViewState": "AgIAAIwAAAAAAAAAAAAiwJsAAAArAAAAAAAAAA==",
+              "Title": "SellerController.cs",
+              "DocumentMoniker": "E:\\.net\\iti\\E-commerce Project\\Fullstack-E-commercr-iti\\Backend\\LoginAndRegister\\Controllers\\SellerController.cs",
+              "RelativeDocumentMoniker": "LoginAndRegister\\Controllers\\SellerController.cs",
+              "ToolTip": "E:\\.net\\iti\\E-commerce Project\\Fullstack-E-commercr-iti\\Backend\\LoginAndRegister\\Controllers\\SellerController.cs",
+              "RelativeToolTip": "LoginAndRegister\\Controllers\\SellerController.cs",
+              "ViewState": "AgIAAAwAAAAgMzMzMzMpwDYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-12T20:14:04.162Z",
+              "WhenOpened": "2026-05-12T23:22:28.145Z",
               "EditorCaption": ""
             }
           ]
