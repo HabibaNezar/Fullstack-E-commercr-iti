@@ -5,6 +5,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{D9E0E295-0A95-4620-87F3-B5F0DFF60345}|LoginAndRegister\\LoginAndRegister.csproj|e:\\.net\\iti\\e-commerce project\\fullstack-e-commercr-iti\\backend\\loginandregister\\controllers\\sellercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D9E0E295-0A95-4620-87F3-B5F0DFF60345}|LoginAndRegister\\LoginAndRegister.csproj|solutionrelative:loginandregister\\controllers\\sellercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9E0E295-0A95-4620-87F3-B5F0DFF60345}|LoginAndRegister\\LoginAndRegister.csproj|e:\\.net\\iti\\e-commerce project\\fullstack-e-commercr-iti\\backend\\loginandregister\\dto\\updatesellerprofiledto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9E0E295-0A95-4620-87F3-B5F0DFF60345}|LoginAndRegister\\LoginAndRegister.csproj|solutionrelative:loginandregister\\dto\\updatesellerprofiledto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,11 +18,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{fbcae063-e2c0-4ab1-a516-996ea3dafb72}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UpdateSellerProfileDto.cs",
+              "DocumentMoniker": "E:\\.net\\iti\\E-commerce Project\\Fullstack-E-commercr-iti\\Backend\\LoginAndRegister\\DTO\\UpdateSellerProfileDto.cs",
+              "RelativeDocumentMoniker": "LoginAndRegister\\DTO\\UpdateSellerProfileDto.cs",
+              "ToolTip": "E:\\.net\\iti\\E-commerce Project\\Fullstack-E-commercr-iti\\Backend\\LoginAndRegister\\DTO\\UpdateSellerProfileDto.cs",
+              "RelativeToolTip": "LoginAndRegister\\DTO\\UpdateSellerProfileDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-13T00:14:08.719Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -28,7 +45,7 @@
               "RelativeDocumentMoniker": "LoginAndRegister\\Controllers\\SellerController.cs",
               "ToolTip": "E:\\.net\\iti\\E-commerce Project\\Fullstack-E-commercr-iti\\Backend\\LoginAndRegister\\Controllers\\SellerController.cs",
               "RelativeToolTip": "LoginAndRegister\\Controllers\\SellerController.cs",
-              "ViewState": "AgIAAAwAAAAgMzMzMzMpwDYAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAEsAAACAmZmZmZkjwGQAAABYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-12T23:22:28.145Z",
               "EditorCaption": ""
