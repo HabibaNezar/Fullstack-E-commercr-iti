@@ -22,13 +22,6 @@ export class Users implements OnInit {
     email: '',
     role: 'Customer',
     password: '',
-    wishlist: [],
-    paymentDetails: {
-      cardNumber: '',
-      expiryDate: '',
-      cvv: '',
-      cardHolderName: ''
-    }
   };
 
   // 👇 tracks if we're editing or creating
@@ -49,8 +42,8 @@ export class Users implements OnInit {
 
   // CREATE
   addUser() {
-    this.usersService.addUser(this.formUser).subscribe(newUser => {
-      this.users.push(newUser);   // 👈 add to local array instantly
+    this.usersService.addUser(this.formUser).subscribe(() => {
+      this.loadUsers();
       this.resetForm();
     });
   }
@@ -63,9 +56,8 @@ export class Users implements OnInit {
 
   // UPDATE
   updateUser() {
-    this.usersService.updateUser(this.formUser).subscribe(updated => {
-      const index = this.users.findIndex(u => u.id === updated.id);
-      this.users[index] = updated; // 👈 replace old with updated
+    this.usersService.saveAdminUserEdits(this.formUser).subscribe(() => {
+      this.loadUsers();
       this.resetForm();
     });
   }
@@ -93,13 +85,6 @@ export class Users implements OnInit {
       email: '',
       role: 'Customer',
       password: '',
-      wishlist: [],
-      paymentDetails: {
-        cardNumber: '',
-        expiryDate: '',
-        cvv: '',
-        cardHolderName: ''
-      }
     };
     this.isEditing = false;
   }

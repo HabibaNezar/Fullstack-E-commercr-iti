@@ -1,27 +1,23 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { IReview } from '../models/ireview';
 
+/** No Reviews paths in `swagger.json` — keep UI without remote calls. */
 @Injectable({ providedIn: 'root' })
 export class ReviewService {
-  private apiUrl = 'http://localhost:3000/reviews';
-
-  constructor(private http: HttpClient) {}
-
-  getReviewsByProductId(productId: number): Observable<IReview[]> {
-    return this.http.get<IReview[]>(`${this.apiUrl}?productId=${productId}`);
+  getReviewsByProductId(_productId: number): Observable<IReview[]> {
+    return of([]);
   }
 
-  getReviewsByUserId(userId: any): Observable<IReview[]> {
-    return this.http.get<IReview[]>(`${this.apiUrl}?userId=${userId}`);
+  getReviewsByUserId(_userId: unknown): Observable<IReview[]> {
+    return of([]);
   }
 
-  addReview(review: IReview): Observable<IReview> {
-    return this.http.post<IReview>(this.apiUrl, review);
+  addReview(_review: IReview): Observable<IReview> {
+    return of(_review);
   }
 
-  deleteReview(reviewId: any): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${reviewId}`);
+  deleteReview(_reviewId: unknown): Observable<void> {
+    return of(undefined);
   }
 }

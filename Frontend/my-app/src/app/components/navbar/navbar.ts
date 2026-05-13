@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, DestroyRef, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';  // ✅ RouterLink مرة واحدة بس
+import { RouterLink, RouterLinkActive } from '@angular/router'; // ✅ RouterLink مرة واحدة بس
 import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/AuthServices/auth-service';
 import { CommonModule } from '@angular/common';
@@ -11,13 +11,13 @@ import { IUser } from '../../models/iuser';
   standalone: true,
   imports: [
     RouterLink,
-    RouterLinkActive,   
+    RouterLinkActive,
     CommonModule
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar implements OnInit {  
+export class Navbar implements OnInit {
 
   cartItemCount = 0;
   currentUser: IUser | null = null;
@@ -36,7 +36,14 @@ export class Navbar implements OnInit {
 
     this.authService.currentUser$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(user => this.currentUser = user);
+      .subscribe((user) => {
+        this.currentUser = user;
+        if (user && this.authService.isLoggedIn()) {
+          this.cartService.loadCartFromApi().subscribe({ error: () => {} });
+        } else {
+          this.cartService.clearCart();
+        }
+      });
   }
 
   logout(): void {

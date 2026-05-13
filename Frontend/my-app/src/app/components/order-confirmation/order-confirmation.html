@@ -25,10 +25,10 @@
       <div class="card conf-card">
         <h3 class="conf-card-title">🛍️ Items Ordered</h3>
         <ul class="conf-items">
-          <li class="conf-item" *ngFor="let item of order.items">
-            <img class="conf-thumb" [src]="item.thumbnail" [alt]="item.title" />
+          <li class="conf-item" *ngFor="let item of order.items || []">
+            <img class="conf-thumb" [src]="item.thumbnail || ''" [alt]="item.title || item.productName" />
             <div class="conf-item-info">
-              <p class="conf-item-name">{{ item.title }}</p>
+              <p class="conf-item-name">{{ item.title || item.productName }}</p>
               <p class="conf-item-meta">
                 Qty: {{ item.quantity }} · ${{ item.price * item.quantity | number:'1.2-2' }}
               </p>
@@ -66,7 +66,7 @@
         <div class="card conf-card conf-total-card">
           <div class="conf-total-row">
             <span>Order Total</span>
-            <span class="conf-total-amount">${{ order.total | number:'1.2-2' }}</span>
+            <span class="conf-total-amount">${{ (order.total ?? order.totalPrice) | number:'1.2-2' }}</span>
           </div>
         </div>
 

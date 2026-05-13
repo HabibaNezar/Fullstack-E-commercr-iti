@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/AuthServices/auth-service';
-import { IUser } from '../../models/iuser';
+import { IUser, DtoNewUser } from '../../models/iuser';
 
 @Component({
   selector: 'app-register',
@@ -111,19 +111,12 @@ export class Register implements OnInit {
     this.errorMsg  = '';
 
     const { firstName, lastName, email, password, role } = this.registerForm.value;
-    const newUser: IUser = { 
-      firstName, 
-      lastName, 
-      email, 
-      password, 
+    const newUser: DtoNewUser = {
+      firstName,
+      lastName,
+      email: email ?? undefined,
+      password,
       role,
-      wishlist: [],
-      paymentDetails: {
-        cardNumber: '',
-        expiryDate: '',
-        cvv: '',
-        cardHolderName: ''
-      }
     };
 
     this.authService.register(newUser,
@@ -137,6 +130,10 @@ export class Register implements OnInit {
         this.errorMsg  = errMsg;
         this.isLoading = false;
         this.cdr.detectChanges(); // 👈 force update
+      },
+      () => {
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     );
   }

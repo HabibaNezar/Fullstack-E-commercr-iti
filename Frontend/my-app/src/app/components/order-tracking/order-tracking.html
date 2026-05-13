@@ -17,14 +17,14 @@
 
   <div class="section track-body">
 
-    <div class="cancelled-banner" *ngIf="order.status === 'cancelled'">
+    <div class="cancelled-banner" *ngIf="isCancelledState()">
       ❌ This order has been cancelled.
     </div>
 
     <div class="track-grid">
 
       <!-- Stepper -->
-      <div class="card track-card" *ngIf="order.status !== 'cancelled'">
+      <div class="card track-card" *ngIf="!isCancelledState()">
         <h3 class="track-card-title">📍 Order Progress</h3>
 
         <div class="stepper">
@@ -66,17 +66,17 @@
           </div>
           <div class="info-row">
             <span class="info-label">Total</span>
-            <span class="track-total">${{ order.total | number:'1.2-2' }}</span>
+            <span class="track-total">${{ (order.total ?? order.totalPrice) | number:'1.2-2' }}</span>
           </div>
         </div>
 
         <div class="card track-card">
-          <h3 class="track-card-title">🛍️ {{ order.items.length }} Items</h3>
+          <h3 class="track-card-title">🛍️ {{ (order.items || []).length }} Items</h3>
           <ul class="track-items">
-            <li *ngFor="let item of order.items" class="track-item">
-              <img [src]="item.thumbnail" [alt]="item.title" class="track-thumb" />
+            <li *ngFor="let item of order.items || []" class="track-item">
+              <img [src]="item.thumbnail || ''" [alt]="item.title || item.productName" class="track-thumb" />
               <div>
-                <p class="track-item-name">{{ item.title }}</p>
+                <p class="track-item-name">{{ item.title || item.productName }}</p>
                 <p class="track-item-meta">x{{ item.quantity }} · ${{ item.price | number:'1.2-2' }}</p>
               </div>
             </li>

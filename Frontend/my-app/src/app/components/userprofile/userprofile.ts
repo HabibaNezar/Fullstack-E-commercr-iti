@@ -15,6 +15,20 @@ import { IProduct } from '../../models/iproduct';
 // ✅ Added missing rxjs operators
 import { timeout, catchError, finalize, of } from 'rxjs';
 
+/** UI-only fields used by userprofile.html (beyond IUser). */
+export interface UserPaymentDetails {
+  cardNumber: string;
+  expiryDate: string;
+  cvv: string;
+  cardHolderName: string;
+}
+
+export type ProfileUser = IUser & {
+  phone?: string;
+  wishlist?: number[];
+  paymentDetails?: UserPaymentDetails;
+};
+
 @Component({
   selector: 'app-user-profile',
   standalone: true,
@@ -23,7 +37,7 @@ import { timeout, catchError, finalize, of } from 'rxjs';
   styleUrl: './userprofile.css'
 })
 export class UserProfile implements OnInit {
-  user: IUser | null = null;
+  user: ProfileUser | null = null;
   isEditing = false;
   message = '';
   private messageTimer: any;
@@ -56,11 +70,16 @@ export class UserProfile implements OnInit {
   loadUser(): void {
     const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
+      const u = currentUser as ProfileUser;
       this.user = {
         ...currentUser,
-        paymentDetails: currentUser.paymentDetails || {
-          cardNumber: '', expiryDate: '', cvv: '', cardHolderName: ''
-        }
+        phone: u.phone ?? currentUser.phoneNumber,
+        paymentDetails: u.paymentDetails ?? {
+          cardNumber: '',
+          expiryDate: '',
+          cvv: '',
+          cardHolderName: '',
+        },
       };
       this.loadTabData();
     }
@@ -80,13 +99,15 @@ export class UserProfile implements OnInit {
       this.ordersLoading = true;
 
       // ✅ Mirrors the same robust pattern used in my-orders.ts
-      this.orderService.getOrdersByUserId(String(this.user.id))
+      this.orderService
+        .getOrdersByUserId(String(this.user.id))
         .pipe(
           timeout(8000),
           catchError((err) => {
-            this.ordersError = err?.name === 'TimeoutError'
-              ? 'Server is not responding. Make sure JSON Server is running.'
-              : 'Could not load orders. Make sure JSON Server is running.';
+            this.ordersError =
+              err?.name === 'TimeoutError'
+                ? 'The orders service did not respond in time. Please try again.'
+                : 'Could not load orders. Please try again later.';
             return of([]);
           }),
           finalize(() => {
@@ -96,13 +117,9 @@ export class UserProfile implements OnInit {
         )
         .subscribe({
           next: (orders) => {
-            this.userOrders = (orders ?? []).sort((a, b) => {
-              const tA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-              const tB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-              return tB - tA;
-            });
+            this.userOrders = this.orderService.sortOrdersDesc(orders ?? []);
             this.cdr.detectChanges();
-          }
+          },
         });
 
     } else if (this.activeTab === 'Wishlist') {
@@ -133,7 +150,7 @@ export class UserProfile implements OnInit {
 
   addToCart(product: IProduct): void {
     this.cartService.addToCart(product);
-    this.showMessage(`Successfully added ${product.title} to your cart!`);
+    this.showMessage(`Successfully added ${product.name} to your cart!`);
   }
 
   removeFromWishlist(productId: number): void {
@@ -150,18 +167,50 @@ export class UserProfile implements OnInit {
       return;
     }
 
-    this.usersService.updateUser(this.user).subscribe({
-      next: (updatedUser) => {
-        this.authService.updateCurrentUser(updatedUser);
-        this.user = { ...updatedUser };
-        this.isEditing = false;
-        this.showMessage('Profile updated successfully!');
-      },
-      error: () => {
-        this.message = 'Failed to update profile. Please try again.';
-        this.cdr.detectChanges();
-      }
+    const dtoUser = this.user as IUser;
+    if (this.authService.isSeller()) {
+      this.usersService
+        .updateSellerProfile({
+          firstName: dtoUser.firstName,
+          lastName: dtoUser.lastName,
+          address: dtoUser.address,
+          phoneNumber: dtoUser.phoneNumber,
+        })
+        .subscribe({
+          next: () => {
+            this.authService.updateCurrentUser({
+              ...dtoUser,
+              wishlist: dtoUser.wishlist,
+              paymentDetails: (this.user as ProfileUser).paymentDetails,
+            });
+            this.user = {
+              ...dtoUser,
+              phone: dtoUser.phoneNumber,
+              paymentDetails: (this.user as ProfileUser).paymentDetails,
+            } as ProfileUser;
+            this.isEditing = false;
+            this.showMessage('Profile updated successfully!');
+          },
+          error: () => {
+            this.message = 'Failed to update profile. Please try again.';
+            this.cdr.detectChanges();
+          },
+        });
+      return;
+    }
+
+    this.authService.updateCurrentUser({
+      ...dtoUser,
+      wishlist: dtoUser.wishlist,
+      paymentDetails: (this.user as ProfileUser).paymentDetails,
     });
+    this.user = {
+      ...dtoUser,
+      phone: dtoUser.phoneNumber,
+      paymentDetails: (this.user as ProfileUser).paymentDetails,
+    } as ProfileUser;
+    this.isEditing = false;
+    this.showMessage('Profile updated successfully!');
   }
 
   // ✅ Extracted helper — avoids duplicating the timer logic

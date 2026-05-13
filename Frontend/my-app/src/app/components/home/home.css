@@ -86,3 +86,48 @@
   .hero-visual { order: -1; }   /* image above text on mobile */
   .hero-visual img { max-width: 340px; }
 }
+
+.home-banners {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto 32px;
+  padding: 0 16px;
+}
+
+.home-banner-card {
+  flex: 1 1 200px;
+  max-width: 360px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  border: 0.5px solid #e5e5e5;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+a.home-banner-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.home-banner-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+}
+
+.home-banner-title {
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #111;
+  background: #fafafa;
+}

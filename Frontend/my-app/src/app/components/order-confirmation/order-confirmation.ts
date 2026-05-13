@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, EMPTY, finalize, tap } from 'rxjs';
 import { OrderService } from '../../services/order.service';
+import { OrderNotificationService } from '../../services/order-notification.service';
 import { IOrder } from '../../models/iorder';
 
 @Component({
@@ -9,25 +12,24 @@ import { IOrder } from '../../models/iorder';
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './order-confirmation.html',
-  styleUrl: './order-confirmation.css'
+  styleUrl: './order-confirmation.css',
 })
 export class OrderConfirmation implements OnInit {
-
   order: IOrder | null = null;
   loading = true;
   error = '';
 
-  constructor(
-    private route: ActivatedRoute,
-    private orderService: OrderService
-  ) { }
+  private readonly route = inject(ActivatedRoute);
+  private readonly orderService = inject(OrderService);
+  private readonly notifications = inject(OrderNotificationService);
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
-    // ✅ Use navigation state first (passed from my-orders — no extra HTTP call)
     const nav = history.state as { order?: IOrder };
     if (nav?.order) {
-      this.order = nav.order;
+      this.order = this.orderService.normalizeOrder(nav.order);
       this.loading = false;
+      this.notifications.notifyOrderConfirmationViewed(this.order);
       return;
     }
 
@@ -38,9 +40,23 @@ export class OrderConfirmation implements OnInit {
       return;
     }
 
-    this.orderService.getOrderById(id).subscribe({
-      next: (o) => { this.order = o; this.loading = false; },
-      error: () => { this.error = 'Could not load your order.'; this.loading = false; }
-    });
+    this.orderService
+      .getOrderById(id)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap((o) => this.notifications.notifyOrderConfirmationViewed(o)),
+        catchError(() => {
+          this.error = 'Could not load your order.';
+          return EMPTY;
+        }),
+        finalize(() => {
+          this.loading = false;
+        })
+      )
+      .subscribe({
+        next: (o) => {
+          this.order = o;
+        },
+      });
   }
 }
