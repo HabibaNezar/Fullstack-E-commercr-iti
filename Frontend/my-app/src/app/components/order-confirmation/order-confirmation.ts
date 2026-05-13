@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  RouterLink,
-  ActivatedRoute
-} from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { OrderService } from '../../services/order.service';
 import { IOrder } from '../../models/iorder';
 
@@ -17,8 +14,8 @@ import { IOrder } from '../../models/iorder';
 export class OrderConfirmation implements OnInit {
 
   order: IOrder | null = null;
-  loading: boolean = true;
-  error: string = '';
+  loading = true;
+  error = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -26,16 +23,15 @@ export class OrderConfirmation implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const nav = history.state;
-
-    if (nav.order) {
+    // ✅ Use navigation state first (passed from my-orders — no extra HTTP call)
+    const nav = history.state as { order?: IOrder };
+    if (nav?.order) {
       this.order = nav.order;
       this.loading = false;
       return;
     }
-    // ── Read :id from URL /order/:id/confirmation ──
-    const id = this.route.snapshot.paramMap.get('id');
 
+    const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
       this.error = 'Order not found.';
       this.loading = false;
@@ -43,16 +39,8 @@ export class OrderConfirmation implements OnInit {
     }
 
     this.orderService.getOrderById(id).subscribe({
-      next: (o) => {
-        console.log(o);
-        this.order = o;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.log(err);
-        this.error = 'Could not load your order.';
-        this.loading = false;
-      }
+      next: (o) => { this.order = o; this.loading = false; },
+      error: () => { this.error = 'Could not load your order.'; this.loading = false; }
     });
   }
 }

@@ -1,5 +1,3 @@
-<!-- order-confirmation.html -->
-
 <!-- Loading -->
 <div class="state-loading section" *ngIf="loading">Loading your order…</div>
 
@@ -17,27 +15,28 @@
     <div class="page-hero-inner conf-hero-inner">
       <div class="conf-check">✅</div>
       <h1>Order Confirmed!</h1>
+      <!-- ✅ IOrder has no userName — show order id only -->
       <p class="conf-sub">
-        Thank you <strong>{{ order.userName }}</strong>!
-        Your order <strong>#{{ order.id }}</strong> has been placed.
+        Your order <strong>#{{ order.id }}</strong> has been placed successfully.
       </p>
     </div>
   </div>
 
   <!-- ── Details ───────────────────────────── -->
   <div class="section conf-body">
-
     <div class="conf-grid">
 
       <!-- Items -->
       <div class="card conf-card">
         <h3 class="conf-card-title">🛍️ Items Ordered</h3>
         <ul class="conf-items">
+          <!-- ✅ IOrderItem: productName, price, quantity — no thumbnail -->
           <li class="conf-item" *ngFor="let item of order.items">
-            <img class="conf-thumb" [src]="item.thumbnail" [alt]="item.title" />
             <div class="conf-item-info">
-              <p class="conf-item-name">{{ item.title }}</p>
-              <p class="conf-item-meta">Qty: {{ item.quantity }} · ${{ item.price * item.quantity | number:'1.2-2' }}</p>
+              <p class="conf-item-name">{{ item.productName }}</p>
+              <p class="conf-item-meta">
+                Qty: {{ item.quantity }} · ${{ item.price * item.quantity | number:'1.2-2' }}
+              </p>
             </div>
           </li>
         </ul>
@@ -45,47 +44,49 @@
 
       <!-- Summary -->
       <div class="conf-right">
+
         <!-- Delivery Info -->
         <div class="card conf-card">
           <h3 class="conf-card-title">📦 Delivery Info</h3>
+
+          <!-- ✅ IOrder has shippingAddress (single field) -->
           <div class="info-row">
-            <span class="info-label">Address</span>
-            <span>{{ order.address }}, {{ order.city }}</span>
+            <span class="info-label">Shipping Address</span>
+            <span>{{ order.shippingAddress }}</span>
           </div>
-          <div class="info-row">
-            <span class="info-label">Phone</span>
-            <span>{{ order.phone }}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Payment</span>
-            <span class="tag tag--purple">{{ order.paymentMethod === 'cash' ? '💵 Cash on Delivery' : '💳 Credit Card' }}</span>
-          </div>
+
+          <!-- ✅ IOrder has status (capitalized) -->
           <div class="info-row">
             <span class="info-label">Status</span>
-            <span class="tag tag--orange">⏳ {{ order.status | titlecase }}</span>
+            <span class="tag tag--orange">⏳ {{ order.status }}</span>
           </div>
+
+          <!-- ✅ IOrder has orderDate -->
           <div class="info-row">
             <span class="info-label">Date</span>
-            <span>{{ order.createdAt | date:'medium' }}</span>
+            <span>{{ order.orderDate | date:'medium' }}</span>
           </div>
         </div>
 
         <!-- Total -->
         <div class="card conf-card conf-total-card">
           <div class="conf-total-row">
+            <!-- ✅ IOrder has totalPrice -->
             <span>Order Total</span>
-            <span class="conf-total-amount">${{ order.total | number:'1.2-2' }}</span>
+            <span class="conf-total-amount">${{ order.totalPrice | number:'1.2-2' }}</span>
           </div>
         </div>
 
         <!-- Actions -->
         <div class="conf-actions">
           <a routerLink="/my-orders" class="btn btn-primary">📋 View My Orders</a>
-          <a [routerLink]="['/order', order.id, 'tracking']" class="btn btn-outline">📍 Track Order</a>
+          <a [routerLink]="['/order', order.id, 'tracking']"
+             [state]="{ order: order }"
+             class="btn btn-outline">📍 Track Order</a>
           <a routerLink="/home" class="btn btn-outline">🏠 Continue Shopping</a>
         </div>
-      </div>
 
+      </div>
     </div>
   </div>
 </div>
