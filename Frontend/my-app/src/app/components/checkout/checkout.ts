@@ -92,9 +92,12 @@ export class Checkout implements OnInit {
     this.orderService.placeOrder(order).subscribe({
       next: (res) => {
         this.cartService.clearCart();
-        this.router.navigate(['/order', res.id, 'confirmation']);
+        this.router.navigate(
+          ['/order', res.id, 'confirmation'],
+          { state: { order: res } }
+        );
       },
-      error: () => {
+      error: (err) => {
         this.errorMsg = 'Something went wrong. Please try again.';
         this.loading = false;
       }

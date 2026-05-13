@@ -26,6 +26,13 @@ export class OrderConfirmation implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    const nav = history.state;
+
+    if (nav.order) {
+      this.order = nav.order;
+      this.loading = false;
+      return;
+    }
     // ── Read :id from URL /order/:id/confirmation ──
     const id = this.route.snapshot.paramMap.get('id');
 
@@ -37,10 +44,12 @@ export class OrderConfirmation implements OnInit {
 
     this.orderService.getOrderById(id).subscribe({
       next: (o) => {
+        console.log(o);
         this.order = o;
         this.loading = false;
       },
-      error: () => {
+      error: (err) => {
+        console.log(err);
         this.error = 'Could not load your order.';
         this.loading = false;
       }
