@@ -1,52 +1,171 @@
-import { Injectable } from '@angular/core';
-import { IProduct } from '../models/iproduct';
-import { ICategory } from '../models/icategory';
-import { Observable, of } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+import { IProduct, IProductFormData } from '../models/iproduct';
+import { CategoryDto, ICategory } from '../models/icategory';
 
-@Injectable({
-  providedIn: 'root',
-})
+export interface ProductQueryParams {
+  Search?: string;
+  CategoryId?: number;
+  MinPrice?: number;
+  MaxPrice?: number;
+  Sort?: string;
+}
+
+function pick<T>(obj: Record<string, unknown>, keys: string[]): T | undefined {
+  for (const k of keys) {
+    const v = obj[k];
+    if (v !== undefined && v !== null && v !== '') return v as T;
+  }
+  return undefined;
+}
+
+function asRecord(raw: unknown): Record<string, unknown> {
+  return raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : {};
+}
+
+function normalizeProduct(raw: unknown): IProduct {
+  const o = asRecord(raw);
+  return {
+    id: Number(pick(o, ['id', 'Id', 'productId', 'ProductId']) ?? 0),
+    name: String(
+      pick(o, ['name', 'Name', 'title', 'Title', 'productName', 'ProductName']) ?? ''
+    ),
+    description: String(pick(o, ['description', 'Description']) ?? ''),
+    price: Number(pick(o, ['price', 'Price', 'unitPrice', 'UnitPrice']) ?? 0),
+    stockQuantity: Number(
+      pick(o, ['stockQuantity', 'StockQuantity', 'stock', 'Stock', 'quantity', 'Quantity']) ?? 0
+    ),
+    image: pick<string>(o, [
+      'image',
+      'Image',
+      'imageUrl',
+      'ImageUrl',
+      'imagePath',
+      'ImagePath',
+      'thumbnail',
+      'Thumbnail',
+      'photo',
+      'Photo',
+    ]),
+    categoryId: Number(pick(o, ['categoryId', 'CategoryId']) ?? 0),
+    categoryName: pick<string>(o, ['categoryName', 'CategoryName', 'category', 'Category']),
+  };
+}
+
+function normalizeCategory(raw: unknown): ICategory {
+  const o = asRecord(raw);
+  return {
+    id: Number(pick(o, ['id', 'Id']) ?? 0),
+    name: String(pick(o, ['name', 'Name']) ?? ''),
+  };
+}
+
+/** ASP.NET / custom envelopes often wrap the array (Swagger does not document the shape). */
+function asArrayFromEnvelope(raw: unknown): unknown[] {
+  if (Array.isArray(raw)) return raw;
+  if (raw && typeof raw === 'object') {
+    const r = raw as Record<string, unknown>;
+    const inner =
+      r['data'] ??
+      r['Data'] ??
+      r['items'] ??
+      r['Items'] ??
+      r['results'] ??
+      r['Results'] ??
+      r['value'] ??
+      r['Value'] ??
+      r['products'] ??
+      r['Products'] ??
+      r['payload'] ??
+      r['Payload'];
+    if (Array.isArray(inner)) return inner;
+    const values = r['$values'];
+    if (Array.isArray(values)) return values;
+  }
+  return [];
+}
+
+@Injectable({ providedIn: 'root' })
 export class ProductService {
-  products: IProduct[] = [
-    {"id":1,"title":"Essence Mascara Lash Princess","description":"The Essence Mascara Lash Princess is a popular mascara known for its volumizing and lengthening effects. Achieve dramatic lashes with this long-lasting and cruelty-free formula.","category":"beauty","price":9.99,"discountPercentage":10.48,"rating":2.56,"stock":99,"tags":["beauty","mascara"],"brand":"Essence","sku":"BEA-ESS-ESS-001","weight":4,"dimensions":{"width":15.14,"height":13.08,"depth":22.99},"warrantyInformation":"1 week warranty","shippingInformation":"Ships in 3-5 business days","availabilityStatus":"In Stock","reviews":[{"rating":3,"comment":"Would not recommend!","date":"2025-04-30T09:41:02.053Z","reviewerName":"Eleanor Collins","reviewerEmail":"eleanor.collins@x.dummyjson.com"},{"rating":4,"comment":"Very satisfied!","date":"2025-04-30T09:41:02.053Z","reviewerName":"Lucas Gordon","reviewerEmail":"lucas.gordon@x.dummyjson.com"},{"rating":5,"comment":"Highly impressed!","date":"2025-04-30T09:41:02.053Z","reviewerName":"Eleanor Collins","reviewerEmail":"eleanor.collins@x.dummyjson.com"}],"returnPolicy":"No return policy","minimumOrderQuantity":48,"meta":{"createdAt":"2025-04-30T09:41:02.053Z","updatedAt":"2025-04-30T09:41:02.053Z","barcode":"5784719087687","qrCode":"https://cdn.dummyjson.com/public/qr-code.png"},"images":["https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/1.webp"],"thumbnail":"https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp"},{"id":2,"title":"Eyeshadow Palette with Mirror","description":"The Eyeshadow Palette with Mirror offers a versatile range of eyeshadow shades for creating stunning eye looks. With a built-in mirror, it's convenient for on-the-go makeup application.","category":"beauty","price":19.99,"discountPercentage":18.19,"rating":2.86,"stock":34,"tags":["beauty","eyeshadow"],"brand":"Glamour Beauty","sku":"BEA-GLA-EYE-002","weight":9,"dimensions":{"width":9.26,"height":22.47,"depth":27.67},"warrantyInformation":"1 year warranty","shippingInformation":"Ships in 2 weeks","availabilityStatus":"In Stock","reviews":[{"rating":2,"comment":"Not as described!","date":"2025-04-30T09:41:02.053Z","reviewerName":"Nora Russell","reviewerEmail":"nora.russell@x.dummyjson.com"},{"rating":1,"comment":"Very disappointed!","date":"2025-04-30T09:41:02.053Z","reviewerName":"Elena Baker","reviewerEmail":"elena.baker@x.dummyjson.com"},{"rating":2,"comment":"Poor quality!","date":"2025-04-30T09:41:02.053Z","reviewerName":"Liam Garcia","reviewerEmail":"liam.garcia@x.dummyjson.com"}],"returnPolicy":"30 days return policy","minimumOrderQuantity":32,"meta":{"createdAt":"2025-04-30T09:41:02.053Z","updatedAt":"2025-04-30T09:41:02.053Z","barcode":"2512019909242","qrCode":"https://cdn.dummyjson.com/public/qr-code.png"},"images":["https://cdn.dummyjson.com/product-images/beauty/eyeshadow-palette-with-mirror/1.webp"],"thumbnail":"https://cdn.dummyjson.com/product-images/beauty/eyeshadow-palette-with-mirror/thumbnail.webp"},{"id":3,"title":"Powder Canister","description":"The Powder Canister is a finely milled setting powder designed to mattify the skin and set makeup for a flawless finish. It comes in a convenient canister for easy application.","category":"beauty","price":14.99,"discountPercentage":18.14,"rating":3.82,"stock":59,"tags":["beauty","face powder"],"brand":"Velvet Touch","sku":"BEA-VEL-POW-003","weight":8,"dimensions":{"width":24.16,"height":10.7,"depth":11.07},"warrantyInformation":"2 year warranty","shippingInformation":"Ships in 1-2 business days","availabilityStatus":"In Stock","reviews":[{"rating":5,"comment":"Very happy with my purchase!","date":"2025-04-30T09:41:02.053Z","reviewerName":"Ethan Thompson","reviewerEmail":"ethan.thompson@x.dummyjson.com"},{"rating":4,"comment":"Great value for money!","date":"2025-04-30T09:41:02.053Z","reviewerName":"Levi Wright","reviewerEmail":"levi.wright@x.dummyjson.com"},{"rating":5,"comment":"Highly recommended!","date":"2025-04-30T09:41:02.053Z","reviewerName":"Emily Johnson","reviewerEmail":"emily.johnson@x.dummyjson.com"}],"returnPolicy":"90 days return policy","minimumOrderQuantity":25,"meta":{"createdAt":"2025-04-30T09:41:02.053Z","updatedAt":"2025-04-30T09:41:02.053Z","barcode":"0516267971277","qrCode":"https://cdn.dummyjson.com/public/qr-code.png"},"images":["https://cdn.dummyjson.com/product-images/beauty/powder-canister/1.webp"],"thumbnail":"https://cdn.dummyjson.com/product-images/beauty/powder-canister/thumbnail.webp"},{"id":4,"title":"Red Lipstick","description":"The Red Lipstick is a classic and bold choice for adding a pop of color to your lips. With a creamy and highly pigmented formula, it provides a vibrant and long-lasting finish.","category":"beauty","price":12.99,"discountPercentage":19.03,"rating":4.12,"stock":68,"tags":["beauty","lipstick"],"brand":"Chic Cosmetics","sku":"BEA-CHI-LIP-004","weight":5,"dimensions":{"width":14.37,"height":13.94,"depth":14.6},"warrantyInformation":"No warranty","shippingInformation":"Ships in 1 month","availabilityStatus":"In Stock","reviews":[{"rating":5,"comment":"Very pleased!","date":"2025-04-30T09:41:02.053Z","reviewerName":"Leo Rivera","reviewerEmail":"leo.rivera@x.dummyjson.com"},{"rating":4,"comment":"Great value for money!","date":"2025-04-30T09:41:02.053Z","reviewerName":"Oscar Ward","reviewerEmail":"oscar.ward@x.dummyjson.com"},{"rating":5,"comment":"Highly recommended!","date":"2025-04-30T09:41:02.053Z","reviewerName":"Ruby Miller","reviewerEmail":"ruby.miller@x.dummyjson.com"}],"returnPolicy":"7 days return policy","minimumOrderQuantity":6,"meta":{"createdAt":"2025-04-30T09:41:02.053Z","updatedAt":"2025-04-30T09:41:02.053Z","barcode":"9409341324690","qrCode":"https://cdn.dummyjson.com/public/qr-code.png"},"images":["https://cdn.dummyjson.com/product-images/beauty/red-lipstick/1.webp"],"thumbnail":"https://cdn.dummyjson.com/product-images/beauty/red-lipstick/thumbnail.webp"},{"id":5,"title":"Red Nail Polish","description":"The Red Nail Polish offers a rich and glossy red shade for your nails. With a quick-drying formula, it provides a professional-looking manicure that lasts.","category":"beauty","price":8.99,"discountPercentage":2.46,"rating":3.91,"stock":71,"tags":["beauty","nail polish"],"brand":"Nail Couture","sku":"BEA-NAI-POL-005","weight":9,"dimensions":{"width":8.11,"height":10.89,"depth":29.06},"warrantyInformation":"1 year warranty","shippingInformation":"Ships in 1 week","availabilityStatus":"In Stock","reviews":[{"rating":5,"comment":"Very pleased!","date":"2025-04-30T09:41:02.053Z","reviewerName":"Leo Rivera","reviewerEmail":"leo.rivera@x.dummyjson.com"},{"rating":1,"comment":"Very disappointed!","date":"2025-04-30T09:41:02.053Z","reviewerName":"Evan Reed","reviewerEmail":"evan.reed@x.dummyjson.com"},{"rating":5,"comment":"Highly recommended!","date":"2025-04-30T09:41:02.053Z","reviewerName":"Evelyn Sanchez","reviewerEmail":"evelyn.sanchez@x.dummyjson.com"}],"returnPolicy":"No return policy","minimumOrderQuantity":46,"meta":{"createdAt":"2025-04-30T09:41:02.053Z","updatedAt":"2025-04-30T09:41:02.053Z","barcode":"3212847902461","qrCode":"https://cdn.dummyjson.com/public/qr-code.png"},"images":["https://cdn.dummyjson.com/product-images/beauty/red-nail-polish/1.webp"],"thumbnail":"https://cdn.dummyjson.com/product-images/beauty/red-nail-polish/thumbnail.webp"}
-  ];
+  private http = inject(HttpClient);
+  private baseUrl = `${environment.apiUrl}/Products`;
+  private categoriesUrl = `${environment.apiUrl}/Categories`;
 
-  getProducts(): IProduct[] {
-    return this.products;
+  getProducts(query?: ProductQueryParams): Observable<IProduct[]> {
+    let params = new HttpParams();
+    if (query?.Search) params = params.set('Search', query.Search);
+    if (query?.CategoryId != null) params = params.set('CategoryId', query.CategoryId);
+    if (query?.MinPrice != null) params = params.set('MinPrice', query.MinPrice);
+    if (query?.MaxPrice != null) params = params.set('MaxPrice', query.MaxPrice);
+    if (query?.Sort) params = params.set('Sort', query.Sort);
+    return this.http.get<unknown>(`${this.baseUrl}/Get_All_Products`, { params }).pipe(
+      map((raw) => asArrayFromEnvelope(raw).map(normalizeProduct))
+    );
   }
 
-  getCategories(): ICategory[] {
-    const uniqueNames = [...new Set(this.products.map((product) => product.category))];
-    return uniqueNames.map((name, index) => ({ id: index + 1, name }));
+  getProductById(id: number): Observable<IProduct> {
+    return this.http
+      .get<unknown>(`${this.baseUrl}/${id}`)
+      .pipe(map((raw) => normalizeProduct(raw)));
   }
 
-  getProductById(id: number): Observable<IProduct | undefined> {
-    const product = this.products.find((product) => product.id === id);
-    return of(product);
+  createProduct(formData: FormData): Observable<IProduct> {
+    return this.http.post<unknown>(`${this.baseUrl}/Add_New_Product`, formData).pipe(
+      map((raw) => {
+        const o = asRecord(raw);
+        const embedded = o['product'] ?? o['Product'];
+        if (embedded != null) return normalizeProduct(embedded);
+        return normalizeProduct(raw);
+      })
+    );
   }
 
-  createProduct(product: Omit<IProduct, 'id'>): IProduct {
-    const newId = Math.max(...this.products.map((product) => product.id), 0) + 1;
-    const newProduct: IProduct = { id: newId, ...product };
-    this.products.push(newProduct);
-    return newProduct;
+  updateProduct(id: number, formData: FormData): Observable<IProduct> {
+    return this.http
+      .put<unknown>(`${this.baseUrl}/${id}`, formData)
+      .pipe(mergeMap(() => this.getProductById(id)));
   }
 
-  updateProduct(id: number, updatedProduct: Partial<IProduct>): IProduct | null {
-    const index = this.products.findIndex((product) => product.id === id);
-    if (index === -1) {
-      return null;
-    }
-    this.products[index] = { ...this.products[index], ...updatedProduct };
-    return this.products[index];
+  deleteProduct(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
-  deleteProduct(id: number): boolean {
-    const index = this.products.findIndex((product) => product.id === id);
-    if (index === -1) {
-      return false;
-    }
-    this.products.splice(index, 1);
-    return true;
+  getCategories(): Observable<ICategory[]> {
+    return this.http.get<unknown>(`${this.categoriesUrl}/Get_All_Categories`).pipe(
+      map((raw) => asArrayFromEnvelope(raw).map(normalizeCategory))
+    );
+  }
+
+  /** API returns `{ message }` only (OpenAPI). */
+  createCategory(dto: CategoryDto): Observable<void> {
+    return this.http
+      .post(`${this.categoriesUrl}/Add_New_Category`, dto)
+      .pipe(map(() => void 0));
+  }
+
+  /** API returns `{ message }` only (OpenAPI). */
+  updateCategory(id: number, dto: CategoryDto): Observable<void> {
+    return this.http
+      .put(`${this.categoriesUrl}/${id}`, dto)
+      .pipe(map(() => void 0));
+  }
+
+  deleteCategory(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.categoriesUrl}/${id}`);
+  }
+
+  buildFormData(data: IProductFormData, options?: { productId?: number }): FormData {
+    const fd = new FormData();
+    if (options?.productId != null) fd.append('Id', String(options.productId));
+    fd.append('Name', data.Name);
+    fd.append('Description', data.Description);
+    fd.append('Price', String(data.Price));
+    fd.append('StockQuantity', String(data.StockQuantity));
+    fd.append('CategoryId', String(data.CategoryId));
+    if (data.Image) fd.append('Image', data.Image);
+    return fd;
   }
 }
