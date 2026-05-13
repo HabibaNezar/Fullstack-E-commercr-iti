@@ -1,95 +1,155 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 import { LoginService } from './login';
 import { RegisterService } from './register';
 import { LogoutService } from './logout';
-import { IUser } from '../../models/iuser';
-import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { AuthTokenService } from './auth-token.service';
+import { IUser, DtoNewUser } from '../../models/iuser';
+import { resolvedAuthToken } from '../../models/api-response';
+import { readApiErrorMessage } from '../../utils/api-error.util';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private router = inject(Router);
+  private loginService = inject(LoginService);
+  private registerService = inject(RegisterService);
+  private logoutService = inject(LogoutService);
+  private tokenService = inject(AuthTokenService);
 
-  // 👇 broadcasts the current user to anyone listening
   private currentUserSubject = new BehaviorSubject<IUser | null>(
-    this.getCurrentUser() // initialize with whatever is in localStorage
+    this._loadUserFromStorage()
   );
-
   currentUser$ = this.currentUserSubject.asObservable();
 
-
-  constructor(
-    private loginService: LoginService,
-    private registerService: RegisterService,
-    private logoutService: LogoutService,
-    private router: Router
-  ) {}
-
-login(email: string, password: string, onError?: (msg: string) => void): void {
-  this.loginService.login(email, password).subscribe({
-    next: (user) => {
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      this.currentUserSubject.next(user);
-      this.router.navigate(['/home']);
-    },
-    error: (err) => {
-      // 👇 Different message based on error code
-      if (err.message === 'NO_ACCOUNT') {
-        onError?.('No account found with this email. Please register first.');
-      } else if (err.message === 'WRONG_PASSWORD') {
-        onError?.('Wrong password. Please try again.');
-      } else {
-        onError?.('Login failed. Please try again.');
-      }
+  private _loadUserFromStorage(): IUser | null {
+    const raw = localStorage.getItem('currentUser');
+    if (raw) {
+      try { return JSON.parse(raw); } catch { return null; }
     }
-  });
-}
-  
-
-  register(user: IUser, onError?: () => void, onErrorMsg?: (msg: string) => void): void {
-  this.registerService.register(user).subscribe({
-    next: (newUser) => {
-      localStorage.setItem('currentUser', JSON.stringify(newUser));
-      this.currentUserSubject.next(newUser);
-      this.router.navigate(['/home']);
-    },
-    error: (err) => {
-      // 👇 Show different message based on error code
-      if (err.message === 'ACCOUNT_EXISTS') {
-        onErrorMsg?.('This email is already registered. Please login instead.');
-      } else {
-        onErrorMsg?.('Registration failed. Please try again.');
-      }
-      onError?.();
+    if (this.tokenService.getToken() && !this.tokenService.isExpired()) {
+      return this._buildUserFromToken();
     }
-  });
-}
+    return null;
+  }
 
-  // 🚪 Logout: clear storage → go to login
+  private _buildUserFromToken(): IUser | null {
+    const payload = this.tokenService.decodePayload();
+    if (!payload) return null;
+    return {
+      id: payload['nameid'] || payload['sub'] || null,
+      firstName: payload['given_name'] || '',
+      lastName: payload['family_name'] || '',
+      email: payload['email'] || '',
+      password: '',
+      role: this.tokenService.getRole() || 'Customer',
+    };
+  }
+
+  login(email: string, password: string, onError?: (msg: string) => void): void {
+    this.loginService.login(email, password).subscribe({
+      next: (res) => {
+        const token = resolvedAuthToken(res);
+        if (!token) {
+          onError?.('Login failed: no token received.');
+          return;
+        }
+        this.tokenService.setToken(token);
+        const user = this._buildUserFromToken();
+        if (user) {
+          user.email = email;
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.currentUserSubject.next(user);
+        }
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        const msg = readApiErrorMessage(err);
+        if (msg) {
+          onError?.(msg);
+          return;
+        }
+        const status = err?.status;
+        if (status === 401 || status === 400) {
+          onError?.('Invalid email or password. Please try again.');
+        } else {
+          onError?.('Login failed. Please try again.');
+        }
+      }
+    });
+  }
+
+  register(
+    user: DtoNewUser,
+    onError?: () => void,
+    onErrorMsg?: (msg: string) => void,
+    onSuccess?: () => void
+  ): void {
+    this.registerService.register(user).subscribe({
+      next: (res) => {
+        const token = resolvedAuthToken(res);
+        if (token) {
+          this.tokenService.setToken(token);
+          const newUser = this._buildUserFromToken();
+          if (newUser) {
+            localStorage.setItem('currentUser', JSON.stringify(newUser));
+            this.currentUserSubject.next(newUser);
+          }
+          onSuccess?.();
+          this.router.navigate(['/home']);
+          return;
+        }
+        onSuccess?.();
+        this.router.navigate(['/login'], {
+          queryParams: { registered: '1' },
+        });
+      },
+      error: (err) => {
+        onErrorMsg?.(AuthService.registerErrorMessage(err));
+        onError?.();
+      }
+    });
+  }
+
   logout(): void {
     this.logoutService.logout();
+    this.currentUserSubject.next(null);
     this.router.navigate(['/login']);
   }
 
-  // ✅ Is the user logged in?
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('currentUser');
+    return !!this.tokenService.getToken() && !this.tokenService.isExpired();
   }
 
-  // 👤 Get the current user object
   getCurrentUser(): IUser | null {
-    const user = localStorage.getItem('currentUser');
-    return user ? JSON.parse(user) : null;
+    return this.currentUserSubject.value;
   }
 
-  // 🔄 Update the current user
   updateCurrentUser(user: IUser): void {
     localStorage.setItem('currentUser', JSON.stringify(user));
     this.currentUserSubject.next(user);
   }
 
-  // 🛡️ Is the user an admin?
   isAdmin(): boolean {
-    const user = this.getCurrentUser();
-    return user?.role?.toLowerCase() === 'admin';
+    return this.tokenService.hasRole('Admin');
+  }
+
+  isSeller(): boolean {
+    return this.tokenService.hasRole('Seller') || this.tokenService.hasRole('Admin');
+  }
+
+  private static registerErrorMessage(err: unknown): string {
+    if (err instanceof HttpErrorResponse) {
+      if (err.status === 0) {
+        return 'Cannot reach the server. Confirm the API is running and try again.';
+      }
+      if (err.status === 409) {
+        return 'This email is already registered. Please login instead.';
+      }
+      const fromBody = readApiErrorMessage(err);
+      if (fromBody) return fromBody;
+    }
+    return 'Registration failed. Please try again.';
   }
 }

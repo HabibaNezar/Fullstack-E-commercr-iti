@@ -1,8 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { AuthTokenService } from './auth-token.service';
 
 @Injectable({ providedIn: 'root' })
 export class LogoutService {
+  private tokenService = inject(AuthTokenService);
+
   logout(): void {
-    localStorage.removeItem('currentUser');  // delete saved user
+    this.tokenService.clearToken();
+    localStorage.removeItem('currentUser');
   }
 }
