@@ -16,7 +16,20 @@ export class Users implements OnInit {
   users: IUser[] = [];
 
   // 👇 the form object — starts empty
-  formUser: IUser = { firstName: '', lastName: '', email: '', role: '', password: '' };
+  formUser: IUser = { 
+    firstName: '', 
+    lastName: '', 
+    email: '', 
+    role: 'Customer', 
+    password: '',
+    wishlist: [],
+    paymentDetails: {
+      cardNumber: '',
+      expiryDate: '',
+      cvv: '',
+      cardHolderName: ''
+    }
+  };
 
   // 👇 tracks if we're editing or creating
   isEditing = false;
@@ -74,7 +87,20 @@ export class Users implements OnInit {
   }
 
   resetForm() {
-    this.formUser = { firstName: '', lastName: '', email: '', role: '', password: '' };
+    this.formUser = { 
+      firstName: '', 
+      lastName: '', 
+      email: '', 
+      role: 'Customer', 
+      password: '',
+      wishlist: [],
+      paymentDetails: {
+        cardNumber: '',
+        expiryDate: '',
+        cvv: '',
+        cardHolderName: ''
+      }
+    };
     this.isEditing = false;
   }
-}
+  }

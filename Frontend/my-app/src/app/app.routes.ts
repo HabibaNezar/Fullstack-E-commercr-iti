@@ -9,6 +9,7 @@ import { Cart } from './components/cart/cart';
 import { AuthGuard } from './guards/auth-guard';
 import { AdminGuard } from './guards/admin-guard';
 import { LoginComponent } from './components/login/login';
+import { UserProfile } from './components/userprofile/userprofile';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -20,6 +21,7 @@ export const routes: Routes = [
   
   // 🔐 Protected — must be logged in
   { path: 'cart',    component: Cart,    canActivate: [AuthGuard] },
+  { path: 'profile', component: UserProfile, canActivate: [AuthGuard] },
   // 🛡️ Admin only
   { path: 'users',     component: Users,     canActivate: [AuthGuard, AdminGuard] },
 

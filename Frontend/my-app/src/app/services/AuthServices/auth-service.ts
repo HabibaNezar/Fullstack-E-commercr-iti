@@ -81,9 +81,15 @@ login(email: string, password: string, onError?: (msg: string) => void): void {
     return user ? JSON.parse(user) : null;
   }
 
+  // 🔄 Update the current user
+  updateCurrentUser(user: IUser): void {
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    this.currentUserSubject.next(user);
+  }
+
   // 🛡️ Is the user an admin?
   isAdmin(): boolean {
     const user = this.getCurrentUser();
-    return user?.role === 'admin';
+    return user?.role?.toLowerCase() === 'admin';
   }
 }
