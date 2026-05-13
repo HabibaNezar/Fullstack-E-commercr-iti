@@ -1,39 +1,30 @@
 <div class="profile-page-container">
   <!-- Status Notifications -->
   @if (message) {
-    <div
-      [ngClass]="{
-        'status-msg': true,
-        success: message.includes('successfully'),
-        error: message.includes('Failed'),
-      }"
-    >
+    <div [ngClass]="{ 'status-msg': true, success: message.includes('successfully'), error: message.includes('Failed') }">
       {{ message }}
     </div>
   }
 
   <div *ngIf="user" class="profile-layout">
-    <!-- Left Sidebar: Identity & Tabs -->
+    <!-- Left Sidebar -->
     <aside class="profile-sidebar">
       <div class="sidebar-content">
         <div class="avatar-large">{{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}</div>
         <h1 class="user-fullname">{{ user.firstName }} {{ user.lastName }}</h1>
         <span class="user-role-badge">{{ user.role }}</span>
 
-        <!-- Tab Navigation -->
         <nav class="sidebar-nav">
           <button [class.active]="activeTab === 'Account'" (click)="setTab('Account')">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
             </svg>
             Account Settings
           </button>
           <button [class.active]="activeTab === 'Orders'" (click)="setTab('Orders')">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
-              <polyline points="3.29 7 12 12 20.71 7" />
-              <line x1="12" y1="22" x2="12" y2="12" />
+              <polyline points="3.29 7 12 12 20.71 7" /><line x1="12" y1="22" x2="12" y2="12" />
             </svg>
             Order History
           </button>
@@ -67,7 +58,8 @@
     <!-- Right Main Content -->
     <main class="profile-main">
       <div class="content-card">
-        <!-- ACCOUNT TAB -->
+
+        <!-- ── ACCOUNT TAB ── -->
         <div *ngIf="activeTab === 'Account'">
           <div class="card-header">
             <h2>Personal Information</h2>
@@ -80,44 +72,27 @@
               <div *ngIf="!isEditing" class="info-value">{{ user.firstName }}</div>
               <input *ngIf="isEditing" type="text" [(ngModel)]="user.firstName" />
             </div>
-
             <div class="info-field">
               <label>Last Name</label>
               <div *ngIf="!isEditing" class="info-value">{{ user.lastName }}</div>
               <input *ngIf="isEditing" type="text" [(ngModel)]="user.lastName" />
             </div>
-
             <div class="info-field">
               <label>Email Address</label>
               <div class="info-value">{{ user.email }}</div>
             </div>
-
             <div class="info-field">
               <label>Phone Number</label>
               <div *ngIf="!isEditing" class="info-value">{{ user.phone || 'Not set' }}</div>
-              <input
-                *ngIf="isEditing"
-                type="text"
-                [(ngModel)]="user.phone"
-                placeholder="+1 000 000 000"
-              />
+              <input *ngIf="isEditing" type="text" [(ngModel)]="user.phone" placeholder="+1 000 000 000" />
             </div>
-
             <div class="info-field full-width">
               <label>Physical Address</label>
-              <div *ngIf="!isEditing" class="info-value">
-                {{ user.address || 'No address provided' }}
-              </div>
-              <input
-                *ngIf="isEditing"
-                type="text"
-                [(ngModel)]="user.address"
-                placeholder="123 Street Name, City, Country"
-              />
+              <div *ngIf="!isEditing" class="info-value">{{ user.address || 'No address provided' }}</div>
+              <input *ngIf="isEditing" type="text" [(ngModel)]="user.address" placeholder="123 Street Name, City, Country" />
             </div>
           </div>
 
-          <!-- Payment Details Section -->
           <div class="section-divider"></div>
           <div class="card-header">
             <h3>Payment Details</h3>
@@ -130,95 +105,77 @@
               <div *ngIf="!isEditing" class="info-value">
                 •••• •••• •••• {{ user.paymentDetails.cardNumber?.slice(-4) || 'Not set' }}
               </div>
-              <input
-                *ngIf="isEditing"
-                type="text"
-                [(ngModel)]="user.paymentDetails.cardNumber"
-                placeholder="1234 5678 9101 1121"
-              />
+              <input *ngIf="isEditing" type="text" [(ngModel)]="user.paymentDetails.cardNumber" placeholder="1234 5678 9101 1121" />
             </div>
-
             <div class="info-field">
               <label>Card Holder Name</label>
-              <div *ngIf="!isEditing" class="info-value">
-                {{ user.paymentDetails.cardHolderName || 'Not set' }}
-              </div>
-              <input
-                *ngIf="isEditing"
-                type="text"
-                [(ngModel)]="user.paymentDetails.cardHolderName"
-                placeholder="Full Name on Card"
-              />
+              <div *ngIf="!isEditing" class="info-value">{{ user.paymentDetails.cardHolderName || 'Not set' }}</div>
+              <input *ngIf="isEditing" type="text" [(ngModel)]="user.paymentDetails.cardHolderName" placeholder="Full Name on Card" />
             </div>
-
             <div class="info-field">
               <label>Expiry Date</label>
-              <div *ngIf="!isEditing" class="info-value">
-                {{ user.paymentDetails.expiryDate || 'MM/YY' }}
-              </div>
-              <input
-                *ngIf="isEditing"
-                type="text"
-                [(ngModel)]="user.paymentDetails.expiryDate"
-                placeholder="MM/YY"
-              />
+              <div *ngIf="!isEditing" class="info-value">{{ user.paymentDetails.expiryDate || 'MM/YY' }}</div>
+              <input *ngIf="isEditing" type="text" [(ngModel)]="user.paymentDetails.expiryDate" placeholder="MM/YY" />
             </div>
           </div>
 
           <div class="form-actions">
-            <button type="button" *ngIf="!isEditing" class="btn btn-edit" (click)="toggleEdit()">
-              Edit Settings
-            </button>
-            <button type="button" *ngIf="isEditing" class="btn btn-save" (click)="saveProfile()">
-              Save Changes
-            </button>
-            <button type="button" *ngIf="isEditing" class="btn btn-cancel" (click)="toggleEdit()">
-              Cancel
-            </button>
+            <button type="button" *ngIf="!isEditing" class="btn btn-edit" (click)="toggleEdit()">Edit Settings</button>
+            <button type="button" *ngIf="isEditing"  class="btn btn-save" (click)="saveProfile()">Save Changes</button>
+            <button type="button" *ngIf="isEditing"  class="btn btn-cancel" (click)="toggleEdit()">Cancel</button>
           </div>
         </div>
 
-        <!-- ORDERS TAB -->
+        <!-- ── ORDERS TAB ── -->
         <div *ngIf="activeTab === 'Orders'">
           <div class="card-header">
             <h2>Order History</h2>
             <p>Review your past purchases and track ongoing shipments.</p>
           </div>
 
-          <div class="data-list" *ngIf="userOrders.length > 0">
+          <!-- ✅ Loading state -->
+          <div class="empty-state" *ngIf="ordersLoading">
+            ⏳ Loading your orders…
+          </div>
+
+          <!-- ✅ Error state (server down / timeout) -->
+          <div class="empty-state" *ngIf="!ordersLoading && ordersError" style="color:#f87171;">
+            ⚠️ {{ ordersError }}
+          </div>
+
+          <!-- ✅ Orders list -->
+          <div class="data-list" *ngIf="!ordersLoading && !ordersError && userOrders.length > 0">
             <div class="list-item order-item" *ngFor="let order of userOrders">
               <div class="item-header">
                 <span class="item-id">Order #{{ order.id }}</span>
-                <span class="item-status" [attr.data-status]="order.status">{{
-                  order.status
-                }}</span>
+                <span class="item-status" [attr.data-status]="order.status">{{ order.status }}</span>
               </div>
               <div class="item-details">
-                <p>Placed on: {{ order.orderDate | date: 'mediumDate' }}</p>
+                <p>Placed on: {{ order.orderDate | date:'mediumDate' }}</p>
                 <p>Total: {{ order.totalPrice | currency }}</p>
               </div>
             </div>
           </div>
-          <div class="empty-state" *ngIf="userOrders.length === 0">
+
+          <!-- ✅ Empty state (loaded OK, but 0 orders) -->
+          <div class="empty-state" *ngIf="!ordersLoading && !ordersError && userOrders.length === 0">
             <p>You haven't placed any orders yet.</p>
           </div>
         </div>
 
-        <!-- WISHLIST TAB -->
+        <!-- ── WISHLIST TAB ── -->
         <div *ngIf="activeTab === 'Wishlist'">
           <div class="card-header">
             <h2>My Wishlist</h2>
             <p>Your favorite items saved for later.</p>
           </div>
-
           <div class="product-grid-mini" *ngIf="wishlistProducts.length > 0">
             <div class="product-card-mini" *ngFor="let product of wishlistProducts">
               <div class="mini-card-img">
                 <img [src]="product.thumbnail" [alt]="product.title">
                 <button class="btn-remove-wish" (click)="removeFromWishlist(product.id)" aria-label="Remove from wishlist">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                    <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
                   </svg>
                 </button>
               </div>
@@ -226,15 +183,12 @@
                 <h4>{{ product.title }}</h4>
                 <div class="mini-card-meta">
                   <span class="price">{{ product.price | currency }}</span>
-                  <span class="stock-label" [class.low]="product.stock < 5">
-                    {{ product.stock }} left
-                  </span>
+                  <span class="stock-label" [class.low]="product.stock < 5">{{ product.stock }} left</span>
                 </div>
                 <button class="btn-wish-cart" (click)="addToCart(product)" [disabled]="product.stock === 0">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                    <line x1="3" y1="6" x2="21" y2="6" />
-                    <path d="M16 10a4 4 0 0 1-8 0" />
+                    <line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" />
                   </svg>
                   Add to Cart
                 </button>
@@ -246,19 +200,17 @@
           </div>
         </div>
 
-
-        <!-- REVIEWS TAB -->
+        <!-- ── REVIEWS TAB ── -->
         <div *ngIf="activeTab === 'Reviews'">
           <div class="card-header">
             <h2>My Reviews</h2>
             <p>View and manage the feedback you've left for products.</p>
           </div>
-
           <div class="data-list" *ngIf="userReviews.length > 0">
             <div class="list-item review-item" *ngFor="let review of userReviews">
               <div class="item-header">
                 <span class="rating">⭐ {{ review.rating }}/5</span>
-                <span class="date">{{ review.reviewDate | date: 'mediumDate' }}</span>
+                <span class="date">{{ review.reviewDate | date:'mediumDate' }}</span>
               </div>
               <p class="comment">{{ review.comment }}</p>
             </div>
@@ -267,16 +219,13 @@
             <p>You haven't written any reviews yet.</p>
           </div>
         </div>
+
       </div>
     </main>
   </div>
 
-  <!-- Loading / Error -->
   <div *ngIf="!user" class="profile-main">
-    <div
-      class="status-msg error"
-      style="position: relative; top: 0; left: 0; transform: none; margin: 0 auto"
-    >
+    <div class="status-msg error" style="position:relative;top:0;left:0;transform:none;margin:0 auto">
       Unable to load profile. Please verify your session.
     </div>
   </div>

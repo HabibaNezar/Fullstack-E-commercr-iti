@@ -1,28 +1,30 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  ReactiveFormsModule, FormGroup,
-  FormControl, Validators
-} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CartService } from '../../services/cart.service';
 import { OrderService } from '../../services/order.service';
 import { AuthService } from '../../services/AuthServices/auth-service';
+import { IOrder } from '../../models/iorder';
 
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './checkout.html',
   styleUrl: './checkout.css'
 })
 export class Checkout implements OnInit {
 
-  checkoutForm!: FormGroup;
-  cartItems: any[] = [];
-  total: number = 0;
-  loading: boolean = false;
-  errorMsg: string = '';
+  // ── Form fields ────────────────────────────────────────────────────
+  shippingAddress = '';
+
+  // UI-only — not part of IOrder model
+  paymentMethod: 'cash' | 'card' = 'cash';
+
+  submitting = false;
+  submitted = false; // triggers inline validation messages
+  error = '';
 
   constructor(
     private cartService: CartService,
@@ -32,74 +34,47 @@ export class Checkout implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // ── Build form ───────────────────────────────
-    this.checkoutForm = new FormGroup({
-      address: new FormControl('', [
-        Validators.required,
-        Validators.minLength(10)
-      ]),
-      city: new FormControl('', Validators.required),
-      phone: new FormControl('', [
-        Validators.required,
-        Validators.pattern(/^(010|011|012|015)[0-9]{8}$/)
-      ]),
-      paymentMethod: new FormControl('cash', Validators.required)
-    });
-
-    // ── Load cart ────────────────────────────────
-    this.cartItems = this.cartService.getItems();
-    this.total = this.cartService.getTotalPrice();
-
-    // ── Redirect if cart is empty ────────────────
-    if (this.cartItems.length === 0) {
+    if (this.cartService.getItemCount() === 0) {
       this.router.navigate(['/cart']);
     }
   }
 
-  // Shortcut to access form controls in template
-  get f() { return this.checkoutForm.controls; }
+  get cartItems() { return this.cartService.getItems(); }
+  get total() { return this.cartService.getTotalPrice(); }
 
   placeOrder(): void {
-    if (this.checkoutForm.invalid) {
-      this.checkoutForm.markAllAsTouched();
-      return;
-    }
+    this.submitted = true;
+    if (!this.shippingAddress.trim()) return;
 
-    this.loading = true;
-    this.errorMsg = '';
+    const user = this.authService.getCurrentUser();
+    if (!user) { this.router.navigate(['/login']); return; }
 
-    const user = this.authService.getCurrentUser()!;
-
-    const order = {
-      userId: String(user.id),
-      userName: `${user.firstName} ${user.lastName}`,
-      items: this.cartItems.map(item => ({
-        productId: item.id,
-        title: item.title,
-        price: item.price,
-        quantity: item.quantity,
-        thumbnail: item.thumbnail
+    // ✅ Matches IOrder exactly
+    const order: IOrder = {
+      userId: user.id,
+      items: this.cartItems.map(i => ({
+        productId: i.id,
+        productName: i.title,
+        quantity: i.quantity,
+        price: i.price
       })),
-      status: 'pending' as const,
-      total: this.total,
-      address: this.checkoutForm.value.address,
-      city: this.checkoutForm.value.city,
-      phone: this.checkoutForm.value.phone,
-      paymentMethod: this.checkoutForm.value.paymentMethod,
-      createdAt: new Date().toISOString()
+      totalPrice: this.total,
+      orderDate: new Date(),
+      status: 'Pending',
+      shippingAddress: this.shippingAddress.trim()
     };
 
-    this.orderService.placeOrder(order).subscribe({
-      next: (res) => {
+    this.submitting = true;
+    this.orderService.createOrder(order).subscribe({
+      next: (created) => {
         this.cartService.clearCart();
-        this.router.navigate(
-          ['/order', res.id, 'confirmation'],
-          { state: { order: res } }
-        );
+        this.router.navigate(['/order', created.id, 'confirmation'], {
+          state: { order: created }
+        });
       },
-      error: (err) => {
-        this.errorMsg = 'Something went wrong. Please try again.';
-        this.loading = false;
+      error: () => {
+        this.error = 'Could not place your order. Please try again.';
+        this.submitting = false;
       }
     });
   }

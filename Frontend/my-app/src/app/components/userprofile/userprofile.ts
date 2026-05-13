@@ -12,6 +12,8 @@ import { IUser } from '../../models/iuser';
 import { IOrder } from '../../models/iorder';
 import { IReview } from '../../models/ireview';
 import { IProduct } from '../../models/iproduct';
+// ✅ Added missing rxjs operators
+import { timeout, catchError, finalize, of } from 'rxjs';
 
 @Component({
   selector: 'app-user-profile',
@@ -26,13 +28,15 @@ export class UserProfile implements OnInit {
   message = '';
   private messageTimer: any;
 
-  // Tabs management
   activeTab: 'Account' | 'Orders' | 'Wishlist' | 'Reviews' = 'Account';
 
-  // Data for tabs
   userOrders: IOrder[] = [];
   wishlistProducts: IProduct[] = [];
   userReviews: IReview[] = [];
+
+  // ✅ New: per-tab loading & error states
+  ordersLoading = false;
+  ordersError = '';
 
   constructor(
     private authService: AuthService,
@@ -43,7 +47,7 @@ export class UserProfile implements OnInit {
     private cartService: CartService,
     private wishlistService: WishlistService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadUser();
@@ -52,13 +56,10 @@ export class UserProfile implements OnInit {
   loadUser(): void {
     const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
-      this.user = { 
+      this.user = {
         ...currentUser,
         paymentDetails: currentUser.paymentDetails || {
-          cardNumber: '',
-          expiryDate: '',
-          cvv: '',
-          cardHolderName: ''
+          cardNumber: '', expiryDate: '', cvv: '', cardHolderName: ''
         }
       };
       this.loadTabData();
@@ -71,17 +72,42 @@ export class UserProfile implements OnInit {
   }
 
   loadTabData(): void {
-    if (!this.user || !this.user.id) return;
+    if (!this.user?.id) return;
 
     if (this.activeTab === 'Orders') {
-      this.userOrders = []; // 🧹 Clear old data
-      this.orderService.getOrdersByUserId(this.user.id).subscribe(orders => {
-        this.userOrders = orders;
-        this.cdr.detectChanges();
-      });
+      this.userOrders = [];
+      this.ordersError = '';
+      this.ordersLoading = true;
+
+      // ✅ Mirrors the same robust pattern used in my-orders.ts
+      this.orderService.getOrdersByUserId(String(this.user.id))
+        .pipe(
+          timeout(8000),
+          catchError((err) => {
+            this.ordersError = err?.name === 'TimeoutError'
+              ? 'Server is not responding. Make sure JSON Server is running.'
+              : 'Could not load orders. Make sure JSON Server is running.';
+            return of([]);
+          }),
+          finalize(() => {
+            this.ordersLoading = false;
+            this.cdr.detectChanges();
+          })
+        )
+        .subscribe({
+          next: (orders) => {
+            this.userOrders = (orders ?? []).sort((a, b) => {
+              const tA = a.orderDate ? new Date(a.orderDate).getTime() : 0;
+              const tB = b.orderDate ? new Date(b.orderDate).getTime() : 0;
+              return tB - tA;
+            });
+            this.cdr.detectChanges();
+          }
+        });
+
     } else if (this.activeTab === 'Wishlist') {
-      this.wishlistProducts = []; // 🧹 Clear old data
-      if (this.user.wishlist && this.user.wishlist.length > 0) {
+      this.wishlistProducts = [];
+      if (this.user.wishlist?.length) {
         this.user.wishlist.forEach(id => {
           this.productService.getProductById(id).subscribe(product => {
             if (product) this.wishlistProducts.push(product);
@@ -89,8 +115,9 @@ export class UserProfile implements OnInit {
           });
         });
       }
+
     } else if (this.activeTab === 'Reviews') {
-      this.userReviews = []; // 🧹 Clear old data
+      this.userReviews = [];
       this.reviewService.getReviewsByUserId(this.user.id).subscribe(reviews => {
         this.userReviews = reviews;
         this.cdr.detectChanges();
@@ -101,60 +128,50 @@ export class UserProfile implements OnInit {
   toggleEdit(): void {
     this.isEditing = !this.isEditing;
     this.message = '';
-    if (!this.isEditing) {
-      this.loadUser();
-    }
+    if (!this.isEditing) this.loadUser();
   }
 
-  // 🛒 Shopping Actions
   addToCart(product: IProduct): void {
     this.cartService.addToCart(product);
-    this.message = `Successfully added ${product.title} to your cart!`;
-    
-    if (this.messageTimer) clearInterval(this.messageTimer);
-    this.cdr.detectChanges();
-
-    this.messageTimer = setInterval(() => {
-      this.message = '';
-      this.cdr.detectChanges();
-      clearInterval(this.messageTimer);
-    }, 5000);
+    this.showMessage(`Successfully added ${product.title} to your cart!`);
   }
 
   removeFromWishlist(productId: number): void {
     this.wishlistService.toggleWishlist(productId).subscribe(() => {
-      // Update local wishlist display instantly
       this.wishlistProducts = this.wishlistProducts.filter(p => p.id !== productId);
       this.cdr.detectChanges();
     });
   }
 
   saveProfile(): void {
-    if (this.user && (this.user.id !== undefined && this.user.id !== null)) {
-      this.usersService.updateUser(this.user).subscribe({
-        next: (updatedUser) => {
-          this.authService.updateCurrentUser(updatedUser);
-          this.user = { ...updatedUser };
-          this.isEditing = false;
-          this.message = 'Profile updated successfully!';
-          
-          if (this.messageTimer) clearInterval(this.messageTimer);
-          this.cdr.detectChanges();
-          
-          this.messageTimer = setInterval(() => {
-            this.message = '';
-            this.cdr.detectChanges();
-            clearInterval(this.messageTimer);
-          }, 5000);
-        },
-        error: (err) => {
-          this.message = 'Failed to update profile. Please try again.';
-          this.cdr.detectChanges();
-        }
-      });
-    } else {
+    if (!this.user?.id) {
       this.message = 'User ID is missing. Please re-login.';
       this.cdr.detectChanges();
+      return;
     }
+
+    this.usersService.updateUser(this.user).subscribe({
+      next: (updatedUser) => {
+        this.authService.updateCurrentUser(updatedUser);
+        this.user = { ...updatedUser };
+        this.isEditing = false;
+        this.showMessage('Profile updated successfully!');
+      },
+      error: () => {
+        this.message = 'Failed to update profile. Please try again.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // ✅ Extracted helper — avoids duplicating the timer logic
+  private showMessage(msg: string): void {
+    this.message = msg;
+    if (this.messageTimer) clearTimeout(this.messageTimer);
+    this.cdr.detectChanges();
+    this.messageTimer = setTimeout(() => {
+      this.message = '';
+      this.cdr.detectChanges();
+    }, 5000);
   }
 }

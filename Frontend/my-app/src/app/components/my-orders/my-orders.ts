@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { OrderService } from '../../services/order.service';
 import { AuthService } from '../../services/AuthServices/auth-service';
 import { IOrder } from '../../models/iorder';
-import { finalize, timeout, catchError } from 'rxjs';
-import { of } from 'rxjs';
+import { finalize, timeout, catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-my-orders',
@@ -17,72 +16,70 @@ import { of } from 'rxjs';
 export class MyOrders implements OnInit {
 
   orders: IOrder[] = [];
-  loading: boolean = true;
-  error: string = '';
+  loading = true;
+  error = '';
 
   constructor(
     private orderService: OrderService,
-    private authService: AuthService
+    private authService: AuthService,
+    // ✅ Added: guarantees UI updates even if change detection misses the async update
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
 
-    if (!user || !user.id) {
+    if (!user?.id) {
       this.error = 'Please log in to view your orders.';
       this.loading = false;
       return;
     }
 
-    const userIdStr = String(user.id);
-
-    this.orderService.getOrdersByUser(userIdStr)
+    this.orderService.getOrdersByUserId(String(user.id))
       .pipe(
-        // ✅ لو السيرفر مش شغال أو بطيء، يطلع error بعد 8 ثوان بدل ما يستنى للأبد
-        timeout(8000),
+        // ✅ Reduced from 8s → 5s for faster user feedback
+        timeout(5000),
         catchError((err) => {
-          const isTimeout = err?.name === 'TimeoutError';
-          this.error = isTimeout
-            ? 'Server is not responding. Make sure JSON Server is running on port 3000.'
-            : 'Could not connect to server. Make sure JSON Server is running.';
+          this.error = err?.name === 'TimeoutError'
+            ? 'Server is not responding. Make sure JSON Server is running on port 3001.'
+            : 'Could not connect to server. Make sure JSON Server is running on port 3001.';
           return of([]);
         }),
-        finalize(() => this.loading = false)
+        finalize(() => {
+          this.loading = false;
+          // ✅ Force UI refresh after loading state changes
+          this.cdr.detectChanges();
+        })
       )
       .subscribe({
         next: (orders) => {
-          if (orders && orders.length > 0) {
-            this.orders = orders.sort((a, b) => {
-              const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-              const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-              return dateB - dateA;
-            });
-            this.error = '';
-          } else {
-            this.orders = [];
-          }
+          this.orders = (orders ?? []).sort((a, b) => {
+            const tA = a.orderDate ? new Date(a.orderDate).getTime() : 0;
+            const tB = b.orderDate ? new Date(b.orderDate).getTime() : 0;
+            return tB - tA;
+          });
+          // ✅ Force UI refresh after data arrives
+          this.cdr.detectChanges();
         }
       });
   }
 
   statusClass(status: string): string {
     const map: Record<string, string> = {
-      pending: 'tag--orange',
-      confirmed: 'tag--blue',
-      shipped: 'tag--purple',
-      delivered: 'tag--green',
-      cancelled: 'tag--red'
+      Pending: 'tag--orange',
+      Shipped: 'tag--purple',
+      Delivered: 'tag--green',
+      Cancelled: 'tag--red'
     };
     return map[status] ?? 'tag--blue';
   }
 
   statusIcon(status: string): string {
     const icons: Record<string, string> = {
-      pending: '⏳',
-      confirmed: '✅',
-      shipped: '🚚',
-      delivered: '🎉',
-      cancelled: '❌'
+      Pending: '⏳',
+      Shipped: '🚚',
+      Delivered: '🎉',
+      Cancelled: '❌'
     };
     return icons[status] ?? '📦';
   }

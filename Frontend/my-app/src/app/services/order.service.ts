@@ -13,6 +13,11 @@ export class OrderService {
     return this.http.get<IOrder[]>(`${this.apiUrl}?userId=${userId}`);
   }
 
+  // ✅ used by order-confirmation & order-tracking fallback
+  getOrderById(orderId: any): Observable<IOrder> {
+    return this.http.get<IOrder>(`${this.apiUrl}/${orderId}`);
+  }
+
   createOrder(order: IOrder): Observable<IOrder> {
     return this.http.post<IOrder>(this.apiUrl, order);
   }
