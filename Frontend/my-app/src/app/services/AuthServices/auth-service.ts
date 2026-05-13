@@ -10,6 +10,9 @@ import { IUser, DtoNewUser } from '../../models/iuser';
 import { resolvedAuthToken } from '../../models/api-response';
 import { readApiErrorMessage } from '../../utils/api-error.util';
 
+// Full ASP.NET claim URI prefixes
+const CLAIMS_BASE = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/';
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private router = inject(Router);
@@ -37,11 +40,35 @@ export class AuthService {
   private _buildUserFromToken(): IUser | null {
     const payload = this.tokenService.decodePayload();
     if (!payload) return null;
+
+    // Support both short claim names (MapInboundClaims=false) and full URIs (MapInboundClaims=true)
+    const id =
+      payload['nameid'] ??
+      payload['sub'] ??
+      payload[CLAIMS_BASE + 'nameidentifier'] ??
+      null;
+
+    const firstName =
+      payload['given_name'] ??
+      payload[CLAIMS_BASE + 'givenname'] ??
+      '';
+
+    const lastName =
+      payload['family_name'] ??
+      payload[CLAIMS_BASE + 'surname'] ??
+      payload[CLAIMS_BASE + 'familyname'] ??
+      '';
+
+    const email =
+      payload['email'] ??
+      payload[CLAIMS_BASE + 'emailaddress'] ??
+      '';
+
     return {
-      id: payload['nameid'] || payload['sub'] || null,
-      firstName: payload['given_name'] || '',
-      lastName: payload['family_name'] || '',
-      email: payload['email'] || '',
+      id,
+      firstName: String(firstName),
+      lastName: String(lastName),
+      email: String(email),
       password: '',
       role: this.tokenService.getRole() || 'Customer',
     };

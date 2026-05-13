@@ -25,6 +25,23 @@ export function readApiErrorBody(body: unknown): string | null {
   const o = body as Record<string, unknown>;
 
   const errs = o['errors'];
+
+  // ASP.NET Identity returns errors as an array of {code, description} objects
+  if (Array.isArray(errs)) {
+    const parts: string[] = [];
+    for (const e of errs) {
+      if (e && typeof e === 'object') {
+        const r = e as Record<string, unknown>;
+        const desc = r['description'] ?? r['Description'] ?? r['message'] ?? r['Message'];
+        if (desc != null && String(desc).trim()) parts.push(String(desc).trim());
+      } else if (typeof e === 'string' && e.trim()) {
+        parts.push(e.trim());
+      }
+    }
+    if (parts.length) return parts.join(' ');
+  }
+
+  // ModelState errors as a key→string[] object
   if (errs && typeof errs === 'object' && !Array.isArray(errs)) {
     const parts: string[] = [];
     for (const [key, v] of Object.entries(errs as Record<string, unknown>)) {

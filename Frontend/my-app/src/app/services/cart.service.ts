@@ -53,7 +53,7 @@ function normalizeCartLine(raw: unknown, fallbackImage: string): CartItem {
       'unitPrice',
       'UnitPrice',
     ]) ??
-      pick(nested, ['price', 'Price']) ??
+      pick(nested, ['price', 'Price', 'currentPrice', 'CurrentPrice']) ??
       0
   );
   const quantity = Number(pick(o, ['quantity', 'Quantity', 'qty', 'Qty']) ?? 1);
@@ -82,6 +82,38 @@ function normalizeCartLine(raw: unknown, fallbackImage: string): CartItem {
     images,
     stock,
   };
+}
+
+/** Try every common .NET / JSON:API wrapper key to find the items array. */
+function extractRows(raw: unknown): unknown[] {
+  if (Array.isArray(raw)) return raw;
+
+  const r = asRecord(raw);
+
+  // JSON.NET $values (circular reference resolver)
+  if (Array.isArray(r['$values'])) return r['$values'] as unknown[];
+
+  // Common wrapper keys
+  const candidates = [
+    'cartItems', 'CartItems',
+    'items',     'Items',
+    'data',      'Data',
+    'result',    'Result',
+    'value',     'Value',
+  ];
+  for (const key of candidates) {
+    const v = r[key];
+    if (Array.isArray(v)) return v;
+    // one level deeper: { data: { items: [...] } }
+    if (v && typeof v === 'object') {
+      const inner = asRecord(v);
+      for (const k2 of candidates) {
+        if (Array.isArray(inner[k2])) return inner[k2] as unknown[];
+      }
+      if (Array.isArray(inner['$values'])) return inner['$values'] as unknown[];
+    }
+  }
+  return [];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -147,10 +179,8 @@ export class CartService {
   loadCartFromApi(): Observable<CartItem[]> {
     return this.http.get<unknown>(`${this.apiUrl}/Get_Cart_Items`).pipe(
       map((raw) => {
-        const rows = Array.isArray(raw) ? raw : asRecord(raw)['items'] ?? asRecord(raw)['Items'];
-        return Array.isArray(rows)
-          ? rows.map((r) => normalizeCartLine(r, this.fallbackImg))
-          : [];
+        const rows = extractRows(raw);
+        return rows.map((r) => normalizeCartLine(r, this.fallbackImg));
       }),
       tap((items) => {
         this.items = items ?? [];

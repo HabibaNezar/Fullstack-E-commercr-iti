@@ -33,8 +33,8 @@ export class MyOrders implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
-    const user = this.authService.getCurrentUser();
-    if (!user?.id) {
+    // Use isLoggedIn() — the orders API authenticates via JWT token, not by user id
+    if (!this.authService.isLoggedIn()) {
       this.ordersError = 'Please log in to view your orders.';
       return;
     }
