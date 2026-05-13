@@ -13,12 +13,26 @@
 
     <ul class="cart-list">
       <li *ngFor="let item of cartItems" class="cart-item">
-        <div class="item-image">
-          <img class="w-100" src="{{ item.images[0] }}" alt="{{ item.title }}" />
+        <div class="item-image-box">
+          <img src="{{ item.images[0] }}" alt="{{ item.title }}" />
+          
+          <!-- Heart Icon for Wishlist -->
+          <button 
+            class="wish-heart" 
+            [class.active]="isInWishlist(item.id)"
+            (click)="toggleWishlist(item.id)"
+          >
+            <i [class]="isInWishlist(item.id) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
+          </button>
         </div>
 
         <div class="item-details">
-          <p class="item-name">{{ item.title }}</p>
+          <div class="item-info-top">
+            <p class="item-name">{{ item.title }}</p>
+            <span class="item-stock" [class.low]="item.stock < 5">
+              {{ item.stock > 0 ? item.stock + ' available' : 'Out of stock' }}
+            </span>
+          </div>
           <span class="item-price">${{ item.price * item.quantity | decimal }}</span>
         </div>
 

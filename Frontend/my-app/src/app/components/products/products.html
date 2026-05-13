@@ -15,6 +15,16 @@
             <span class="card-badge">Out of stock</span>
           }
           <span class="card-category-tag">{{ p.category }}</span>
+
+          <!-- Wishlist Heart Icon -->
+          <button 
+            class="btn-favorite" 
+            [class.is-favorite]="isInWishlist(p.id)"
+            (click)="toggleWishlist(p.id)"
+            [attr.aria-label]="isInWishlist(p.id) ? 'Remove from wishlist' : 'Add to wishlist'"
+          >
+            <i [class]="isInWishlist(p.id) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
+          </button>
         </div>
 
         <!-- Content -->
