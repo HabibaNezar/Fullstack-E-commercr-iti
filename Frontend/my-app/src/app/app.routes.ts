@@ -10,11 +10,13 @@ import { AuthGuard } from './guards/auth-guard';
 import { AdminGuard } from './guards/admin-guard';
 import { LoginComponent } from './components/login/login';
 import { UserProfile } from './components/userprofile/userprofile';
+import { ProductDetails } from './components/product-details/product-details';
 
 export const routes: Routes = [
   { path: '', component: Home },
   { path: 'home', component: Home },
   { path: 'products', component: MasterProducts },
+  { path: 'products/:id', component: ProductDetails },
   { path: 'categories', component: Category },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: Register },
