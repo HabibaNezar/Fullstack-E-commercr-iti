@@ -2,7 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {UsersService} from "../../services/user.service";
+import { UsersService } from "../../services/user.service";
 import { IUser } from './../../models/iuser';
 
 @Component({
@@ -16,11 +16,11 @@ export class Users implements OnInit {
   users: IUser[] = [];
 
   // 👇 the form object — starts empty
-  formUser: IUser = { 
-    firstName: '', 
-    lastName: '', 
-    email: '', 
-    role: 'Customer', 
+  formUser: IUser = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    role: 'Customer',
     password: '',
     wishlist: [],
     paymentDetails: {
@@ -34,7 +34,7 @@ export class Users implements OnInit {
   // 👇 tracks if we're editing or creating
   isEditing = false;
 
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersService) { }
 
   ngOnInit() {
     this.loadUsers();
@@ -72,7 +72,7 @@ export class Users implements OnInit {
 
   // DELETE
   deleteUser(id: number) {
-    this.usersService.deleteUser(id).subscribe(() => {
+    this.usersService.deleteUser(String(id)).subscribe(() => {
       this.users = this.users.filter(u => u.id !== id);
     });
   }
@@ -87,11 +87,11 @@ export class Users implements OnInit {
   }
 
   resetForm() {
-    this.formUser = { 
-      firstName: '', 
-      lastName: '', 
-      email: '', 
-      role: 'Customer', 
+    this.formUser = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      role: 'Customer',
       password: '',
       wishlist: [],
       paymentDetails: {
@@ -103,4 +103,4 @@ export class Users implements OnInit {
     };
     this.isEditing = false;
   }
-  }
+}

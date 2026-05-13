@@ -501,7 +501,53 @@
       "paymentMethod": "cash",
       "createdAt": "2026-05-13T00:30:24.535Z",
       "id": "smZ4KPLKk1U"
+    },
+    {
+      "userId": "2",
+      "userName": "Sara Ali",
+      "items": [
+        {
+          "productId": 1,
+          "title": "Essence Mascara Lash Princess",
+          "price": 9.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp"
+        },
+        {
+          "productId": 2,
+          "title": "Eyeshadow Palette with Mirror",
+          "price": 19.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/eyeshadow-palette-with-mirror/thumbnail.webp"
+        },
+        {
+          "productId": 3,
+          "title": "Powder Canister",
+          "price": 14.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/powder-canister/thumbnail.webp"
+        }
+      ],
+      "status": "pending",
+      "total": 44.97,
+      "address": "123 Floor4,st",
+      "city": "Cairo",
+      "phone": "01029496150",
+      "paymentMethod": "cash",
+      "createdAt": "2026-05-13T10:46:04.100Z",
+      "id": "LB2apnhWqpU"
     }
   ],
-  "$schema": "./node_modules/json-server/schema.json"
+  "$schema": "./node_modules/json-server/schema.json",
+  "reviews": [
+    {
+      "id": "1",
+      "productId": 1,
+      "userId": "1",
+      "userName": "Ahmed Mohamed",
+      "rating": 5,
+      "comment": "Excellent product, highly recommended!",
+      "reviewDate": "2026-05-11T12:00:00.000Z"
+    }
+  ]
 }

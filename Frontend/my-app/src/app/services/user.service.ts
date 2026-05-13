@@ -1,33 +1,36 @@
-import { IUser } from './../models/iuser';
-// users.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { IUser } from '../models/iuser';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
 
-  private apiUrl = 'http://localhost:3001/users';
+  private api = 'http://localhost:3000/users';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  // READ — get all users
   getUsers(): Observable<IUser[]> {
-    return this.http.get<IUser[]>(this.apiUrl);
+    return this.http.get<IUser[]>(this.api);
   }
 
-  // CREATE — add new user
+  getUserById(id: string): Observable<IUser> {
+    return this.http.get<IUser>(`${this.api}/${id}`);
+  }
+
   addUser(user: IUser): Observable<IUser> {
-    return this.http.post<IUser>(this.apiUrl, user);
+    return this.http.post<IUser>(this.api, user);
   }
 
-  // UPDATE — edit existing user
   updateUser(user: IUser): Observable<IUser> {
-    return this.http.put<IUser>(`${this.apiUrl}/${user.id}`, user);
+    return this.http.put<IUser>(`${this.api}/${user.id}`, user);
   }
 
-  // DELETE — remove user
-  deleteUser(id: any): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  patchUser(id: string, data: Partial<IUser>): Observable<IUser> {
+    return this.http.patch<IUser>(`${this.api}/${id}`, data);
   }
+
+  deleteUser(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.api}/${id}`);
   }
+}

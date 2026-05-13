@@ -97,8 +97,8 @@ export class UserProfile implements OnInit {
         .subscribe({
           next: (orders) => {
             this.userOrders = (orders ?? []).sort((a, b) => {
-              const tA = a.orderDate ? new Date(a.orderDate).getTime() : 0;
-              const tB = b.orderDate ? new Date(b.orderDate).getTime() : 0;
+              const tA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+              const tB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
               return tB - tA;
             });
             this.cdr.detectChanges();

@@ -1,10 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { OrderService } from '../../services/order.service';
 import { AuthService } from '../../services/AuthServices/auth-service';
 import { IOrder } from '../../models/iorder';
-import { finalize, timeout, catchError, of } from 'rxjs';
+import { timeout, catchError, finalize, of } from 'rxjs';
 
 @Component({
   selector: 'app-my-orders',
@@ -16,70 +16,65 @@ import { finalize, timeout, catchError, of } from 'rxjs';
 export class MyOrders implements OnInit {
 
   orders: IOrder[] = [];
-  loading = true;
-  error = '';
+  ordersLoading = false;
+  ordersError = '';
 
   constructor(
     private orderService: OrderService,
-    private authService: AuthService,
-    // ✅ Added: guarantees UI updates even if change detection misses the async update
-    private cdr: ChangeDetectorRef
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
 
     if (!user?.id) {
-      this.error = 'Please log in to view your orders.';
-      this.loading = false;
+      this.ordersError = 'Please log in to view your orders.';
       return;
     }
 
-    this.orderService.getOrdersByUserId(String(user.id))
+    this.loadOrders(String(user.id));
+  }
+
+  loadOrders(userId: string): void {
+    this.ordersLoading = true;
+    this.ordersError = '';
+
+    this.orderService.getOrdersByUserId(userId)
       .pipe(
-        // ✅ Reduced from 8s → 5s for faster user feedback
-        timeout(5000),
+        timeout(8000),
         catchError((err) => {
-          this.error = err?.name === 'TimeoutError'
-            ? 'Server is not responding. Make sure JSON Server is running on port 3001.'
-            : 'Could not connect to server. Make sure JSON Server is running on port 3001.';
+          this.ordersError = err?.name === 'TimeoutError'
+            ? 'Server not responding. Run: npx json-server db.json'
+            : 'Could not load orders. Run: npx json-server db.json';
           return of([]);
         }),
-        finalize(() => {
-          this.loading = false;
-          // ✅ Force UI refresh after loading state changes
-          this.cdr.detectChanges();
-        })
+        finalize(() => { this.ordersLoading = false; })
       )
-      .subscribe({
-        next: (orders) => {
-          this.orders = (orders ?? []).sort((a, b) => {
-            const tA = a.orderDate ? new Date(a.orderDate).getTime() : 0;
-            const tB = b.orderDate ? new Date(b.orderDate).getTime() : 0;
-            return tB - tA;
-          });
-          // ✅ Force UI refresh after data arrives
-          this.cdr.detectChanges();
-        }
+      .subscribe(orders => {
+        this.orders = orders.sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
       });
   }
 
   statusClass(status: string): string {
     const map: Record<string, string> = {
-      Pending: 'tag--orange',
-      Shipped: 'tag--purple',
-      Delivered: 'tag--green',
-      Cancelled: 'tag--red'
+      pending: 'tag--orange',
+      confirmed: 'tag--blue',
+      shipped: 'tag--purple',
+      delivered: 'tag--green',
+      cancelled: 'tag--red'
     };
     return map[status] ?? 'tag--blue';
   }
 
   statusIcon(status: string): string {
     const icons: Record<string, string> = {
-      Pending: '⏳',
-      Shipped: '🚚',
-      Delivered: '🎉',
-      Cancelled: '❌'
+      pending: '⏳',
+      confirmed: '✅',
+      shipped: '🚚',
+      delivered: '🎉',
+      cancelled: '❌'
     };
     return icons[status] ?? '📦';
   }

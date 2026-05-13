@@ -1,9 +1,8 @@
 <div class="state-loading section" *ngIf="loading">Loading order…</div>
-<div class="section state-empty"  *ngIf="error">⚠️ {{ error }}</div>
+<div class="section state-empty" *ngIf="error">⚠️ {{ error }}</div>
 
 <div class="track-page" *ngIf="!loading && !error && order">
 
-  <!-- ── Hero ──────────────────────────────── -->
   <div class="page-hero">
     <div class="hero-orb"></div>
     <div class="page-hero-inner">
@@ -18,15 +17,14 @@
 
   <div class="section track-body">
 
-    <!-- ✅ Cancelled banner — IOrder status value -->
-    <div class="cancelled-banner" *ngIf="order.status === 'Cancelled'">
+    <div class="cancelled-banner" *ngIf="order.status === 'cancelled'">
       ❌ This order has been cancelled.
     </div>
 
     <div class="track-grid">
 
-      <!-- ══ Stepper ══════════════════════════ -->
-      <div class="card track-card" *ngIf="order.status !== 'Cancelled'">
+      <!-- Stepper -->
+      <div class="card track-card" *ngIf="order.status !== 'cancelled'">
         <h3 class="track-card-title">📍 Order Progress</h3>
 
         <div class="stepper">
@@ -45,54 +43,47 @@
         </div>
       </div>
 
-      <!-- ══ Order Details ════════════════════ -->
+      <!-- Details -->
       <div class="track-right">
         <div class="card track-card">
           <h3 class="track-card-title">📦 Order #{{ order.id }}</h3>
 
-          <!-- ✅ shippingAddress — single IOrder field -->
           <div class="info-row">
-            <span class="info-label">Shipping Address</span>
-            <span>{{ order.shippingAddress }}</span>
+            <span class="info-label">Address</span>
+            <span>{{ order.address }}, {{ order.city }}</span>
           </div>
-
-          <!-- ✅ orderDate — IOrder field -->
+          <div class="info-row">
+            <span class="info-label">Phone</span>
+            <span>{{ order.phone }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Payment</span>
+            <span>{{ order.paymentMethod === 'cash' ? '💵 Cash' : '💳 Card' }}</span>
+          </div>
           <div class="info-row">
             <span class="info-label">Ordered</span>
-            <span>{{ order.orderDate | date:'mediumDate' }}</span>
+            <span>{{ order.createdAt | date:'mediumDate' }}</span>
           </div>
-
-          <!-- ✅ totalPrice — IOrder field -->
           <div class="info-row">
             <span class="info-label">Total</span>
-            <span class="track-total">${{ order.totalPrice | number:'1.2-2' }}</span>
-          </div>
-
-          <!-- ✅ status capitalised — IOrder field -->
-          <div class="info-row">
-            <span class="info-label">Status</span>
-            <span>{{ order.status }}</span>
+            <span class="track-total">${{ order.total | number:'1.2-2' }}</span>
           </div>
         </div>
 
-        <!-- Items mini list -->
         <div class="card track-card">
           <h3 class="track-card-title">🛍️ {{ order.items.length }} Items</h3>
           <ul class="track-items">
-            <!-- ✅ IOrderItem: productName, quantity, price — no thumbnail -->
             <li *ngFor="let item of order.items" class="track-item">
+              <img [src]="item.thumbnail" [alt]="item.title" class="track-thumb" />
               <div>
-                <p class="track-item-name">{{ item.productName }}</p>
-                <p class="track-item-meta">
-                  x{{ item.quantity }} · ${{ item.price | number:'1.2-2' }}
-                </p>
+                <p class="track-item-name">{{ item.title }}</p>
+                <p class="track-item-meta">x{{ item.quantity }} · ${{ item.price | number:'1.2-2' }}</p>
               </div>
             </li>
           </ul>
         </div>
 
-        <a routerLink="/my-orders"
-           class="btn btn-outline"
+        <a routerLink="/my-orders" class="btn btn-outline"
            style="display:block; text-align:center">
           ← Back to My Orders
         </a>

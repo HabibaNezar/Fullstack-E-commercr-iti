@@ -8,18 +8,18 @@
   </div>
 
   <div class="section orders-body">
-    <div class="state-loading" *ngIf="loading">Loading your orders…</div>
+<div class="state-loading" *ngIf="ordersLoading">Loading your orders…</div>
 
-    <div class="state-empty" *ngIf="!loading && error">⚠️ {{ error }}</div>
+<div class="state-empty" *ngIf="!ordersLoading && ordersError">⚠️ {{ ordersError }}</div>
 
-    <div class="orders-empty" *ngIf="!loading && !error && orders.length === 0">
+<div class="orders-empty" *ngIf="!ordersLoading && !ordersError && orders.length === 0">
       <div class="empty-icon-lg">🛍️</div>
       <h3>No orders yet</h3>
       <p>Looks like you haven't placed any orders.</p>
       <a routerLink="/home" class="btn btn-primary">Start Shopping →</a>
     </div>
 
-    <div class="orders-list" *ngIf="!loading && !error && orders.length > 0">
+<div class="orders-list" *ngIf="!ordersLoading && !ordersError && orders.length > 0">
       <div class="order-card card" *ngFor="let order of orders">
 
         <div class="order-card-top">
@@ -27,31 +27,30 @@
             <span class="order-label">Order</span>
             <span class="order-id">#{{ order.id }}</span>
           </div>
-          <!-- ✅ status values are capitalised in IOrder -->
           <span class="tag" [ngClass]="statusClass(order.status)">
-            {{ statusIcon(order.status) }} {{ order.status }}
+            {{ statusIcon(order.status) }} {{ order.status | titlecase }}
           </span>
         </div>
 
-        <!-- ✅ IOrderItem has productName — no thumbnail available -->
-        <div class="order-items-preview">
-          <span class="order-item-name"
-                *ngFor="let item of order.items.slice(0, 3)">
-            {{ item.productName }}
-            <span *ngIf="item.quantity > 1">×{{ item.quantity }}</span>
-          </span>
-          <span class="order-more" *ngIf="order.items.length > 3">
-            +{{ order.items.length - 3 }} more
+        <!-- Thumbnail preview row -->
+        <div class="order-thumbs">
+          <img
+            *ngFor="let item of order.items.slice(0, 4)"
+            [src]="item.thumbnail"
+            [alt]="item.title"
+            class="order-thumb"
+            [title]="item.title"
+          />
+          <span class="order-more" *ngIf="order.items.length > 4">
+            +{{ order.items.length - 4 }}
           </span>
         </div>
 
         <div class="order-card-footer">
           <div class="order-meta">
-            <!-- ✅ orderDate — IOrder field -->
-            <span class="meta-row">📅 {{ order.orderDate | date:'mediumDate' }}</span>
+            <span class="meta-row">📅 {{ order.createdAt | date:'mediumDate' }}</span>
             <span class="meta-row">🛍️ {{ order.items.length }} item{{ order.items.length > 1 ? 's' : '' }}</span>
-            <!-- ✅ totalPrice — IOrder field -->
-            <span class="meta-row meta-total">${{ order.totalPrice | number:'1.2-2' }}</span>
+            <span class="meta-row meta-total">${{ order.total | number:'1.2-2' }}</span>
           </div>
 
           <div class="order-actions">
