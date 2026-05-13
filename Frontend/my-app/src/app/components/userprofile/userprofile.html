@@ -194,8 +194,20 @@
                 }}</span>
               </div>
               <div class="item-details">
-                <p>Placed on: {{ order.orderDate | date: 'mediumDate' }}</p>
-                <p>Total: {{ order.totalPrice | currency }}</p>
+                <p class="order-date">Placed on: {{ order.orderDate | date: 'mediumDate' }}</p>
+                
+                <!-- Items List -->
+                <div class="order-items-summary">
+                  <div *ngFor="let item of order.items" class="mini-item">
+                    <span>{{ item.productName }}</span>
+                    <span>x{{ item.quantity }}</span>
+                  </div>
+                </div>
+
+                <div class="order-total-row">
+                  <span>Total Amount</span>
+                  <span class="price-val">{{ order.totalPrice | currency }}</span>
+                </div>
               </div>
             </div>
           </div>

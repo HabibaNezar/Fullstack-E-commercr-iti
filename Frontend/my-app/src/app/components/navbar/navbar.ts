@@ -14,7 +14,13 @@ import { IUser } from '../../models/iuser';
   styleUrl: './navbar.css',
 })
 export class Navbar {
+  isMenuOpen = false;
+
   constructor(public cartService: CartService, public authService: AuthService) {}
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
 
   
   //* properties

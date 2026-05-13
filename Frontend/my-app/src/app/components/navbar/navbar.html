@@ -3,69 +3,87 @@
   <!-- LOGO -->
   <a routerLink="/home" class="logo">ShopHub</a>
 
-  <!-- CATEGORIES (visible on desktop — like image) -->
-  <div *ngIf="authService.isLoggedIn()" class="nav-categories">
-    <!-- <button class="cat-drop">Categories</button>
-    <a routerLink="/products/deals">Deals</a>
-    <a routerLink="/products/new">What's New</a>
-    <a routerLink="/products/delivery">Delivery</a> -->
-    <a routerLink="/home">Home</a>
-  </div>
+  <!-- Hamburger Toggle (Mobile Only) -->
+  <button class="menu-toggle" (click)="toggleMenu()" aria-label="Toggle menu">
+    <i [class]="isMenuOpen ? 'ti ti-x' : 'ti ti-menu-2'"></i>
+  </button>
 
-  <!-- ❌ GUEST -->
-  <div *ngIf="!authService.isLoggedIn()" class="nav-links guest">
-    <a routerLink="/login">Sign in</a>
-    <a routerLink="/register">Get started</a>
-  </div>
+  <div class="nav-content" [class.open]="isMenuOpen">
+    <!-- CATEGORIES -->
+    <div *ngIf="authService.isLoggedIn()" class="nav-categories">
+      <a routerLink="/home" (click)="isMenuOpen = false">Home</a>
+    </div>
 
-  <!-- ✅ LOGGED IN -->
-  <div *ngIf="authService.isLoggedIn()" class="nav-links">
-    <!-- <a routerLink="/products">Products</a> -->
+    <!-- ❌ GUEST -->
+    <div *ngIf="!authService.isLoggedIn()" class="nav-links guest">
+      <!-- Cart as icon button for guests -->
+      <a routerLink="/cart" class="cart-link" aria-label="Cart" (click)="isMenuOpen = false">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        >
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <path d="M16 10a4 4 0 0 1-8 0" />
+        </svg>
+        <span class="cart-badge">{{ cartItemCount }}</span>
+      </a>
+      <a routerLink="/login" (click)="isMenuOpen = false">Sign in</a>
+      <a routerLink="/register" (click)="isMenuOpen = false">Get started</a>
+    </div>
 
-    <!-- Cart as icon button -->
-    <a routerLink="/cart" class="cart-link" aria-label="Cart">
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-      >
-        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-        <line x1="3" y1="6" x2="21" y2="6" />
-        <path d="M16 10a4 4 0 0 1-8 0" />
-      </svg>
-      <span class="cart-badge">{{ cartItemCount }}</span>
-    </a>
+    <!-- ✅ LOGGED IN -->
+    <div *ngIf="authService.isLoggedIn()" class="nav-links">
+      <!-- Cart as icon button -->
+      <a routerLink="/cart" class="cart-link" aria-label="Cart" (click)="isMenuOpen = false">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        >
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <path d="M16 10a4 4 0 0 1-8 0" />
+        </svg>
+        <span class="cart-badge">{{ cartItemCount }}</span>
+      </a>
 
-    <!-- Profile as icon button -->
-    <a routerLink="/profile" class="profile-link" aria-label="Account">
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-      >
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-        <circle cx="12" cy="7" r="4" />
-      </svg>
-    </a>
+      <!-- Profile as icon button -->
+      <a routerLink="/profile" class="profile-link" aria-label="Account" (click)="isMenuOpen = false">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        >
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      </a>
 
-    <!-- 🛡️ ADMIN ONLY -->
-    <ng-container *ngIf="authService.isAdmin()">
+      <!-- 🛡️ ADMIN ONLY -->
+      <ng-container *ngIf="authService.isAdmin()">
+        <div class="nav-divider"></div>
+        <div class="admin-links">
+          <a routerLink="/users" (click)="isMenuOpen = false">👥 Users</a>
+          <a routerLink="/dashboard" (click)="isMenuOpen = false">📊 Dashboard</a>
+        </div>
+      </ng-container>
+
       <div class="nav-divider"></div>
-      <div class="admin-links">
-        <a routerLink="/users">👥 Users</a>
-        <a routerLink="/dashboard">📊 Dashboard</a>
-      </div>
-    </ng-container>
-
-    <div class="nav-divider"></div>
-    <button class="btn-logout" (click)="logout()">Logout</button>
+      <button class="btn-logout" (click)="logout(); isMenuOpen = false">Logout</button>
+    </div>
   </div>
 </nav>

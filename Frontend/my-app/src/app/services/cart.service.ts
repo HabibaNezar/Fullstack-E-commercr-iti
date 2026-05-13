@@ -9,6 +9,23 @@ export class CartService {
   private itemCountBehaviorSubject = new BehaviorSubject<number>(0);
   itemCountObservable$ = this.itemCountBehaviorSubject.asObservable();
 
+  constructor() {
+    this.loadCart();
+  }
+
+  private saveCart() {
+    localStorage.setItem('cartItems', JSON.stringify(this.items));
+    this.itemCountBehaviorSubject.next(this.items.length);
+  }
+
+  private loadCart() {
+    const savedItems = localStorage.getItem('cartItems');
+    if (savedItems) {
+      this.items = JSON.parse(savedItems);
+      this.itemCountBehaviorSubject.next(this.items.length);
+    }
+  }
+
   addToCart(product: any) {
     // 👇 Check if the product already exists in the cart
     const existingItem = this.items.find(item => item.id === product.id);
@@ -21,8 +38,7 @@ export class CartService {
       this.items.push({ ...product, quantity: 1 });
     }
 
-    // 👇 Count = number of UNIQUE items (not total quantity)
-    this.itemCountBehaviorSubject.next(this.items.length);
+    this.saveCart();
   }
 
   getItems() {
@@ -31,7 +47,7 @@ export class CartService {
 
   clearCart() {
     this.items = [];
-    this.itemCountBehaviorSubject.next(0); // 👈 reset the badge too
+    this.saveCart();
     return this.items;
   }
 
@@ -50,7 +66,7 @@ export class CartService {
     const item = this.items.find(i => i.id === productId);
     if (item) {
       item.quantity++;
-      this.itemCountBehaviorSubject.next(this.items.length);
+      this.saveCart();
     }
   }
 
@@ -61,14 +77,14 @@ export class CartService {
         item.quantity--;          // 👈 just decrease
       } else {
         this.removeItem(productId); // 👈 if quantity = 1, remove it entirely
+        return; // removeItem already calls saveCart
       }
-      this.itemCountBehaviorSubject.next(this.items.length);
+      this.saveCart();
     }
   }
 
   removeItem(productId: number) {
     this.items = this.items.filter(i => i.id !== productId);
-    this.itemCountBehaviorSubject.next(this.items.length);
+    this.saveCart();
   }
-
 }

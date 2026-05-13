@@ -351,6 +351,69 @@
 .item-status[data-status="Shipped"] { background: #dbeafe; color: #1e40af; }
 .item-status[data-status="Cancelled"] { background: #fee2e2; color: #991b1b; }
 
+/* Order History Details */
+.order-date {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 1rem;
+}
+
+.order-items-summary {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #f1f5f9;
+}
+
+.mini-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  padding: 0.4rem 0;
+  color: #334155;
+  border-bottom: 1px solid #f8fafc;
+}
+
+.mini-item:last-child {
+  border-bottom: none;
+}
+
+.mini-item span:first-child {
+  font-weight: 500;
+  max-width: 80%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mini-item span:last-child {
+  color: #64748b;
+  font-weight: 600;
+}
+
+.order-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.order-total-row span:first-child {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.05em;
+}
+
+.order-total-row .price-val {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #6366f1;
+}
+
 /* Mini Product Cards (Wishlist) */
 .product-grid-mini {
   display: grid;

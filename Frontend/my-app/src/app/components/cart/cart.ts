@@ -4,12 +4,12 @@ import { CommonModule } from '@angular/common';
 import { DecimalPipe } from "../../pipes/decimal-pipe";
 import { WishlistService } from '../../services/wishlist.service';
 import { AuthService } from '../../services/AuthServices/auth-service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { IProduct } from '../../models/iproduct';
 
 @Component({
   selector: 'app-cart',
-  imports: [CommonModule, DecimalPipe],
+  imports: [CommonModule, DecimalPipe, RouterLink],
   templateUrl: './cart.html',
   styleUrl: './cart.css',
 })
