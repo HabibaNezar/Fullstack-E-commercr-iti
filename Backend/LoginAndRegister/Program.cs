@@ -173,6 +173,23 @@ namespace LoginAndRegister
             }
             #endregion
 
+            #region Adding Dummy Data if there is no acual data
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<AppDbContext>();
+                var userManager = services.GetRequiredService<UserManager<AppUser>>(); 
+                try
+                {
+                    await StoreContextSeed.SeedAsync(context, userManager);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message); // ⁄‘«‰ ·Ê Õ’· «Ì—Ê— ÌŸÂ— Â‰«
+                }
+            }
+            #endregion
+
             app.Run();
         }
     }
