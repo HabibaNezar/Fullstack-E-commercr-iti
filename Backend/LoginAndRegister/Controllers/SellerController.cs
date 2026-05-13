@@ -1,4 +1,5 @@
 ﻿using LoginAndRegister.AppContext;
+using LoginAndRegister.DTO;
 using LoginAndRegister.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -92,8 +93,31 @@ namespace LoginAndRegister.Controllers
         .OrderByDescending(x => x.TotalSold)
         .Take(5) // نرجع أول 5 منتجات بس
         .ToListAsync();
-         return Ok(topProducts);
+            return Ok(topProducts);
         }
         #endregion
+
+        #region Update Profile
+        [HttpPut("UpdateProfile")]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateSellerProfileDto profileDto)
+        {
+            // 1. نجيب الـ ID بتاع البائع اللي عامل Login
+            var sellerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var seller = await _userManager.FindByIdAsync(sellerId);
+            if (seller == null) return NotFound();
+            // 2. نحدث البيانات
+            seller.FirstName = profileDto.FirstName;
+            seller.LastName = profileDto.LastName;
+            seller.Address = profileDto.Address;
+            seller.PhoneNumber = profileDto.PhoneNumber;
+            // 3. نحفظ التعديلات
+            var result = await _userManager.UpdateAsync(seller);
+            if (result.Succeeded)
+                return Ok(new { Message = "Profile updated successfully!" });
+
+            return BadRequest(result.Errors);
+        }
+            #endregion
+
+        }
     }
-}
