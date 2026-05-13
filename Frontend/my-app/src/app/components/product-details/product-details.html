@@ -1,0 +1,125 @@
+<div class="product-details-container" *ngIf="product">
+  <div class="back-nav">
+    <button (click)="goBack()" class="btn-back">
+      <i class="fa-solid fa-arrow-left"></i> Back to products
+    </button>
+  </div>
+
+  <div class="details-grid">
+    <!-- Gallery -->
+    <div class="product-gallery">
+      <div class="main-image-container">
+        <img [src]="mainImage" [alt]="product.title" class="main-image">
+        <span class="discount-badge" *ngIf="product.discountPercentage > 0">
+          -{{product.discountPercentage}}%
+        </span>
+      </div>
+      <div class="thumbnail-list" *ngIf="product.images.length > 1">
+        <div 
+          *ngFor="let img of product.images" 
+          class="thumb-item" 
+          [class.active]="mainImage === img"
+          (click)="setMainImage(img)"
+        >
+          <img [src]="img" [alt]="product.title">
+        </div>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="product-info">
+      <div class="info-header">
+        <span class="category-tag">{{product.category}}</span>
+        <h1 class="product-title">{{product.title}}</h1>
+        <div class="rating-row">
+          <div class="stars">
+            <i class="fa-solid fa-star" *ngFor="let s of [1,2,3,4,5]" [class.filled]="s <= product.rating"></i>
+          </div>
+          <span class="rating-text">({{product.rating}})</span>
+          <span class="divider">|</span>
+          <span class="brand-text">Brand: <strong>{{product.brand || 'Generic'}}</strong></span>
+        </div>
+      </div>
+
+      <div class="price-section">
+        <span class="current-price">${{product.price | decimal}}</span>
+        <span class="stock-status" [class.low]="product.stock < 10" [class.out]="product.stock === 0">
+          {{product.stock === 0 ? 'Out of Stock' : (product.stock < 10 ? 'Only ' + product.stock + ' left!' : 'In Stock')}}
+        </span>
+      </div>
+
+      <p class="product-description">{{product.description}}</p>
+
+      <div class="action-buttons">
+        <button 
+          class="btn-cart" 
+          (click)="onAddToCart()" 
+          [disabled]="product.stock === 0"
+          *ngIf="isLoggedIn()"
+        >
+          <i class="fa-solid fa-shopping-bag"></i> Add to Cart
+        </button>
+        <button class="btn-login" routerLink="/login" *ngIf="!isLoggedIn()">
+          <i class="fa-solid fa-lock"></i> Sign in to Buy
+        </button>
+        
+        <button 
+          class="btn-wishlist" 
+          (click)="toggleWishlist()"
+          [class.active]="isInWishlist()"
+        >
+          <i [class]="isInWishlist() ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
+          {{isInWishlist() ? 'In Wishlist' : 'Add to Wishlist'}}
+        </button>
+      </div>
+
+      <div class="extra-details">
+        <div class="detail-item">
+          <i class="fa-solid fa-truck"></i>
+          <div>
+            <strong>Shipping</strong>
+            <p>{{product.shippingInformation}}</p>
+          </div>
+        </div>
+        <div class="detail-item">
+          <i class="fa-solid fa-shield-halved"></i>
+          <div>
+            <strong>Warranty</strong>
+            <p>{{product.warrantyInformation}}</p>
+          </div>
+        </div>
+        <div class="detail-item">
+          <i class="fa-solid fa-rotate-left"></i>
+          <div>
+            <strong>Return Policy</strong>
+            <p>{{product.returnPolicy}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reviews Section -->
+  <div class="reviews-section" *ngIf="product.reviews && product.reviews.length > 0">
+    <h2 class="section-title">Customer Reviews</h2>
+    <div class="reviews-grid">
+      <div class="review-card" *ngFor="let review of product.reviews">
+        <div class="review-header">
+          <div class="reviewer-info">
+            <strong>{{review.reviewerName}}</strong>
+            <span class="review-date">{{review.date | date:'mediumDate'}}</span>
+          </div>
+          <div class="review-stars">
+            <i class="fa-solid fa-star" *ngFor="let s of [1,2,3,4,5]" [class.filled]="s <= review.rating"></i>
+          </div>
+        </div>
+        <p class="review-comment">{{review.comment}}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading-state" *ngIf="!product">
+  <div class="spinner"></div>
+  <p>Loading product details...</p>
+</div>
