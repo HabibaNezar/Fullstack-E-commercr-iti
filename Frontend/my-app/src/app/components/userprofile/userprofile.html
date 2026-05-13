@@ -1,9 +1,9 @@
 <div class="profile-page-container">
   <!-- Status Notifications -->
   @if (message) {
-    <div [ngClass]="{ 'status-msg': true, success: message.includes('successfully'), error: message.includes('Failed') }">
-      {{ message }}
-    </div>
+  <div [ngClass]="{ 'status-msg': true, success: message.includes('successfully'), error: message.includes('Failed') }">
+    {{ message }}
+  </div>
   }
 
   <div *ngIf="user" class="profile-layout">
@@ -16,27 +16,36 @@
 
         <nav class="sidebar-nav">
           <button [class.active]="activeTab === 'Account'" (click)="setTab('Account')">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
             </svg>
             Account Settings
           </button>
           <button [class.active]="activeTab === 'Orders'" (click)="setTab('Orders')">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
-              <polyline points="3.29 7 12 12 20.71 7" /><line x1="12" y1="22" x2="12" y2="12" />
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+              <polyline points="3.29 7 12 12 20.71 7" />
+              <line x1="12" y1="22" x2="12" y2="12" />
             </svg>
             Order History
           </button>
           <button [class.active]="activeTab === 'Wishlist'" (click)="setTab('Wishlist')">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
             My Wishlist
           </button>
           <button [class.active]="activeTab === 'Reviews'" (click)="setTab('Reviews')">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
             </svg>
             My Reviews
           </button>
@@ -89,7 +98,8 @@
             <div class="info-field full-width">
               <label>Physical Address</label>
               <div *ngIf="!isEditing" class="info-value">{{ user.address || 'No address provided' }}</div>
-              <input *ngIf="isEditing" type="text" [(ngModel)]="user.address" placeholder="123 Street Name, City, Country" />
+              <input *ngIf="isEditing" type="text" [(ngModel)]="user.address"
+                placeholder="123 Street Name, City, Country" />
             </div>
           </div>
 
@@ -105,12 +115,14 @@
               <div *ngIf="!isEditing" class="info-value">
                 •••• •••• •••• {{ user.paymentDetails.cardNumber?.slice(-4) || 'Not set' }}
               </div>
-              <input *ngIf="isEditing" type="text" [(ngModel)]="user.paymentDetails.cardNumber" placeholder="1234 5678 9101 1121" />
+              <input *ngIf="isEditing" type="text" [(ngModel)]="user.paymentDetails.cardNumber"
+                placeholder="1234 5678 9101 1121" />
             </div>
             <div class="info-field">
               <label>Card Holder Name</label>
               <div *ngIf="!isEditing" class="info-value">{{ user.paymentDetails.cardHolderName || 'Not set' }}</div>
-              <input *ngIf="isEditing" type="text" [(ngModel)]="user.paymentDetails.cardHolderName" placeholder="Full Name on Card" />
+              <input *ngIf="isEditing" type="text" [(ngModel)]="user.paymentDetails.cardHolderName"
+                placeholder="Full Name on Card" />
             </div>
             <div class="info-field">
               <label>Expiry Date</label>
@@ -121,8 +133,8 @@
 
           <div class="form-actions">
             <button type="button" *ngIf="!isEditing" class="btn btn-edit" (click)="toggleEdit()">Edit Settings</button>
-            <button type="button" *ngIf="isEditing"  class="btn btn-save" (click)="saveProfile()">Save Changes</button>
-            <button type="button" *ngIf="isEditing"  class="btn btn-cancel" (click)="toggleEdit()">Cancel</button>
+            <button type="button" *ngIf="isEditing" class="btn btn-save" (click)="saveProfile()">Save Changes</button>
+            <button type="button" *ngIf="isEditing" class="btn btn-cancel" (click)="toggleEdit()">Cancel</button>
           </div>
         </div>
 
@@ -151,8 +163,8 @@
                 <span class="item-status" [attr.data-status]="order.status">{{ order.status }}</span>
               </div>
               <div class="item-details">
-                <p>Placed on: {{ order.orderDate | date:'mediumDate' }}</p>
-                <p>Total: {{ order.totalPrice | currency }}</p>
+                <p>Placed on: {{ order.createdAt | date:'mediumDate' }}</p>
+                <p>Total: {{ order.total | currency }}</p>
               </div>
             </div>
           </div>
@@ -173,9 +185,11 @@
             <div class="product-card-mini" *ngFor="let product of wishlistProducts">
               <div class="mini-card-img">
                 <img [src]="product.thumbnail" [alt]="product.title">
-                <button class="btn-remove-wish" (click)="removeFromWishlist(product.id)" aria-label="Remove from wishlist">
+                <button class="btn-remove-wish" (click)="removeFromWishlist(product.id)"
+                  aria-label="Remove from wishlist">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                    <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
                   </svg>
                 </button>
               </div>
@@ -188,7 +202,8 @@
                 <button class="btn-wish-cart" (click)="addToCart(product)" [disabled]="product.stock === 0">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                    <line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <path d="M16 10a4 4 0 0 1-8 0" />
                   </svg>
                   Add to Cart
                 </button>

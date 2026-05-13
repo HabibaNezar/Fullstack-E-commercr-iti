@@ -1,19 +1,28 @@
-import { IProduct } from './iproduct';
-
 export interface IOrderItem {
   productId: number;
-  productName: string;
-  quantity: number;
+  title: string;
   price: number;
+  quantity: number;
+  thumbnail: string;
 }
 
+export type OrderStatus =
+  | 'pending'
+  | 'confirmed'
+  | 'shipped'
+  | 'delivered'
+  | 'cancelled';
 
 export interface IOrder {
-  id?: any;
-  userId: any;
+  id?: string;
+  userId: string;
+  userName: string;
   items: IOrderItem[];
-  totalPrice: number;
-  orderDate: Date;
-  status: 'Pending' | 'Shipped' | 'Delivered' | 'Cancelled';
-  shippingAddress: string;
+  status: OrderStatus;
+  total: number;
+  address: string;
+  city: string;
+  phone: string;
+  paymentMethod: 'cash' | 'card';
+  createdAt: string;
 }

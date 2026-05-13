@@ -5,7 +5,7 @@ import { IReview } from '../models/ireview';
 
 @Injectable({ providedIn: 'root' })
 export class ReviewService {
-  private apiUrl = 'http://localhost:3001/reviews';
+  private apiUrl = 'http://localhost:3000/reviews';
 
   constructor(private http: HttpClient) {}
 

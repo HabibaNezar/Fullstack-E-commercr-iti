@@ -5,24 +5,32 @@ import { IOrder } from '../models/iorder';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
-  private apiUrl = 'http://localhost:3001/orders';
 
-  constructor(private http: HttpClient) {}
+  private api = 'http://localhost:3000/orders';
 
-  getOrdersByUserId(userId: any): Observable<IOrder[]> {
-    return this.http.get<IOrder[]>(`${this.apiUrl}?userId=${userId}`);
-  }
-
-  // ✅ used by order-confirmation & order-tracking fallback
-  getOrderById(orderId: any): Observable<IOrder> {
-    return this.http.get<IOrder>(`${this.apiUrl}/${orderId}`);
-  }
+  constructor(private http: HttpClient) { }
 
   createOrder(order: IOrder): Observable<IOrder> {
-    return this.http.post<IOrder>(this.apiUrl, order);
+    return this.http.post<IOrder>(this.api, order);
   }
 
-  updateOrderStatus(orderId: any, status: string): Observable<IOrder> {
-    return this.http.patch<IOrder>(`${this.apiUrl}/${orderId}`, { status });
+  getOrderById(id: string): Observable<IOrder> {
+    return this.http.get<IOrder>(`${this.api}/${id}`);
+  }
+
+  getOrdersByUserId(userId: string): Observable<IOrder[]> {
+    return this.http.get<IOrder[]>(`http://localhost:3000/orders?userId=${userId}`);
+  }
+
+  getAllOrders(): Observable<IOrder[]> {
+    return this.http.get<IOrder[]>(this.api);
+  }
+
+  updateOrderStatus(id: string, status: string): Observable<IOrder> {
+    return this.http.patch<IOrder>(`${this.api}/${id}`, { status });
+  }
+
+  cancelOrder(id: string): Observable<IOrder> {
+    return this.http.patch<IOrder>(`${this.api}/${id}`, { status: 'cancelled' });
   }
 }

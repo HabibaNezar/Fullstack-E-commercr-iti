@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import {
+  RouterLink,
+  ActivatedRoute
+} from '@angular/router';
 import { OrderService } from '../../services/order.service';
-import { IOrder } from '../../models/iorder';
-
-// ✅ Match IOrder status union exactly
-type OrderStatus = 'Pending' | 'Shipped' | 'Delivered' | 'Cancelled';
+import { IOrder, OrderStatus } from '../../models/iorder';
 
 @Component({
   selector: 'app-order-tracking',
@@ -20,13 +20,13 @@ export class OrderTracking implements OnInit {
   loading = true;
   error = '';
 
-  // ✅ IOrder status: 'Pending' | 'Shipped' | 'Delivered' — Cancelled is a special state, not a step
-  readonly steps: OrderStatus[] = ['Pending', 'Shipped', 'Delivered'];
+  readonly steps: OrderStatus[] = ['pending', 'confirmed', 'shipped', 'delivered'];
 
   readonly stepMeta: Record<string, { icon: string; label: string; desc: string }> = {
-    Pending: { icon: '⏳', label: 'Order Placed', desc: 'We received your order and are reviewing it.' },
-    Shipped: { icon: '🚚', label: 'Shipped', desc: 'Your order is on its way!' },
-    Delivered: { icon: '🎉', label: 'Delivered', desc: 'Your order has been delivered. Enjoy!' },
+    pending: { icon: '⏳', label: 'Order Placed', desc: 'We received your order and are reviewing it.' },
+    confirmed: { icon: '✅', label: 'Confirmed', desc: 'Your order is confirmed and being prepared.' },
+    shipped: { icon: '🚚', label: 'Shipped', desc: 'Your order is on its way!' },
+    delivered: { icon: '🎉', label: 'Delivered', desc: 'Your order has been delivered. Enjoy!' }
   };
 
   constructor(
@@ -35,7 +35,6 @@ export class OrderTracking implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // ✅ Use navigation state first (faster — no HTTP call)
     const nav = history.state as { order?: IOrder };
     if (nav?.order) {
       this.order = nav.order;
@@ -44,11 +43,7 @@ export class OrderTracking implements OnInit {
     }
 
     const id = this.route.snapshot.paramMap.get('id');
-    if (!id) {
-      this.error = 'Order not found.';
-      this.loading = false;
-      return;
-    }
+    if (!id) { this.error = 'Order not found.'; this.loading = false; return; }
 
     this.orderService.getOrderById(id).subscribe({
       next: (o) => { this.order = o; this.loading = false; },
