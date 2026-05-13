@@ -7,28 +7,34 @@ import { OrderService } from '../../services/order.service';
 import { AuthService } from '../../services/AuthServices/auth-service';
 import { of } from 'rxjs';
 
-// ✅ Mocks للـ 3 services
+let placeOrderCalled = false;
+
 const mockCartService = {
-  getItems: () => [],
-  getTotalPrice: () => 0,
-  itemCountObservable$: of(0),
-  clearCart: () => {}
+  getItemCount: () => 1,
+  getItems: () => [
+    { id: 1, name: 'Product', price: 10, quantity: 1, image: '' },
+  ],
+  getTotalPrice: () => 10,
+  clearCart: () => { },
 };
 
 const mockOrderService = {
-  placeOrderCalled: false,
-  placeOrder: function() {
-    this.placeOrderCalled = true;
+  placeOrder() {
+    placeOrderCalled = true;
     return of({ id: 'order-123' });
-  }
+  },
 };
 
 const mockAuthService = {
   getCurrentUser: () => ({
-    id: '1', name: 'Test User',
-    email: 'test@test.com', role: 'user'
+    id: '1',
+    firstName: 'Test',
+    lastName: 'User',
+    email: 'test@test.com',
+    role: 'Customer',
+    password: '',
   }),
-  currentUser$: of({ id: '1', name: 'Test' })
+  currentUser$: of(null),
 };
 
 describe('Checkout', () => {
@@ -36,14 +42,15 @@ describe('Checkout', () => {
   let fixture: ComponentFixture<Checkout>;
 
   beforeEach(async () => {
+    placeOrderCalled = false;
     await TestBed.configureTestingModule({
       imports: [Checkout, ReactiveFormsModule],
       providers: [
         provideRouter([]),
-        { provide: CartService,  useValue: mockCartService  },
+        { provide: CartService, useValue: mockCartService },
         { provide: OrderService, useValue: mockOrderService },
-        { provide: AuthService,  useValue: mockAuthService  }
-      ]
+        { provide: AuthService, useValue: mockAuthService },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Checkout);
@@ -57,23 +64,23 @@ describe('Checkout', () => {
   });
 
   it('should init form with default paymentMethod = cash', () => {
-    expect(component.checkoutForm.get('paymentMethod')?.value).toBe('cash');
+    expect(component.form.get('paymentMethod')?.value).toBe('cash');
   });
 
   it('should not place order if form is invalid', () => {
-    mockOrderService.placeOrderCalled = false;
+    placeOrderCalled = false;
     component.placeOrder();
-    expect(mockOrderService.placeOrderCalled).toBeFalsy();
+    expect(placeOrderCalled).toBeFalsy();
   });
 
-  it('should set loading=false after successful order', () => {
-    component.checkoutForm.setValue({
+  it('should set submitting=false after successful order', () => {
+    component.form.setValue({
       address: 'Cairo, Maadi, Street 9',
       city: 'Cairo',
       phone: '01012345678',
-      paymentMethod: 'cash'
+      paymentMethod: 'cash',
     });
     component.placeOrder();
-    expect(component.loading).toBeFalsy();
+    expect(component.submitting).toBeFalsy();
   });
 });

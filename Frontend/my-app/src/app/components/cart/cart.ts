@@ -26,6 +26,17 @@ export class Cart implements OnInit {
   ) {}
 
   ngOnInit() {
+    if (this.authService.isLoggedIn()) {
+      this.cartService.loadCartFromApi().subscribe({
+        next: () => this.syncItems(),
+        error: () => this.syncItems(),
+      });
+    } else {
+      this.syncItems();
+    }
+  }
+
+  private syncItems(): void {
     this.cartItems = this.cartService.getItems();
   }
 
@@ -35,17 +46,17 @@ export class Cart implements OnInit {
 
   increment(productId: number) {
     this.cartService.incrementItem(productId);
-    this.cartItems = this.cartService.getItems();
+    this.syncItems();
   }
 
   decrement(productId: number) {
     this.cartService.decrementItem(productId);
-    this.cartItems = this.cartService.getItems();
+    this.syncItems();
   }
 
   remove(productId: number) {
     this.cartService.removeItem(productId);
-    this.cartItems = this.cartService.getItems();
+    this.syncItems();
   }
 
   clearCart() {

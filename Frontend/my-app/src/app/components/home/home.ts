@@ -1,12 +1,15 @@
-import { Component } from '@angular/core';
-import { Category } from "../category/category";
-import { Products } from "../products/products";
-import { MasterProducts } from "../master-product/master-product";
+import { Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { MasterProducts } from '../master-product/master-product';
+import { AdminCmsService } from '../../admin/services/admin-cms.service';
 
 @Component({
   selector: 'app-home',
-  imports: [Category, Products, MasterProducts],
+  imports: [MasterProducts],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class Home {}
+export class Home {
+  private cms = inject(AdminCmsService);
+  readonly banners = toSignal(this.cms.activeHomeBanners(), { initialValue: [] });
+}

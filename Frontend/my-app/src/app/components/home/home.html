@@ -15,4 +15,28 @@
     </div>
   </div>
 </section>
+
+@if (banners().length) {
+  <section class="home-banners" aria-label="Featured">
+    @for (b of banners(); track b.id) {
+      @if (b.linkUrl) {
+        <a
+          class="home-banner-card"
+          [href]="b.linkUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img [src]="b.imageUrl" [alt]="b.title" loading="lazy" />
+          <span class="home-banner-title">{{ b.title }}</span>
+        </a>
+      } @else {
+        <div class="home-banner-card">
+          <img [src]="b.imageUrl" [alt]="b.title" loading="lazy" />
+          <span class="home-banner-title">{{ b.title }}</span>
+        </div>
+      }
+    }
+  </section>
+}
+
 <app-master-products></app-master-products>

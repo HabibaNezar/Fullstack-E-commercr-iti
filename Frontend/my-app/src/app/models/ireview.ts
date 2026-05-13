@@ -3,7 +3,7 @@ export interface IReview {
   productId: number;
   userId: any;
   userName: string;
-  rating: number; // 1 to 5
+  rating: number;
   comment: string;
-  reviewDate: Date;
+  reviewDate: Date | string;
 }

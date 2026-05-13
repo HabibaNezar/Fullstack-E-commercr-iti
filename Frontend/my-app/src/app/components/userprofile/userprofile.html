@@ -184,7 +184,7 @@
           <div class="product-grid-mini" *ngIf="wishlistProducts.length > 0">
             <div class="product-card-mini" *ngFor="let product of wishlistProducts">
               <div class="mini-card-img">
-                <img [src]="product.thumbnail" [alt]="product.title">
+                <img [src]="product.image" [alt]="product.name">
                 <button class="btn-remove-wish" (click)="removeFromWishlist(product.id)"
                   aria-label="Remove from wishlist">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
@@ -194,12 +194,12 @@
                 </button>
               </div>
               <div class="product-info">
-                <h4>{{ product.title }}</h4>
+                <h4>{{ product.name }}</h4>
                 <div class="mini-card-meta">
                   <span class="price">{{ product.price | currency }}</span>
-                  <span class="stock-label" [class.low]="product.stock < 5">{{ product.stock }} left</span>
+                  <span class="stock-label" [class.low]="product.stockQuantity < 5">{{ product.stockQuantity }} left</span>
                 </div>
-                <button class="btn-wish-cart" (click)="addToCart(product)" [disabled]="product.stock === 0">
+                <button class="btn-wish-cart" (click)="addToCart(product)" [disabled]="product.stockQuantity === 0">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
                     <line x1="3" y1="6" x2="21" y2="6" />
