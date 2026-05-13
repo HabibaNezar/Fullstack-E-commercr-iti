@@ -1,8 +1,4 @@
-<!-- my-orders.html -->
-
 <div class="orders-page">
-
-  <!-- ── Hero ──────────────────────────────── -->
   <div class="page-hero">
     <div class="hero-orb"></div>
     <div class="page-hero-inner">
@@ -12,14 +8,10 @@
   </div>
 
   <div class="section orders-body">
-
-    <!-- Loading -->
     <div class="state-loading" *ngIf="loading">Loading your orders…</div>
 
-    <!-- Error -->
-    <div class="state-empty" *ngIf="error">⚠️ {{ error }}</div>
+    <div class="state-empty" *ngIf="!loading && error">⚠️ {{ error }}</div>
 
-    <!-- Empty -->
     <div class="orders-empty" *ngIf="!loading && !error && orders.length === 0">
       <div class="empty-icon-lg">🛍️</div>
       <h3>No orders yet</h3>
@@ -27,12 +19,8 @@
       <a routerLink="/home" class="btn btn-primary">Start Shopping →</a>
     </div>
 
-    <!-- Orders list -->
     <div class="orders-list" *ngIf="!loading && !error && orders.length > 0">
-
       <div class="order-card card" *ngFor="let order of orders">
-
-        <!-- Top bar -->
         <div class="order-card-top">
           <div class="order-id-wrap">
             <span class="order-label">Order</span>
@@ -43,7 +31,6 @@
           </span>
         </div>
 
-        <!-- Items preview -->
         <div class="order-thumbs">
           <img
             *ngFor="let item of order.items.slice(0,4)"
@@ -57,7 +44,6 @@
           </span>
         </div>
 
-        <!-- Footer -->
         <div class="order-card-footer">
           <div class="order-meta">
             <span class="meta-row">📅 {{ order.createdAt | date:'mediumDate' }}</span>
@@ -66,19 +52,22 @@
           </div>
 
           <div class="order-actions">
-            <a [routerLink]="['/order', order.id, 'tracking']"
-               class="btn btn-outline btn-sm">
-              📍 Track
-            </a>
-            <a [routerLink]="['/order', order.id, 'confirmation']"
-               class="btn btn-outline btn-sm">
-              🧾 Details
-            </a>
+            <!-- ✅ بنمرر الأوردر في state عشان صفحة التراكينج تستخدمه مباشرةً بدون HTTP call -->
+            <a
+              [routerLink]="['/order', order.id, 'tracking']"
+              [state]="{ order: order }"
+              class="btn btn-outline btn-sm"
+            >📍 Track</a>
+
+            <!-- ✅ نفس الشيء للكونفيرميشن -->
+            <a
+              [routerLink]="['/order', order.id, 'confirmation']"
+              [state]="{ order: order }"
+              class="btn btn-outline btn-sm"
+            >🧾 Details</a>
           </div>
         </div>
-
       </div>
-
-    </div><!-- /orders-list -->
+    </div>
   </div>
 </div>

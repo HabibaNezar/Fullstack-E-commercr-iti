@@ -20,7 +20,6 @@ export class OrderTracking implements OnInit {
   loading: boolean = true;
   error: string = '';
 
-  // The 4 visible steps (cancelled is handled separately)
   readonly steps: OrderStatus[] = ['pending', 'confirmed', 'shipped', 'delivered'];
 
   readonly stepMeta: Record<string, { icon: string; label: string; desc: string }> = {
@@ -36,8 +35,21 @@ export class OrderTracking implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // ✅ استخدم البيانات من navigation state لو موجودة (أسرع بكتير — بدون HTTP call)
+    const nav = history.state;
+    if (nav?.order) {
+      this.order = nav.order;
+      this.loading = false;
+      return;
+    }
+
+    // fallback: اجيب الأوردر من السيرفر لو فُتحت الصفحة مباشرةً من URL
     const id = this.route.snapshot.paramMap.get('id');
-    if (!id) { this.error = 'Order not found.'; this.loading = false; return; }
+    if (!id) {
+      this.error = 'Order not found.';
+      this.loading = false;
+      return;
+    }
 
     this.orderService.getOrderById(id).subscribe({
       next: (o) => { this.order = o; this.loading = false; },
@@ -45,13 +57,11 @@ export class OrderTracking implements OnInit {
     });
   }
 
-  // Returns true if this step is reached
   isReached(step: OrderStatus): boolean {
     if (!this.order) return false;
     return this.steps.indexOf(step) <= this.steps.indexOf(this.order.status as OrderStatus);
   }
 
-  // Returns true if this is the current step
   isCurrent(step: OrderStatus): boolean {
     return this.order?.status === step;
   }

@@ -1,4 +1,54 @@
 {
+  "users": [
+    {
+      "id": "1",
+      "firstName": "Ahmed",
+      "lastName": "Mohamed",
+      "email": "ahmed@gmail.com",
+      "role": "admin",
+      "password": "12345678a"
+    },
+    {
+      "id": "2",
+      "firstName": "Sara",
+      "lastName": "Ali",
+      "email": "sara@gmail.com",
+      "role": "user",
+      "password": "654321123"
+    },
+    {
+      "id": "3",
+      "firstName": "Omar",
+      "lastName": "Hassan",
+      "email": "omar@gmail.com",
+      "role": "user",
+      "password": "987654123"
+    },
+    {
+      "firstName": "habiba",
+      "lastName": "nezar",
+      "email": "habibanezar2@gmail.com",
+      "password": "fJaqX-24cQZ8shL",
+      "role": "user",
+      "id": "j7NwdAsbqP0"
+    },
+    {
+      "firstName": "habiba",
+      "lastName": "nezar",
+      "email": "habibanez@gmail.com",
+      "password": "fJaqX-24cQZ8shL",
+      "role": "user",
+      "id": "NU22AzRkS3M"
+    },
+    {
+      "firstName": "Habiba",
+      "lastName": "Abdelmohsen",
+      "email": "habibane@gmail.com",
+      "password": "12345656",
+      "role": "user",
+      "id": "iKd0Wa-kcFM"
+    }
+  ],
   "products": [
     {
       "id": "1",
@@ -87,48 +137,13 @@
         }
       ],
       "status": "pending",
-      "total": 94.96000000000001,
+      "total": 94.96,
       "address": "123 NIle,st",
       "city": "Cairo",
       "phone": "01029496150",
       "paymentMethod": "card",
       "createdAt": "2026-05-12T18:44:11.292Z",
       "id": "wAHw2tpi0xk"
-    },
-    {
-      "userId": "2",
-      "userName": "Sara Ali",
-      "items": [
-        {
-          "productId": 2,
-          "title": "Eyeshadow Palette with Mirror",
-          "price": 19.99,
-          "quantity": 1,
-          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/eyeshadow-palette-with-mirror/thumbnail.webp"
-        },
-        {
-          "productId": 3,
-          "title": "Powder Canister",
-          "price": 14.99,
-          "quantity": 1,
-          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/powder-canister/thumbnail.webp"
-        },
-        {
-          "productId": 4,
-          "title": "Red Lipstick",
-          "price": 12.99,
-          "quantity": 1,
-          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/red-lipstick/thumbnail.webp"
-        }
-      ],
-      "status": "pending",
-      "total": 47.97,
-      "address": "123 NIle , St",
-      "city": "Cairo",
-      "phone": "01029496150",
-      "paymentMethod": "cash",
-      "createdAt": "2026-05-12T18:47:56.436Z",
-      "id": "QPI9_n5cPGY"
     },
     {
       "userId": "2",
@@ -206,7 +221,7 @@
         }
       ],
       "status": "pending",
-      "total": 242.95000000000005,
+      "total": 242.95,
       "address": "123 Nile street",
       "city": "cairo",
       "phone": "01029496150",
@@ -240,9 +255,9 @@
           "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/powder-canister/thumbnail.webp"
         }
       ],
-      "status": "pending",
+      "status": "delivered",
       "total": 44.97,
-      "address": "123 Nile Street ",
+      "address": "123 Nile Street",
       "city": "Cairo",
       "phone": "01029496150",
       "paymentMethod": "cash",
@@ -254,11 +269,11 @@
       "userName": "Sara Ali",
       "items": [
         {
-          "productId": 1,
-          "title": "Essence Mascara Lash Princess",
-          "price": 9.99,
+          "productId": 3,
+          "title": "Powder Canister",
+          "price": 14.99,
           "quantity": 1,
-          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp"
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/powder-canister/thumbnail.webp"
         },
         {
           "productId": 2,
@@ -268,34 +283,6 @@
           "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/eyeshadow-palette-with-mirror/thumbnail.webp"
         },
         {
-          "productId": 3,
-          "title": "Powder Canister",
-          "price": 14.99,
-          "quantity": 1,
-          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/powder-canister/thumbnail.webp"
-        },
-        {
-          "productId": 4,
-          "title": "Red Lipstick",
-          "price": 12.99,
-          "quantity": 1,
-          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/red-lipstick/thumbnail.webp"
-        }
-      ],
-      "status": "pending",
-      "total": 57.96,
-      "address": "123 Nile street ",
-      "city": "cairo",
-      "phone": "01029496150",
-      "paymentMethod": "card",
-      "createdAt": "2026-05-12T22:09:43.230Z",
-      "id": "Fe6AYNuiCV0"
-    },
-    {
-      "userId": "2",
-      "userName": "Sara Ali",
-      "items": [
-        {
           "productId": 1,
           "title": "Essence Mascara Lash Princess",
           "price": 9.99,
@@ -303,20 +290,6 @@
           "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp"
         },
         {
-          "productId": 2,
-          "title": "Eyeshadow Palette with Mirror",
-          "price": 19.99,
-          "quantity": 1,
-          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/eyeshadow-palette-with-mirror/thumbnail.webp"
-        },
-        {
-          "productId": 3,
-          "title": "Powder Canister",
-          "price": 14.99,
-          "quantity": 1,
-          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/powder-canister/thumbnail.webp"
-        },
-        {
           "productId": 4,
           "title": "Red Lipstick",
           "price": 12.99,
@@ -324,26 +297,19 @@
           "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/red-lipstick/thumbnail.webp"
         }
       ],
-      "status": "pending",
+      "status": "shipped",
       "total": 57.96,
-      "address": "123 Nile street",
-      "city": "cairo",
+      "address": "123 Nile Street",
+      "city": "Cairo",
       "phone": "01029496150",
       "paymentMethod": "cash",
-      "createdAt": "2026-05-12T22:11:50.863Z",
-      "id": "JDkmT4157Sg"
+      "createdAt": "2026-05-12T22:34:36.980Z",
+      "id": "gJPwQnos_RI"
     },
     {
       "userId": "2",
       "userName": "Sara Ali",
       "items": [
-        {
-          "productId": 3,
-          "title": "Powder Canister",
-          "price": 14.99,
-          "quantity": 1,
-          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/powder-canister/thumbnail.webp"
-        },
         {
           "productId": 2,
           "title": "Eyeshadow Palette with Mirror",
@@ -357,6 +323,48 @@
           "price": 9.99,
           "quantity": 1,
           "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp"
+        },
+        {
+          "productId": 3,
+          "title": "Powder Canister",
+          "price": 14.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/powder-canister/thumbnail.webp"
+        }
+      ],
+      "status": "pending",
+      "total": 44.97,
+      "address": "123 Nile Street",
+      "city": "Cairo",
+      "phone": "01029496150",
+      "paymentMethod": "cash",
+      "createdAt": "2026-05-12T23:19:16.688Z",
+      "id": "Ec7QTRaH7qk"
+    },
+    {
+      "userId": "2",
+      "userName": "Sara Ali",
+      "items": [
+        {
+          "productId": 1,
+          "title": "Essence Mascara Lash Princess",
+          "price": 9.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp"
+        },
+        {
+          "productId": 2,
+          "title": "Eyeshadow Palette with Mirror",
+          "price": 19.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/eyeshadow-palette-with-mirror/thumbnail.webp"
+        },
+        {
+          "productId": 3,
+          "title": "Powder Canister",
+          "price": 14.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/powder-canister/thumbnail.webp"
         },
         {
           "productId": 4,
@@ -371,9 +379,128 @@
       "address": "123 Nile Street",
       "city": "Cairo",
       "phone": "01029496150",
+      "paymentMethod": "card",
+      "createdAt": "2026-05-12T23:30:08.794Z",
+      "id": "BUv_EvBlQRQ"
+    },
+    {
+      "userId": "2",
+      "userName": "Sara Ali",
+      "items": [
+        {
+          "productId": 1,
+          "title": "Essence Mascara Lash Princess",
+          "price": 9.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp"
+        },
+        {
+          "productId": 2,
+          "title": "Eyeshadow Palette with Mirror",
+          "price": 19.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/eyeshadow-palette-with-mirror/thumbnail.webp"
+        },
+        {
+          "productId": 3,
+          "title": "Powder Canister",
+          "price": 14.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/powder-canister/thumbnail.webp"
+        }
+      ],
+      "status": "pending",
+      "total": 44.97,
+      "address": "132 Nile street",
+      "city": "cairo",
+      "phone": "01029496150",
+      "paymentMethod": "card",
+      "createdAt": "2026-05-12T23:47:23.414Z",
+      "id": "RtpQh_AvFMA"
+    },
+    {
+      "userId": "2",
+      "userName": "Sara Ali",
+      "items": [
+        {
+          "productId": 1,
+          "title": "Essence Mascara Lash Princess",
+          "price": 9.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp"
+        },
+        {
+          "productId": 2,
+          "title": "Eyeshadow Palette with Mirror",
+          "price": 19.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/eyeshadow-palette-with-mirror/thumbnail.webp"
+        },
+        {
+          "productId": 3,
+          "title": "Powder Canister",
+          "price": 14.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/powder-canister/thumbnail.webp"
+        },
+        {
+          "productId": 5,
+          "title": "Red Nail Polish",
+          "price": 8.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/red-nail-polish/thumbnail.webp"
+        }
+      ],
+      "status": "pending",
+      "total": 53.96,
+      "address": "123 Nile Street",
+      "city": "Cairo",
+      "phone": "01029496150",
+      "paymentMethod": "card",
+      "createdAt": "2026-05-13T00:19:00.419Z",
+      "id": "Vs5I0D5S6w8"
+    },
+    {
+      "userId": "2",
+      "userName": "Sara Ali",
+      "items": [
+        {
+          "productId": 1,
+          "title": "Essence Mascara Lash Princess",
+          "price": 9.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp"
+        },
+        {
+          "productId": 2,
+          "title": "Eyeshadow Palette with Mirror",
+          "price": 19.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/eyeshadow-palette-with-mirror/thumbnail.webp"
+        },
+        {
+          "productId": 3,
+          "title": "Powder Canister",
+          "price": 14.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/powder-canister/thumbnail.webp"
+        },
+        {
+          "productId": 4,
+          "title": "Red Lipstick",
+          "price": 12.99,
+          "quantity": 1,
+          "thumbnail": "https://cdn.dummyjson.com/product-images/beauty/red-lipstick/thumbnail.webp"
+        }
+      ],
+      "status": "pending",
+      "total": 57.96,
+      "address": "123  Nile Street ",
+      "city": "Cairo",
+      "phone": "01029496150",
       "paymentMethod": "cash",
-      "createdAt": "2026-05-12T22:34:36.980Z",
-      "id": "gJPwQnos_RI"
+      "createdAt": "2026-05-13T00:30:24.535Z",
+      "id": "smZ4KPLKk1U"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
