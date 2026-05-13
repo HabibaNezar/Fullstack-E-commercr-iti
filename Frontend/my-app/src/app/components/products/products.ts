@@ -8,13 +8,13 @@ import { IProduct } from '../../models/iproduct';
 import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/AuthServices/auth-service';
 import { DecimalPipe } from "../../pipes/decimal-pipe";
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { WishlistService } from '../../services/wishlist.service';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-products',
-  imports: [CommonModule, NgClass, HighLight, TruncateWordsPipe, ZoomImageDirective, DecimalPipe],
+  imports: [CommonModule, NgClass, HighLight, TruncateWordsPipe, ZoomImageDirective, DecimalPipe, RouterLink],
   templateUrl: './products.html',
   styleUrl: './products.css',
   standalone: true
