@@ -1,7 +1,27 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "E:\\.net\\iti\\E-commerce Project\\Fullstack-E-commercr-iti\\Backend\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/localhost/ECommerceDB/True/SqlTable/dbo.Products.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9E0E295-0A95-4620-87F3-B5F0DFF60345}|LoginAndRegister\\LoginAndRegister.csproj|e:\\.net\\iti\\e-commerce project\\fullstack-e-commercr-iti\\backend\\loginandregister\\data\\storecontextseed.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9E0E295-0A95-4620-87F3-B5F0DFF60345}|LoginAndRegister\\LoginAndRegister.csproj|solutionrelative:loginandregister\\data\\storecontextseed.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9E0E295-0A95-4620-87F3-B5F0DFF60345}|LoginAndRegister\\LoginAndRegister.csproj|e:\\.net\\iti\\e-commerce project\\fullstack-e-commercr-iti\\backend\\loginandregister\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9E0E295-0A95-4620-87F3-B5F0DFF60345}|LoginAndRegister\\LoginAndRegister.csproj|solutionrelative:loginandregister\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9E0E295-0A95-4620-87F3-B5F0DFF60345}|LoginAndRegister\\LoginAndRegister.csproj|e:\\.net\\iti\\e-commerce project\\fullstack-e-commercr-iti\\backend\\loginandregister\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9E0E295-0A95-4620-87F3-B5F0DFF60345}|LoginAndRegister\\LoginAndRegister.csproj|solutionrelative:loginandregister\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D9E0E295-0A95-4620-87F3-B5F0DFF60345}|LoginAndRegister\\LoginAndRegister.csproj|e:\\.net\\iti\\e-commerce project\\fullstack-e-commercr-iti\\backend\\loginandregister\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D9E0E295-0A95-4620-87F3-B5F0DFF60345}|LoginAndRegister\\LoginAndRegister.csproj|solutionrelative:loginandregister\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,11 +29,73 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{fbcae063-e2c0-4ab1-a516-996ea3dafb72}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "dbo.Products [Data]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/localhost/ECommerceDB/True/SqlTable/dbo.Products.sql",
+              "ToolTip": "dbo.Products [Data]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2026-05-13T01:06:19.802Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "CategoriesController.cs",
+              "DocumentMoniker": "E:\\.net\\iti\\E-commerce Project\\Fullstack-E-commercr-iti\\Backend\\LoginAndRegister\\Controllers\\CategoriesController.cs",
+              "RelativeDocumentMoniker": "LoginAndRegister\\Controllers\\CategoriesController.cs",
+              "ToolTip": "E:\\.net\\iti\\E-commerce Project\\Fullstack-E-commercr-iti\\Backend\\LoginAndRegister\\Controllers\\CategoriesController.cs",
+              "RelativeToolTip": "LoginAndRegister\\Controllers\\CategoriesController.cs",
+              "ViewState": "AgIAAAwAAABgZmZmZmYkwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-13T00:51:34.743Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ProductsController.cs",
+              "DocumentMoniker": "E:\\.net\\iti\\E-commerce Project\\Fullstack-E-commercr-iti\\Backend\\LoginAndRegister\\Controllers\\ProductsController.cs",
+              "RelativeDocumentMoniker": "LoginAndRegister\\Controllers\\ProductsController.cs",
+              "ToolTip": "E:\\.net\\iti\\E-commerce Project\\Fullstack-E-commercr-iti\\Backend\\LoginAndRegister\\Controllers\\ProductsController.cs",
+              "RelativeToolTip": "LoginAndRegister\\Controllers\\ProductsController.cs",
+              "ViewState": "AgIAAGMAAAAAAAAAAAAAAHMAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-13T00:49:38.81Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "StoreContextSeed.cs",
+              "DocumentMoniker": "E:\\.net\\iti\\E-commerce Project\\Fullstack-E-commercr-iti\\Backend\\LoginAndRegister\\Data\\StoreContextSeed.cs",
+              "RelativeDocumentMoniker": "LoginAndRegister\\Data\\StoreContextSeed.cs",
+              "ToolTip": "E:\\.net\\iti\\E-commerce Project\\Fullstack-E-commercr-iti\\Backend\\LoginAndRegister\\Data\\StoreContextSeed.cs",
+              "RelativeToolTip": "LoginAndRegister\\Data\\StoreContextSeed.cs",
+              "ViewState": "AgIAAB0AAAAAmZmZmZkdwC0AAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-13T00:26:49.975Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\.net\\iti\\E-commerce Project\\Fullstack-E-commercr-iti\\Backend\\LoginAndRegister\\Program.cs",
+              "RelativeDocumentMoniker": "LoginAndRegister\\Program.cs",
+              "ToolTip": "E:\\.net\\iti\\E-commerce Project\\Fullstack-E-commercr-iti\\Backend\\LoginAndRegister\\Program.cs",
+              "RelativeToolTip": "LoginAndRegister\\Program.cs",
+              "ViewState": "AgIAAIMAAAAA/v////8PwMIAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-13T00:24:14.272Z",
+              "EditorCaption": ""
             }
           ]
         }
