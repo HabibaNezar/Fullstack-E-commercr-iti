@@ -12,7 +12,6 @@ import { IUser } from '../../models/iuser';
 import { IOrder } from '../../models/iorder';
 import { IReview } from '../../models/ireview';
 import { IProduct } from '../../models/iproduct';
-// ✅ Added missing rxjs operators
 import { timeout, catchError, finalize, of } from 'rxjs';
 
 /** UI-only fields used by userprofile.html (beyond IUser). */
@@ -48,7 +47,6 @@ export class UserProfile implements OnInit {
   wishlistProducts: IProduct[] = [];
   userReviews: IReview[] = [];
 
-  // ✅ New: per-tab loading & error states
   ordersLoading = false;
   ordersError = '';
 
@@ -91,16 +89,19 @@ export class UserProfile implements OnInit {
   }
 
   loadTabData(): void {
-    if (!this.user?.id) return;
-
     if (this.activeTab === 'Orders') {
+      // Orders API uses JWT token — no user.id needed
+      if (!this.authService.isLoggedIn()) {
+        this.ordersError = 'Please log in to view your orders.';
+        return;
+      }
+
       this.userOrders = [];
       this.ordersError = '';
       this.ordersLoading = true;
 
-      // ✅ Mirrors the same robust pattern used in my-orders.ts
       this.orderService
-        .getOrdersByUserId(String(this.user.id))
+        .getMyOrders()
         .pipe(
           timeout(8000),
           catchError((err) => {
@@ -123,6 +124,7 @@ export class UserProfile implements OnInit {
         });
 
     } else if (this.activeTab === 'Wishlist') {
+      if (!this.user?.id) return;
       this.wishlistProducts = [];
       if (this.user.wishlist?.length) {
         this.user.wishlist.forEach(id => {
@@ -134,6 +136,7 @@ export class UserProfile implements OnInit {
       }
 
     } else if (this.activeTab === 'Reviews') {
+      if (!this.user?.id) return;
       this.userReviews = [];
       this.reviewService.getReviewsByUserId(this.user.id).subscribe(reviews => {
         this.userReviews = reviews;
@@ -161,8 +164,8 @@ export class UserProfile implements OnInit {
   }
 
   saveProfile(): void {
-    if (!this.user?.id) {
-      this.message = 'User ID is missing. Please re-login.';
+    if (!this.user) {
+      this.message = 'User data is missing. Please re-login.';
       this.cdr.detectChanges();
       return;
     }
@@ -213,7 +216,6 @@ export class UserProfile implements OnInit {
     this.showMessage('Profile updated successfully!');
   }
 
-  // ✅ Extracted helper — avoids duplicating the timer logic
   private showMessage(msg: string): void {
     this.message = msg;
     if (this.messageTimer) clearTimeout(this.messageTimer);
