@@ -1,0 +1,42 @@
+<div class="seller-orders">
+  <h1 class="orders-title">My Orders</h1>
+  
+  @if (loading()) {
+    <p class="loading-text">Loading orders...</p>
+  } @else if (orders().length === 0) {
+    <p class="empty-state">No orders found</p>
+  } @else {
+    <div class="orders-list">
+      @for (order of orders(); track order.orderId) {
+        <div class="order-card">
+          <div class="order-header">
+            <h3 class="order-id">Order #{{ order.orderId }}</h3>
+            <span class="order-status [getStatusClass(order.status)]">{{ order.status }}</span>
+          </div>
+          <div class="order-details">
+            <div class="order-detail">
+              <span class="detail-label">Product:</span>
+              <span class="detail-value">{{ order.productName }}</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Customer:</span>
+              <span class="detail-value">{{ order.customerName }}</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Quantity:</span>
+              <span class="detail-value">{{ order.quantity }}</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Unit Price:</span>
+              <span class="detail-value">{{ order.unitPrice | currency }}</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Date:</span>
+              <span class="detail-value">{{ order.orderDate }}</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

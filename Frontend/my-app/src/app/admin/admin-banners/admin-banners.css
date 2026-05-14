@@ -1,0 +1,179 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Figtree:wght@400;500;600&display=swap');
+
+.adm-page {
+  font-family: 'Figtree', sans-serif;
+  max-width: 960px;
+  padding: 2.5rem 2rem 4rem;
+  background: #f5f4f0;
+  min-height: 100%;
+  box-sizing: border-box;
+  animation: adm-fade 0.3s ease both;
+}
+
+@keyframes adm-fade {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Page header ─────────────────────────────────────────── */
+.adm-page-header {
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #e8e6e0;
+}
+
+.adm-page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: #18181b;
+  letter-spacing: -0.01em;
+}
+
+.adm-page-sub {
+  font-size: 13px;
+  color: #52525b;
+  margin: 0;
+}
+
+/* ── Form grid (add banner) ──────────────────────────────── */
+.adm-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding: 14px 16px;
+  background: #ffffff;
+  border: 1px solid #e8e6e0;
+  border-radius: 14px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.adm-form-grid input {
+  padding: 8px 12px;
+  border-radius: 9px;
+  border: 1px solid #e8e6e0;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: #18181b;
+  background: #f5f4f0;
+  outline: none;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    box-shadow 0.15s;
+}
+
+.adm-form-grid input::placeholder {
+  color: #52525b;
+}
+
+.adm-form-grid input:focus {
+  border-color: #c5d5e8;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(28, 58, 94, 0.08);
+}
+
+/* ── Checkbox label ──────────────────────────────────────── */
+.adm-check {
+  font-size: 13px;
+  color: #52525b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.adm-btn-primary {
+  padding: 8px 18px;
+  border-radius: 9px;
+  border: none;
+  background: #2c2c2a;
+  color: #f1efe8;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.adm-btn-primary:hover {
+  background: #1a1a18;
+}
+.adm-btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.adm-link {
+  border: none;
+  background: none;
+  color: #1c3a5e;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  margin-right: 6px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.12s;
+}
+
+.adm-link:hover {
+  color: #0c447c;
+}
+
+.adm-danger {
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid #fcc;
+  background: #fff;
+  color: #c0392b;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  transition:
+    background 0.12s,
+    border-color 0.12s;
+}
+
+.adm-danger:hover {
+  background: #fff0f0;
+  border-color: #f5a5a5;
+}
+
+/* ── Custom select arrow ─────────────────────────────────── */
+/* Both :host ::ng-deep (Angular scoped) and plain class (global fallback) */
+:host ::ng-deep .adm-form-grid select,
+.adm-form-grid select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%231c3a5e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
+:host ::ng-deep .adm-form-grid select:hover,
+.adm-form-grid select:hover {
+  border-color: #a8b8cc;
+  background-color: #ffffff;
+}
+
+:host ::ng-deep .adm-form-grid select:focus,
+.adm-form-grid select:focus {
+  border-color: #c5d5e8;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(28, 58, 94, 0.08);
+}

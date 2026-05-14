@@ -1,18 +1,32 @@
+import type {
+  SwaggerDtoLogin,
+  SwaggerDtoNewUser,
+  SwaggerUpdateSellerProfileDto,
+} from './swagger-types';
+
 export interface IUser {
-  id?:    any;   // 👈 optional because new users don't have id yet
-  
-  firstName:   string;
-  lastName:   string;
-  email:  string;
-  password:   string;
-  role:   'Customer' | 'Seller' | 'Admin' | string; 
-  phone?: string;
+  id?: any;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: 'Customer' | 'Seller' | 'Admin' | string;
+  phoneNumber?: string;
   address?: string;
+  city?: string;
+  /** Present when API returns account state */
+  isActive?: boolean;
+  isRestricted?: boolean;
+  deletedAt?: string | null;
+  wishlist?: number[];
   paymentDetails?: {
-    cardNumber?: string;
-    expiryDate?: string;
-    cvv?: string;
-    cardHolderName?: string;
+    cardNumber: string;
+    expiryDate: string;
+    cvv: string;
+    cardHolderName: string;
   };
-  wishlist?: number[]; // Array of product IDs
 }
+
+export type DtoNewUser = SwaggerDtoNewUser;
+export type DtoLogin = SwaggerDtoLogin;
+export type UpdateSellerProfileDto = SwaggerUpdateSellerProfileDto;

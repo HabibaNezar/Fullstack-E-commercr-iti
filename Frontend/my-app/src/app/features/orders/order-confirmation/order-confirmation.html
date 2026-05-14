@@ -1,0 +1,101 @@
+<div class="state-loading section" *ngIf="loading">Loading your order…</div>
+
+<div class="conf-page section" *ngIf="error">
+  <div class="state-empty">⚠️ {{ error }}</div>
+</div>
+
+<div class="conf-page" *ngIf="!loading && !error && order">
+
+  <div class="page-hero">
+    <div class="hero-orb"></div>
+    <div class="page-hero-inner conf-hero-inner">
+      <div class="conf-check">✅</div>
+      <h1>Order Confirmed!</h1>
+      <p class="conf-sub">
+        Your order <strong>#{{ order.id }}</strong> has been placed.
+      </p>
+    </div>
+  </div>
+
+  <div class="section conf-body">
+    <div class="conf-grid">
+
+      <!-- Items -->
+      <div class="card conf-card">
+        <h3 class="conf-card-title">🛍️ Items Ordered</h3>
+        <ul class="conf-items">
+          <li class="conf-item" *ngFor="let item of order.items || []">
+            <img class="conf-thumb" [src]="item.thumbnail || ''" [alt]="item.productName" />
+            <div class="conf-item-info">
+              <p class="conf-item-name">{{ item.productName }}</p>
+              <p class="conf-item-meta">
+                Qty: {{ item.quantity }} · ${{ item.price * item.quantity | number:'1.2-2' }}
+              </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="conf-right">
+
+        <div class="card conf-card">
+          <h3 class="conf-card-title">📦 Delivery Info</h3>
+          <div class="info-row">
+            <span class="info-label">Address</span>
+            <span>{{ order.address }}, {{ order.city }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Phone</span>
+            <span>{{ order.phone }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Payment</span>
+            <span>{{ order.paymentMethod === 'cash' ? '💵 Cash on Delivery' : '💳 Credit Card' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Status</span>
+            <span class="tag tag--orange">⏳ {{ order.status | titlecase }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Date</span>
+            <span>{{ order.orderDate | date:'medium' }}</span>
+          </div>
+        </div>
+
+        <div class="card conf-card conf-total-card">
+          <div class="conf-total-row">
+            <span>Order Total</span>
+            <span class="conf-total-amount">${{ order.totalPrice | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <div class="conf-actions">
+          <a routerLink="/my-orders" class="btn btn-primary">📋 View My Orders</a>
+          <a [routerLink]="['/order', order.id, 'tracking']"
+             [state]="{ order: order }"
+             class="btn btn-outline">📍 Track Order</a>
+          <a routerLink="/home" class="btn btn-outline">🏠 Continue Shopping</a>
+        </div>
+
+        <div class="card conf-card conf-share-card">
+          <h3 class="conf-card-title">📣 Share Your Purchase</h3>
+          <p class="conf-share-sub">Let your friends know what you got.</p>
+          <div class="conf-share-actions">
+            @if (shareSupported) {
+              <button type="button" class="btn btn-outline btn-sm" (click)="shareNative()">
+                📤 Share…
+              </button>
+            }
+            <a class="btn btn-outline btn-sm" [href]="shareTwitter()" target="_blank" rel="noopener noreferrer">🐦 Twitter</a>
+            <a class="btn btn-outline btn-sm" [href]="shareFacebook()" target="_blank" rel="noopener noreferrer">📘 Facebook</a>
+            <a class="btn btn-outline btn-sm" [href]="shareWhatsApp()" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
+            <button type="button" class="btn btn-outline btn-sm" (click)="copyLink()">
+              {{ copied() ? '✅ Copied!' : '🔗 Copy link' }}
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

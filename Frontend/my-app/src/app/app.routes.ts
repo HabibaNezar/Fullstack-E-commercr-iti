@@ -1,32 +1,86 @@
-import { Register } from './components/register/register';
 import { Routes } from '@angular/router';
-import { Home } from './components/home/home';
-import { Products } from './components/products/products';
-import { Category } from './components/category/category';
-import { MasterProducts } from './components/master-product/master-product';
-import { Users } from './components/users/users';
-import { Cart } from './components/cart/cart';
-import { AuthGuard } from './guards/auth-guard';
-import { AdminGuard } from './guards/admin-guard';
-import { LoginComponent } from './components/login/login';
-import { UserProfile } from './components/userprofile/userprofile';
-import { ProductDetails } from './components/product-details/product-details';
+import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
+import { sellerGuard } from './core/guards/seller.guard';
 
 export const routes: Routes = [
-  { path: '', component: Home },
-  { path: 'home', component: Home },
-  { path: 'products', component: MasterProducts },
-  { path: 'products/:id', component: ProductDetails },
-  { path: 'categories', component: Category },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: Register },
-  
-  // 🔐 Protected — must be logged in
-  { path: 'cart',    component: Cart,    canActivate: [AuthGuard] },
-  { path: 'profile', component: UserProfile, canActivate: [AuthGuard] },
-  // 🛡️ Admin only
-  { path: 'users',     component: Users,     canActivate: [AuthGuard, AdminGuard] },
-
-  // catch bad URLs
-  { path: '**', redirectTo: 'home' }
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  {
+    path: 'home',
+    loadComponent: () => import('./features/home/home/home').then((m) => m.Home),
+  },
+  {
+    path: 'products',
+    loadComponent: () =>
+      import('./features/products/master-product/master-product').then((m) => m.MasterProducts),
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./features/auth/login/login').then((m) => m.LoginComponent),
+  },
+  {
+    path: 'register',
+    loadComponent: () => import('./features/auth/register/register').then((m) => m.Register),
+  },
+  {
+    path: 'cart',
+    loadComponent: () => import('./features/cart/cart/cart').then((m) => m.Cart),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'profile',
+    loadComponent: () =>
+      import('./features/profile/userprofile/userprofile').then((m) => m.UserProfile),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'checkout',
+    loadComponent: () => import('./features/orders/checkout/checkout').then((m) => m.Checkout),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'my-orders',
+    loadComponent: () =>
+      import('./features/orders/my-orders/my-orders').then((m) => m.MyOrders),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'order/:id/confirmation',
+    loadComponent: () =>
+      import('./features/orders/order-confirmation/order-confirmation').then(
+        (m) => m.OrderConfirmation
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'order/:id/tracking',
+    loadComponent: () =>
+      import('./features/orders/order-tracking/order-tracking').then((m) => m.OrderTracking),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'users',
+    redirectTo: 'admin/users',
+    pathMatch: 'full',
+  },
+  {
+    path: 'dashboard',
+    redirectTo: 'admin/dashboard',
+    pathMatch: 'full',
+  },
+  {
+    path: 'admin',
+    loadComponent: () =>
+      import('./admin/admin-layout/admin-layout').then((m) => m.AdminLayout),
+    canActivate: [authGuard, adminGuard],
+    loadChildren: () => import('./admin/admin.routes').then((m) => m.adminChildRoutes),
+  },
+  {
+    path: 'seller',
+    loadComponent: () =>
+      import('./seller/seller-layout/Seller-layout').then((m) => m.SellerLayout),
+    canActivate: [authGuard, sellerGuard],
+    loadChildren: () => import('./seller/seller.routes').then((m) => m.sellerChildRoutes),
+  },
+  { path: '**', redirectTo: 'home' },
 ];
