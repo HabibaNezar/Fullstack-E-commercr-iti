@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../../core/services/product.service';
 import { CategoryService } from '../../../core/services/category.service';
-import { IProduct } from '../../../models/iproduct';
+import { IProduct, IProductFormData } from '../../../models/iproduct';
 
 @Component({
   selector: 'app-seller-products',
@@ -19,7 +19,9 @@ export class SellerProducts implements OnInit {
   products = signal<IProduct[]>([]);
   categories = signal<any[]>([]);
   loading = signal(true);
-  searchQuery = signal('');
+
+  // ✅ plain string — ngModel doesn't work with signals
+  searchQuery = '';
 
   currentProduct: Partial<IProduct> = {};
   isEditMode = signal(false);
@@ -43,9 +45,7 @@ export class SellerProducts implements OnInit {
     });
 
     this.categoryService.getCategories().subscribe({
-      next: (data) => {
-        this.categories.set(data);
-      },
+      next: (data) => this.categories.set(data),
     });
   }
 
@@ -88,7 +88,23 @@ export class SellerProducts implements OnInit {
     this.saving.set(true);
     this.saveError.set('');
 
-    const formData = this.productService.buildFormData(this.currentProduct, this.selectedImageFile);
+    // ✅ Map camelCase IProduct → PascalCase IProductFormData
+    // ✅ Image goes INSIDE the data object, not as a second argument
+    const formDataInput: IProductFormData = {
+      Name: this.currentProduct.name!,
+      Description: this.currentProduct.description ?? '',
+      Price: this.currentProduct.price!,
+      StockQuantity: this.currentProduct.stockQuantity ?? 0,
+      CategoryId: this.currentProduct.categoryId ?? 0,
+      Image: this.selectedImageFile ?? undefined,
+    };
+
+    // ✅ Pass productId in options object when editing
+    const options = this.isEditMode() && this.currentProduct.id
+      ? { productId: this.currentProduct.id }
+      : undefined;
+
+    const formData = this.productService.buildFormData(formDataInput, options);
 
     const observable = this.isEditMode()
       ? this.productService.updateProduct(this.currentProduct.id!, formData)
@@ -110,15 +126,13 @@ export class SellerProducts implements OnInit {
   deleteProduct(id: number): void {
     if (confirm('Are you sure you want to delete this product?')) {
       this.productService.deleteProduct(id).subscribe({
-        next: () => {
-          this.loadData();
-        },
+        next: () => this.loadData(),
       });
     }
   }
 
   get filteredProducts(): IProduct[] {
-    const query = this.searchQuery().toLowerCase();
+    const query = this.searchQuery.toLowerCase();
     if (!query) return this.products();
     return this.products().filter(
       (p) => p.name.toLowerCase().includes(query) || p.description?.toLowerCase().includes(query)
