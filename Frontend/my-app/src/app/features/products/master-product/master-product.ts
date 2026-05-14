@@ -191,6 +191,15 @@ export class MasterProducts implements OnInit {
   isAdmin(): boolean {
     return this.authService.isAdmin();
   }
+
+  isSeller(): boolean {
+    return this.authService.isSeller();
+  }
+
+  canManageProducts(): boolean {
+    return this.authService.isAdmin() || this.authService.isSeller();
+  }
+
   isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
   }
