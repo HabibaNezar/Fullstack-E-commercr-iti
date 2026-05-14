@@ -4,8 +4,16 @@
       <h1 class="auth-title">Create account</h1>
       <p class="auth-subtitle">Join 12,000+ happy organic shoppers today</p>
 
+      <!-- success message -->
+      <div class="auth-success" *ngIf="isSuccess">
+        <div class="success-icon">📧</div>
+        <h3>Check your email</h3>
+        <p>{{ successMsg }}</p>
+        <a routerLink="/login" class="btn-success-login">Go to Login</a>
+      </div>
+
       <!-- error message -->
-      <div class="auth-error" *ngIf="errorMsg">
+      <div class="auth-error" *ngIf="errorMsg && !isSuccess">
         <span>⚠️</span> {{ errorMsg }}
 
         <!-- 👇 Show login link when account already exists -->
@@ -15,7 +23,7 @@
       </div>
 
       <!-- 👇 [formGroup] connects the whole form -->
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" *ngIf="!isSuccess">
         <div class="auth-fields">
           <div class="fields-row">
             <!-- First name -->
@@ -71,7 +79,6 @@
               />
             </div>
             <span class="field-error" *ngIf="f['email'].invalid && f['email'].touched">
-              <!-- 👇 show DIFFERENT message for each error type -->
               <ng-container *ngIf="f['email'].errors?.['required']">
                 Email is required
               </ng-container>
@@ -79,6 +86,62 @@
                 Enter a valid email address
               </ng-container>
             </span>
+          </div>
+
+          <!-- Address -->
+          <div class="field-group">
+            <label class="field-label" for="address">Address</label>
+            <div class="field-wrap">
+              <span class="field-icon">📍</span>
+              <input
+                id="address"
+                type="text"
+                class="field-input"
+                placeholder="123 Street Name"
+                formControlName="address"
+              />
+            </div>
+            <span class="field-error" *ngIf="f['address'].invalid && f['address'].touched">
+              Address is required
+            </span>
+          </div>
+
+          <div class="fields-row">
+            <!-- City -->
+            <div class="field-group">
+              <label class="field-label" for="city">City</label>
+              <div class="field-wrap">
+                <span class="field-icon">🏙️</span>
+                <input
+                  id="city"
+                  type="text"
+                  class="field-input"
+                  placeholder="Cairo"
+                  formControlName="city"
+                />
+              </div>
+              <span class="field-error" *ngIf="f['city'].invalid && f['city'].touched">
+                City is required
+              </span>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="field-group">
+              <label class="field-label" for="phoneNumber">Phone Number</label>
+              <div class="field-wrap">
+                <span class="field-icon">📞</span>
+                <input
+                  id="phoneNumber"
+                  type="text"
+                  class="field-input"
+                  placeholder="0123456789"
+                  formControlName="phoneNumber"
+                />
+              </div>
+              <span class="field-error" *ngIf="f['phoneNumber'].invalid && f['phoneNumber'].touched">
+                Phone Number is required
+              </span>
+            </div>
           </div>
 
           <!-- Role -->

@@ -171,6 +171,57 @@
   margin-bottom: 20px;
 }
 
+/* ── Success banner ── */
+.auth-success {
+  text-align: center;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: var(--radius-card);
+  padding: 32px 24px;
+  margin-bottom: 24px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.success-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.auth-success h3 {
+  color: #166534;
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+  font-family: var(--font-display);
+}
+
+.auth-success p {
+  color: #15803d;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.btn-success-login {
+  display: inline-block;
+  background: #166534;
+  color: white;
+  padding: 10px 24px;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: opacity 0.2s;
+}
+
+.btn-success-login:hover {
+  opacity: 0.9;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .auth-error-link {
   margin-left: auto;
   color: #9333ea;

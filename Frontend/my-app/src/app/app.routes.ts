@@ -12,6 +12,7 @@ import { LoginComponent } from './components/login/login';
 import { UserProfile } from './components/userprofile/userprofile';
 import { ProductDetails } from './components/product-details/product-details';
 import { Checkout } from './components/checkout/checkout';
+import { ConfirmEmailComponent } from './components/confirm-email/confirm-email';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -21,6 +22,7 @@ export const routes: Routes = [
   { path: 'categories', component: Category },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: Register },
+  { path: 'confirm-email', component: ConfirmEmailComponent },
   { path: 'cart',     component: Cart },
   { path: 'checkout', component: Checkout },
   

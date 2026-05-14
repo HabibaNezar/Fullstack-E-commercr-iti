@@ -17,7 +17,7 @@ import { AuthService } from '../../services/AuthServices/auth-service';
 export class MasterProducts implements AfterViewInit {
 
   selectedCategory: string = 'All';
-  maxPrice: number = 1000;
+  maxPrice: number = 100000;
   searchQuery: string = '';           
   totalparentPrice: number = 0;
   catList: ICategory[] = [];
@@ -34,17 +34,21 @@ export class MasterProducts implements AfterViewInit {
     private productService: ProductService,
     private authService: AuthService
   ) {
-    this.catList = this.productService.getCategories();
+    this.productService.getCategories().subscribe((categories) => {
+      this.catList = categories;
+    });
   }
 
   ngAfterViewInit(): void {
-    console.log('Filtered products count:', this.productsChild.filteredProducts.length);
+    if (this.productsChild) {
+      console.log('Filtered products count:', this.productsChild.filteredProducts.length);
+    }
   }
 
   // ✅ Clears all three filters at once
   clearAll(): void {
     this.selectedCategory = 'All';
-    this.maxPrice = 1000;
+    this.maxPrice = 100000;
     this.searchQuery = '';
     this.catOpen = false;
     this.priceOpen = false;
@@ -75,9 +79,10 @@ export class MasterProducts implements AfterViewInit {
         updatedAt: new Date().toISOString(),
         barcode: '', qrCode: ''
       },
-      images: [], thumbnail: ''
-    };
-  }
+      images: [],
+      thumbnail: ''
+      };
+      }
 
   addProduct(): void {
     this.isEditMode = false;
@@ -91,11 +96,15 @@ export class MasterProducts implements AfterViewInit {
 
   saveProduct(): void {
     if (this.isEditMode) {
-      this.productService.updateProduct(this.currentProduct.id, this.currentProduct);
+      this.productService.updateProduct(this.currentProduct.id, this.currentProduct).subscribe(() => {
+        this.resetForm();
+        // Trigger refresh in products child if needed
+      });
     } else {
-      this.productService.createProduct(this.currentProduct);
+      this.productService.createProduct(this.currentProduct).subscribe(() => {
+        this.resetForm();
+      });
     }
-    this.resetForm();
   }
 
   cancelEdit(): void {
@@ -104,7 +113,9 @@ export class MasterProducts implements AfterViewInit {
 
   deleteProduct(id: number): void {
     if (confirm('Are you sure you want to delete this product?')) {
-      this.productService.deleteProduct(id);
+      this.productService.deleteProduct(id).subscribe(() => {
+        // Trigger refresh
+      });
     }
   }
 

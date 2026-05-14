@@ -1,4 +1,3 @@
-
 using LoginAndRegister.AppContext;
 using LoginAndRegister.Models;
 using Microsoft.AspNetCore.Identity;
@@ -18,41 +17,26 @@ namespace LoginAndRegister
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            //builder.Services.AddSwaggerGen();
 
             // Add DbContext
             builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            // Add Identity
-            //builder.Services.AddIdentity<AppUser, IdentityRole>()
-            //.AddEntityFrameworkStores<AppDbContext>()
-            //.AddDefaultTokenProviders();
-
             #region Email Confirmation
-            // 1.  ›⁄Ì· ‰Ÿ«„ «· Êﬂ‰“ ›Ì «·‹ Identity
             builder.Services.AddIdentity<AppUser, IdentityRole>(options => {
-                // 1.  ›⁄Ì· ÷—Ê—…  √ﬂÌœ «·≈Ì„Ì· ··œŒÊ·
                 options.SignIn.RequireConfirmedEmail = true;
-
-                // 2. «·”ÿ— œÂ ÂÊ «·Õ· ·„‰⁄  ﬂ—«— «·≈Ì„Ì· ›Ì «·œ« «»Ì“
                 options.User.RequireUniqueEmail = true;
-
-                // 3.  ≈⁄œ«œ«  «·»«”Ê—œ 
                 options.Password.RequireDigit = true;
                 options.Password.RequiredLength = 6;
-                options.Password.RequireNonAlphanumeric = false; // „‘ ÂÌÃ»—ﬂ ⁄·Ï —„Ê“ ’⁄»…
-                options.Password.RequireUppercase = false; // „‘ ÂÌÃ»—ﬂ ⁄·Ï Õ—Ê› ﬂ»Ì—…
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
             })
             .AddEntityFrameworkStores<AppDbContext>()
-            .AddDefaultTokenProviders(); 
+            .AddDefaultTokenProviders();
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
-
             #endregion
 
             #region JWT Authentication
@@ -60,26 +44,24 @@ namespace LoginAndRegister
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })  
-               .AddJwtBearer(options =>
+            })
+            .AddJwtBearer(options =>
             {
-               options.TokenValidationParameters = new TokenValidationParameters
-            {
-                 ValidateIssuer = true,
-                 ValidateAudience = true,
-                 ValidateLifetime = true,
-                 ValidateIssuerSigningKey = true,
-
-         ValidIssuer = builder.Configuration["Jwt:Issuer"],
-         ValidAudience = builder.Configuration["Jwt:Audience"],
-
-         IssuerSigningKey = new SymmetricSecurityKey(
-             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-            };
- });
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                };
+            });
             #endregion
 
-            #region Swagar 
+            #region Swagger
             builder.Services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
@@ -95,26 +77,36 @@ namespace LoginAndRegister
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-
                     Description = "Enter JWT Token like this: Bearer your_token"
                 });
 
                 options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-    {
-        {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-            {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
                 {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
-    });
+                    {
+                        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                        {
+                            Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                            {
+                                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] {}
+                    }
+                });
             });
+            #endregion
 
+            #region CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngular", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
             #endregion
 
             var app = builder.Build();
@@ -127,6 +119,7 @@ namespace LoginAndRegister
             }
 
             app.UseHttpsRedirection();
+            app.UseCors("AllowAngular");        // ‚Üê CORS must be before Auth
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseStaticFiles();
@@ -138,8 +131,8 @@ namespace LoginAndRegister
             {
                 var services = scope.ServiceProvider;
                 var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-                var userManager = services.GetRequiredService<UserManager<AppUser>>(); // ÷Ì›‰« «·‹ UserManager
-                // 1. ≈‰‘«¡ «·√œÊ«— ·Ê „‘ „ÊÃÊœ…
+                var userManager = services.GetRequiredService<UserManager<AppUser>>();
+
                 string[] roleNames = { "Admin", "Customer", "Seller" };
                 foreach (var roleName in roleNames)
                 {
@@ -148,7 +141,7 @@ namespace LoginAndRegister
                         await roleManager.CreateAsync(new IdentityRole(roleName));
                     }
                 }
-                // 2. ≈‰‘«¡ ÌÊ“— √œ„‰ «› —«÷Ì 
+
                 var adminEmail = "admin@ecommerce.com";
                 var adminUser = await userManager.FindByEmailAsync(adminEmail);
                 if (adminUser == null)
@@ -156,36 +149,36 @@ namespace LoginAndRegister
                     var newAdmin = new AppUser
                     {
                         UserName = "SuperAdmin",
+                        FirstName = "Admin",
+                        LastName = "User",
                         Email = adminEmail,
                         EmailConfirmed = true,
                         Address = "Main Admin Office",
-                        City = "Cairo", 
+                        City = "Cairo",
                         PhoneNumber = "0123456789"
                     };
-                    // »‰ﬂ—Ì  «·ÌÊ“— Ê»‰œÌ·Â »«”Ê—œ ﬁÊÌ
                     var createAdminResult = await userManager.CreateAsync(newAdmin, "Admin@123");
                     if (createAdminResult.Succeeded)
                     {
-                        // »‰—»ÿ «·ÌÊ“— œÂ »œÊ— «·‹ Admin
                         await userManager.AddToRoleAsync(newAdmin, "Admin");
                     }
                 }
             }
             #endregion
 
-            #region Adding Dummy Data if there is no acual data
+            #region Adding Dummy Data if there is no actual data
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<AppDbContext>();
-                var userManager = services.GetRequiredService<UserManager<AppUser>>(); 
+                var userManager = services.GetRequiredService<UserManager<AppUser>>();
                 try
                 {
                     await StoreContextSeed.SeedAsync(context, userManager);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message); // ⁄‘«‰ ·Ê Õ’· «Ì—Ê— ÌŸÂ— Â‰«
+                    Console.WriteLine(ex.Message);
                 }
             }
             #endregion

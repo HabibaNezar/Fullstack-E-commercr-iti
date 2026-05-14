@@ -22,7 +22,7 @@ import { Subscription } from 'rxjs';
 export class Products implements OnInit, OnDestroy {  // ✅ Added interfaces
 
   @Input() selectedCategory: string = 'All';
-  @Input() maxPrice: number = 1000;
+  @Input() maxPrice: number = 100000;
   @Input() searchQuery: string = '';       
 
 
@@ -40,36 +40,43 @@ export class Products implements OnInit, OnDestroy {  // ✅ Added interfaces
     private wishlistService: WishlistService,
     private router: Router,
     private cdr: ChangeDetectorRef // 👈 needed for async updates
-  ) {
-    this.products = this.productService.getProducts(); 
-  }
+  ) { }
 
   ngOnInit(): void {
-    // 🔗 Listen for user/wishlist changes globally
-    this.userSub = this.authService.currentUser$.subscribe(() => {
-      this.cdr.detectChanges(); // Re-render hearts if wishlist changes elsewhere
-    });
-  }
-
+  this.productService.getProducts().subscribe({
+    next: (products) => {
+      console.log('Products from API:', products);  // ← add this
+      console.log('Products count:', products.length);  // ← and this
+      this.products = products;
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error('Failed to load products:', err);  // ← this will show if API call fails
+    }
+  });
+}
   ngOnDestroy(): void {
     if (this.userSub) this.userSub.unsubscribe();
   }
 
 
   get filteredProducts(): IProduct[] {
-    const query = this.searchQuery.trim().toLowerCase();
-    return this.products.filter(p => {
-      const matchesCategory =
-        this.selectedCategory === 'All' || p.category === this.selectedCategory;
-      const matchesPrice = p.price <= this.maxPrice;
-      const matchesSearch =
-        query === '' ||
-        p.title.toLowerCase().includes(query) ||
-        p.brand?.toLowerCase().includes(query) ||
-        p.category.toLowerCase().includes(query);
-      return matchesCategory && matchesPrice && matchesSearch;
-    });
-  }
+  const query = this.searchQuery.trim().toLowerCase();
+  return this.products.filter(p => {
+    const matchesCategory =
+      this.selectedCategory === 'All' || p.category === this.selectedCategory;
+    const matchesPrice = p.price <= this.maxPrice;
+    const matchesSearch =
+      query === '' ||
+      p.title.toLowerCase().includes(query) ||
+      p.category.toLowerCase().includes(query);
+
+    // ← add this temporarily
+    console.log(`${p.title} | category: ${matchesCategory} | price: ${matchesPrice} | search: ${matchesSearch} | maxPrice: ${this.maxPrice} | selectedCategory: ${this.selectedCategory}`);
+
+    return matchesCategory && matchesPrice && matchesSearch;
+  });
+}
   // ✅ Getter for inStockCount based on filtered result
   get inStockCount(): number {
     return this.filteredProducts.filter(p => p.stock > 0).length;

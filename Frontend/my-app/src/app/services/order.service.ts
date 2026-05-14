@@ -2,22 +2,27 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IOrder } from '../models/iorder';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
-  private apiUrl = 'http://localhost:3001/orders';
+  private apiUrl = `${environment.apiUrl}/api/Orders`;
 
   constructor(private http: HttpClient) {}
 
   getOrdersByUserId(userId: any): Observable<IOrder[]> {
-    return this.http.get<IOrder[]>(`${this.apiUrl}?userId=${userId}`);
+    // Backend uses the token to identify the user
+    return this.http.get<IOrder[]>(`${this.apiUrl}/My-Orders`);
   }
 
-  createOrder(order: IOrder): Observable<IOrder> {
-    return this.http.post<IOrder>(this.apiUrl, order);
+  createOrder(orderData: any): Observable<any> {
+    const shippingAddress = orderData.shippingAddress || 'Default Address';
+    return this.http.post<any>(`${this.apiUrl}/CheckOut?shippingAddress=${encodeURIComponent(shippingAddress)}`, {});
   }
 
-  updateOrderStatus(orderId: any, status: string): Observable<IOrder> {
-    return this.http.patch<IOrder>(`${this.apiUrl}/${orderId}`, { status });
+  updateOrderStatus(orderId: any, status: string): Observable<any> {
+    // AdminController handles this: [HttpPut("UpdateOrderStatus/{id}")]
+    return this.http.put<any>(`${environment.apiUrl}/api/Admin/UpdateOrderStatus/${orderId}`, status);
   }
 }
+

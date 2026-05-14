@@ -16,7 +16,9 @@ export class Register implements OnInit {
   showPass      = false;
   showConfirm   = false;
   isLoading     = false;
+  isSuccess     = false;
   errorMsg      = '';
+  successMsg    = '';
 
   strengthWidth = '0%';
   strengthColor = '#e0e0e0';
@@ -42,6 +44,15 @@ export class Register implements OnInit {
         Validators.required,
         Validators.email,
       ]),
+      address: new FormControl('', [
+        Validators.required,
+      ]),
+      phoneNumber: new FormControl('', [
+        Validators.required,
+      ]),
+      city: new FormControl('', [
+        Validators.required,
+      ]),
       role: new FormControl('', [
         Validators.required,
       ]),
@@ -63,6 +74,7 @@ export class Register implements OnInit {
       this.checkStrength(val);
     });
   }
+
 
   passwordMatchValidator(form: AbstractControl): ValidationErrors | null {
     const pass    = form.get('password')?.value;
@@ -110,13 +122,16 @@ export class Register implements OnInit {
     this.isLoading = true;
     this.errorMsg  = '';
 
-    const { firstName, lastName, email, password, role } = this.registerForm.value;
-    const newUser: IUser = { 
+    const { firstName, lastName, email, password, role, address, phoneNumber, city } = this.registerForm.value;
+    const newUser: any = { 
       firstName, 
       lastName, 
       email, 
       password, 
       role,
+      address,
+      phoneNumber,
+      city,
       wishlist: [],
       paymentDetails: {
         cardNumber: '',
@@ -127,17 +142,18 @@ export class Register implements OnInit {
     };
 
     this.authService.register(newUser,
-      () => {
-        // 👇 on error — re-enable button
+      (msg: string) => {
         this.isLoading = false;
-        this.cdr.detectChanges(); // 👈 force update
+        this.isSuccess = true;
+        this.successMsg = msg || 'Registration successful! Please check your email to confirm your account.';
+        this.cdr.detectChanges();
       },
       (errMsg: string) => {
-        // 👇 on error message — show it
-        this.errorMsg  = errMsg;
+        this.errorMsg = errMsg;
         this.isLoading = false;
-        this.cdr.detectChanges(); // 👈 force update
+        this.cdr.detectChanges();
       }
     );
+
   }
 }

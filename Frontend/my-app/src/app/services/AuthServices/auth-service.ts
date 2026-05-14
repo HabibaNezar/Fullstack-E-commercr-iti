@@ -4,18 +4,16 @@ import { LoginService } from './login';
 import { RegisterService } from './register';
 import { LogoutService } from './logout';
 import { IUser } from '../../models/iuser';
-import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  // 👇 broadcasts the current user to anyone listening
   private currentUserSubject = new BehaviorSubject<IUser | null>(
-    this.getCurrentUser() // initialize with whatever is in localStorage
+    this.getCurrentUser()
   );
 
   currentUser$ = this.currentUserSubject.asObservable();
-
 
   constructor(
     private loginService: LoginService,
@@ -24,70 +22,80 @@ export class AuthService {
     private router: Router
   ) {}
 
-login(email: string, password: string, onError?: (msg: string) => void): void {
-  this.loginService.login(email, password).subscribe({
-    next: (user) => {
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      this.currentUserSubject.next(user);
-      this.router.navigate(['/home']);
-    },
-    error: (err) => {
-      // 👇 Different message based on error code
-      if (err.message === 'NO_ACCOUNT') {
-        onError?.('No account found with this email. Please register first.');
-      } else if (err.message === 'WRONG_PASSWORD') {
-        onError?.('Wrong password. Please try again.');
-      } else {
-        onError?.('Login failed. Please try again.');
+  login(email: string, password: string, onError?: (msg: string) => void): void {
+    this.loginService.login(email, password).subscribe({
+      next: (response) => {
+        // Map backend response to IUser
+        const user: IUser = {
+          firstName: response.firstName,
+          lastName: response.lastName,
+          email: email, // Email isn't returned by login API, but we have it
+          password: '', // Don't store password
+          role: response.roles && response.roles.length > 0 ? response.roles[0] : 'Customer'
+        };
+        
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        this.currentUserSubject.next(user);
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        if (err.status === 401) {
+          onError?.('Invalid email or password.');
+        } else if (err.error && typeof err.error === 'string') {
+          onError?.(err.error);
+        } else {
+          onError?.('Login failed. Please try again.');
+        }
       }
-    }
-  });
-}
-  
+    });
+  }
 
-  register(user: IUser, onError?: () => void, onErrorMsg?: (msg: string) => void): void {
-  this.registerService.register(user).subscribe({
-    next: (newUser) => {
-      localStorage.setItem('currentUser', JSON.stringify(newUser));
-      this.currentUserSubject.next(newUser);
-      this.router.navigate(['/home']);
-    },
-    error: (err) => {
-      // 👇 Show different message based on error code
-      if (err.message === 'ACCOUNT_EXISTS') {
-        onErrorMsg?.('This email is already registered. Please login instead.');
-      } else {
-        onErrorMsg?.('Registration failed. Please try again.');
+  register(user: IUser, onSuccess?: (msg: string) => void, onErrorMsg?: (msg: string) => void): void {
+    this.registerService.register(user).subscribe({
+      next: (response) => {
+        // Backend returns a success message as a string
+        onSuccess?.(typeof response === 'string' ? response : 'Registration successful! Please check your email.');
+      },
+      error: (err) => {
+        if (err.error && typeof err.error === 'string') {
+          onErrorMsg?.(err.error);
+        } else if (err.error && err.error.errors) {
+          // Handle ModelState errors from ASP.NET Core
+          const messages = Object.values(err.error.errors).flat().join(' ');
+          onErrorMsg?.(messages || 'Registration failed.');
+        } else {
+          onErrorMsg?.('Registration failed. Please try again.');
+        }
       }
-      onError?.();
-    }
-  });
-}
+    });
+  }
 
-  // 🚪 Logout: clear storage → go to login
   logout(): void {
     this.logoutService.logout();
+    localStorage.removeItem('token');
+    this.currentUserSubject.next(null);
     this.router.navigate(['/login']);
   }
 
-  // ✅ Is the user logged in?
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('currentUser');
+    return !!localStorage.getItem('token');
   }
 
-  // 👤 Get the current user object
   getCurrentUser(): IUser | null {
     const user = localStorage.getItem('currentUser');
     return user ? JSON.parse(user) : null;
   }
 
-  // 🔄 Update the current user
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
   updateCurrentUser(user: IUser): void {
     localStorage.setItem('currentUser', JSON.stringify(user));
     this.currentUserSubject.next(user);
   }
 
-  // 🛡️ Is the user an admin?
   isAdmin(): boolean {
     const user = this.getCurrentUser();
     return user?.role?.toLowerCase() === 'admin';

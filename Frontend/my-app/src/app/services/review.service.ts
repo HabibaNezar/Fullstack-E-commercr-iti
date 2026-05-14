@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IReview } from '../models/ireview';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ReviewService {
-  private apiUrl = 'http://localhost:3001/reviews';
+  private apiUrl = `${environment.apiUrl}/api/Reviews`;
 
   constructor(private http: HttpClient) {}
 
@@ -25,3 +26,4 @@ export class ReviewService {
     return this.http.delete<void>(`${this.apiUrl}/${reviewId}`);
   }
 }
+

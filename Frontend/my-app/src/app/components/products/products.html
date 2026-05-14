@@ -3,7 +3,7 @@
     @for (p of filteredProducts; track p.id) {
       <div class="product-card" [class.out-of-stock]="p.stock === 0">
         <!-- Image -->
-        <div class="card-image-wrapper" [routerLink]="['/products', p.id]" style="cursor: pointer;">
+        <div class="card-image-wrapper" [routerLink]="['/products', p.id]" style="cursor: pointer">
           <img
             [src]="p.images[0]"
             [alt]="p.title"
@@ -17,8 +17,8 @@
           <span class="card-category-tag">{{ p.category }}</span>
 
           <!-- Wishlist Heart Icon (Stop propagation to prevent navigating to details) -->
-          <button 
-            class="btn-favorite" 
+          <button
+            class="btn-favorite"
             [class.is-favorite]="isInWishlist(p.id)"
             (click)="toggleWishlist(p.id); $event.stopPropagation()"
             [attr.aria-label]="isInWishlist(p.id) ? 'Remove from wishlist' : 'Add to wishlist'"
@@ -29,7 +29,14 @@
 
         <!-- Content -->
         <div class="card-content">
-          <h3 class="card-title" [appHighLight]="true" [routerLink]="['/products', p.id]" style="cursor: pointer;">{{ p.title }}</h3>
+          <h3
+            class="card-title"
+            [appHighLight]="true"
+            [routerLink]="['/products', p.id]"
+            style="cursor: pointer"
+          >
+            {{ p.title }}
+          </h3>
           <p class="card-description">{{ p.description | truncateWords }}</p>
 
           <!-- Admin actions -->

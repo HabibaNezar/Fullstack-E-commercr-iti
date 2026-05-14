@@ -12,7 +12,9 @@ export class Category {
   allCategories: string[] = [];
   constructor(private productService: ProductService) {}
   ngOnInit() {
-    this.allCategories = this.productService.getCategories().map(c => c.name);
+    this.productService.getCategories().subscribe((categories) => {
+      this.allCategories = categories.map((c) => c.name);
+    });
   }
 
 }
