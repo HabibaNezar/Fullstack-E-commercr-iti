@@ -43,8 +43,8 @@
             <h3 class="card-title" [appHighLight]="true">{{ p.name }}</h3>
             <p class="card-description">{{ p.description | truncateWords }}</p>
 
-            <!-- Admin actions -->
-            @if (isAdmin()) {
+            <!-- Admin/Seller actions -->
+            @if (canManageProducts()) {
               <div class="card-actions">
                 <button class="btn-edit" (click)="onEdit(p)">
                   <i class="ti ti-edit" aria-hidden="true"></i> Edit

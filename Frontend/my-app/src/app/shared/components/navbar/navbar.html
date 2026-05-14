@@ -79,6 +79,16 @@
         </svg>
       </a>
 
+      <!-- SELLER -->
+      @if (authService.isSeller()) {
+        <div class="nav-divider"></div>
+        <div class="admin-links">
+          <a routerLink="/seller/dashboard" routerLinkActive="active">📊 Seller Dashboard</a>
+          <a routerLink="/seller/products" routerLinkActive="active">📦 Products</a>
+          <a routerLink="/seller/orders" routerLinkActive="active">📋 Orders</a>
+        </div>
+      }
+
       <!-- ADMIN -->
       @if (authService.isAdmin()) {
         <div class="nav-divider"></div>

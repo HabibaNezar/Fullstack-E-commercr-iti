@@ -162,6 +162,15 @@ export class Products implements OnInit, OnChanges {
   isAdmin(): boolean {
     return this.authService.isAdmin();
   }
+
+  isSeller(): boolean {
+    return this.authService.isSeller();
+  }
+
+  canManageProducts(): boolean {
+    return this.isAdmin() || this.isSeller();
+  }
+
   isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
   }

@@ -1,0 +1,63 @@
+<div class="seller-dashboard">
+  <h1 class="dashboard-title">Seller Dashboard</h1>
+ 
+  @if (loading()) {
+    <p class="loading-text">Loading statistics...</p>
+  } @else {
+    <div class="stats-grid">
+      <div class="stat-card">
+        <p class="stat-label">Products</p>
+        <p class="stat-value">{{ productCount() }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Orders</p>
+        <p class="stat-value">{{ orderCount() }}</p>
+      </div>
+      <div class="stat-card stat-card-warning">
+        <p class="stat-label">Low Stock</p>
+        <p class="stat-value">{{ lowStockCount() }}</p>
+      </div>
+      @if (totalRevenue() != null) {
+        <div class="stat-card stat-card-accent">
+          <p class="stat-label">Total Revenue</p>
+          <p class="stat-value">{{ totalRevenue() | currency }}</p>
+        </div>
+      }
+    </div>
+ 
+    <div class="dashboard-sections">
+      <section class="dashboard-section">
+        <h2>Low Stock Products</h2>
+        @if (lowStockProducts().length === 0) {
+          <p class="empty-state">No low stock products</p>
+        } @else {
+          <div class="product-list">
+            @for (product of lowStockProducts(); track product.name) {
+              <div class="product-item">
+                <span class="product-name">{{ product.name }}</span>
+                <span class="product-stock">{{ product.stockQuantity }} left</span>
+              </div>
+            }
+          </div>
+        }
+      </section>
+ 
+      <section class="dashboard-section">
+        <h2>Top Selling Products</h2>
+        @if (topSellingProducts().length === 0) {
+          <p class="empty-state">No sales data yet</p>
+        } @else {
+          <div class="product-list">
+            @for (product of topSellingProducts(); track product.productName) {
+              <div class="product-item">
+                <span class="product-name">{{ product.productName }}</span>
+                <span class="product-sales">{{ product.totalSold }} sold</span>
+                <span class="product-revenue">{{ product.totalRevenue | currency }}</span>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    </div>
+  }
+</div>

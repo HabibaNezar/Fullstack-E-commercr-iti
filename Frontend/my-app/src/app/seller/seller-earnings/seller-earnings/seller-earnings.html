@@ -1,0 +1,31 @@
+<div class="seller-earnings">
+  <h1 class="earnings-title">Earnings</h1>
+  
+  @if (loading()) {
+    <p class="loading-text">Loading earnings data...</p>
+  } @else {
+    <div class="earnings-grid">
+      <div class="earnings-card earnings-card-primary">
+        <p class="earnings-label">Total Revenue</p>
+        <p class="earnings-value">{{ totalRevenue() | currency }}</p>
+      </div>
+      <div class="earnings-card">
+        <p class="earnings-label">Monthly Revenue</p>
+        <p class="earnings-value">{{ monthlyRevenue() | currency }}</p>
+      </div>
+      <div class="earnings-card earnings-card-warning">
+        <p class="earnings-label">Pending Payouts</p>
+        <p class="earnings-value">{{ pendingPayouts() | currency }}</p>
+      </div>
+      <div class="earnings-card earnings-card-success">
+        <p class="earnings-label">Completed Payouts</p>
+        <p class="earnings-value">{{ completedPayouts() | currency }}</p>
+      </div>
+    </div>
+
+    <div class="earnings-details">
+      <h2>Earnings History</h2>
+      <p class="empty-state">Earnings history will be displayed here</p>
+    </div>
+  }
+</div>

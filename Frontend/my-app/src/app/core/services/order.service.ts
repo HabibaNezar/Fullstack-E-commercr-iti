@@ -9,11 +9,13 @@ import { IProduct } from '../../models/iproduct';
 import { OrderNotificationService } from './order-notification.service';
 import { ProductService } from './product.service';
 
+export type PaymentMethod = 'cash' | 'card';
+
 export interface PlaceOrderMeta {
   address: string;
   city: string;
   phone: string;
-  paymentMethod: 'cash' | 'card';
+  paymentMethod: PaymentMethod;
   userName: string;
   cartLineTotal: number;
   cartItems: {
@@ -230,7 +232,7 @@ export class OrderService {
       if (key === 'ADDR') out.address = val;
       else if (key === 'CITY') out.city = val;
       else if (key === 'PHONE') out.phone = val;
-      else if (key === 'PAY') out.paymentMethod = val as 'cash' | 'card';
+      else if (key === 'PAY') out.paymentMethod = val as PaymentMethod;
     });
     return out;
   }
@@ -312,7 +314,7 @@ export class OrderService {
       address: parsed.address ?? meta?.address,
       city: parsed.city ?? meta?.city,
       phone: parsed.phone ?? meta?.phone,
-      paymentMethod: (parsed.paymentMethod as 'cash' | 'card') ?? meta?.paymentMethod,
+      paymentMethod: parsed.paymentMethod ?? meta?.paymentMethod,
     };
   }
 

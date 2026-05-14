@@ -111,7 +111,7 @@
   <!-- ── TOOLBAR ── -->
   <div class="toolbar">
     <div class="toolbar-left">
-      @if (isAdmin()) {
+      @if (canManageProducts()) {
         <button class="add-product-btn" (click)="addProduct()">
           <i class="ti ti-plus" aria-hidden="true"></i> Add Product
         </button>

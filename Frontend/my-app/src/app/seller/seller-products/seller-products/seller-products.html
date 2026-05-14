@@ -1,0 +1,101 @@
+<div class="seller-products">
+  <div class="products-header">
+    <h1>My Products</h1>
+    <button class="btn-add" (click)="addProduct()">
+      <i class="ti ti-plus"></i> Add Product
+    </button>
+  </div>
+
+  <div class="search-bar">
+    <input
+      type="text"
+      placeholder="Search products..."
+      [(ngModel)]="searchQuery"
+      class="search-input"
+    />
+  </div>
+
+  @if (loading()) {
+    <p class="loading-text">Loading products...</p>
+  } @else if (filteredProducts.length === 0) {
+    <p class="empty-state">No products found</p>
+  } @else {
+    <div class="products-grid">
+      @for (product of filteredProducts; track product.id) {
+        <div class="product-card">
+          <div class="product-image">
+            @if (product.image) {
+              <img [src]="product.image" [alt]="product.name" />
+            } @else {
+              <div class="image-placeholder">No image</div>
+            }
+          </div>
+          <div class="product-info">
+            <h3 class="product-name">{{ product.name }}</h3>
+            <p class="product-description">{{ product.description }}</p>
+            <p class="product-price">${{ product.price }}</p>
+            <p class="product-stock">Stock: {{ product.stockQuantity }}</p>
+          </div>
+          <div class="product-actions">
+            <button class="btn-edit" (click)="editProduct(product)">
+              <i class="ti ti-edit"></i> Edit
+            </button>
+            <button class="btn-delete" (click)="deleteProduct(product.id)">
+              <i class="ti ti-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (showForm()) {
+    <div class="modal-overlay" (click)="cancelEdit()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <h2>{{ isEditMode() ? 'Edit Product' : 'Add New Product' }}</h2>
+        <form>
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" [(ngModel)]="currentProduct.name" name="name" required />
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea [(ngModel)]="currentProduct.description" name="description"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Price</label>
+            <input type="number" [(ngModel)]="currentProduct.price" name="price" required />
+          </div>
+          <div class="form-group">
+            <label>Stock Quantity</label>
+            <input type="number" [(ngModel)]="currentProduct.stockQuantity" name="stockQuantity" />
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select [(ngModel)]="currentProduct.categoryId" name="categoryId">
+              <option value="">Select category</option>
+              @for (cat of categories(); track cat.id) {
+                <option [value]="cat.id">{{ cat.name }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Image</label>
+            <input type="file" (change)="onImageSelected($event)" accept="image/*" />
+          </div>
+          @if (saveError()) {
+            <p class="error-message">{{ saveError() }}</p>
+          }
+          <div class="form-actions">
+            <button type="button" class="btn-save" (click)="saveProduct()" [disabled]="saving()">
+              {{ saving() ? 'Saving...' : 'Save' }}
+            </button>
+            <button type="button" class="btn-cancel" (click)="cancelEdit()" [disabled]="saving()">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

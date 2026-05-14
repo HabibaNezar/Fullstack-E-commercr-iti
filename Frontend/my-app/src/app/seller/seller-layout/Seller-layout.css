@@ -1,0 +1,28 @@
+.seller-layout {
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
+.seller-header {
+  background: white;
+  padding: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.seller-header h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+}
+
+.seller-header p {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.seller-content {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}

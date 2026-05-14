@@ -11,7 +11,7 @@ import { Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize, catchError, EMPTY } from 'rxjs';
 import { CartService } from '../../../core/services/cart.service';
-import { OrderService } from '../../../core/services/order.service';
+import { OrderService, PaymentMethod } from '../../../core/services/order.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { AdminCmsService } from '../../../admin/services/admin-cms.service';
 import { PromoCode } from '../../../models/admin-promo';
@@ -27,6 +27,9 @@ export class Checkout implements OnInit {
   form!: FormGroup;
   submitting = false;
   error = '';
+
+  isGuest = false;
+  guestForm!: FormGroup;
 
   promoInput = signal('');
   promoError = signal('');
@@ -55,6 +58,8 @@ export class Checkout implements OnInit {
       return;
     }
 
+    this.isGuest = !this.authService.isLoggedIn();
+
     this.form = new FormGroup({
       address: new FormControl('', [Validators.required, Validators.minLength(10)]),
       city: new FormControl('', Validators.required),
@@ -62,7 +67,13 @@ export class Checkout implements OnInit {
         Validators.required,
         Validators.pattern(/^(010|011|012|015)\d{8}$/),
       ]),
-      paymentMethod: new FormControl<'cash' | 'card'>('cash', Validators.required),
+      paymentMethod: new FormControl<PaymentMethod>('cash', Validators.required),
+    });
+
+    this.guestForm = new FormGroup({
+      firstName: new FormControl('', [Validators.required, Validators.minLength(2)]),
+      lastName: new FormControl('', [Validators.required]),
+      email: new FormControl('', [Validators.required, Validators.email]),
     });
   }
 
@@ -116,10 +127,20 @@ export class Checkout implements OnInit {
 
   placeOrder(): void {
     this.form.markAllAsTouched();
+    if (this.isGuest) {
+      this.guestForm.markAllAsTouched();
+      if (this.guestForm.invalid) return;
+    }
     if (this.form.invalid || this.submitting) return;
 
     const user = this.authService.getCurrentUser();
-    if (!user) {
+    let userName = '';
+
+    if (user) {
+      userName = `${user.firstName} ${user.lastName}`.trim();
+    } else if (this.isGuest) {
+      userName = `${this.guestForm.value.firstName} ${this.guestForm.value.lastName}`.trim();
+    } else {
       this.router.navigate(['/login']);
       return;
     }
@@ -131,8 +152,8 @@ export class Checkout implements OnInit {
       address: this.f['address'].value.trim(),
       city: this.f['city'].value.trim(),
       phone: this.f['phone'].value.trim(),
-      paymentMethod: this.f['paymentMethod'].value as 'cash' | 'card',
-      userName: `${user.firstName} ${user.lastName}`.trim(),
+      paymentMethod: this.f['paymentMethod'].value as PaymentMethod,
+      userName,
       cartLineTotal: this.grandTotal(),
       cartItems: this.cartItems.map((i) => ({
         id: i.id,
