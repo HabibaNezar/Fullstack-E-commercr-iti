@@ -24,6 +24,8 @@ export class AdminDataTableComponent {
   readonly rowSource = input.required<Record<string, unknown>[]>();
   readonly searchKeys = input<string[]>([]);
   readonly pageSizeOptions = input<number[]>([5, 10, 25, 50]);
+  /** Optional function that returns a CSS class string for a row */
+  readonly rowClassFn = input<((row: Record<string, unknown>) => string) | null>(null);
 
   readonly actionsTpl = contentChild<TemplateRef<{ $implicit: Record<string, unknown> }>>(
     'actions'
@@ -53,11 +55,9 @@ export class AdminDataTableComponent {
   });
 
   readonly total = computed(() => this.filtered().length);
-
   readonly pagedRows = computed(() =>
     applyClientPaging(this.filtered(), this.pageIndex(), this.pageSize())
   );
-
   readonly totalPages = computed(() =>
     Math.max(1, Math.ceil(this.total() / Math.max(1, this.pageSize())))
   );
@@ -74,16 +74,7 @@ export class AdminDataTableComponent {
     return id != null ? String(id) : JSON.stringify(row);
   }
 
-  prev(): void {
-    this.pageIndex.update((p) => Math.max(0, p - 1));
-  }
-
-  next(): void {
-    this.pageIndex.update((p) => Math.min(this.totalPages() - 1, p + 1));
-  }
-
-  setPageSize(n: number): void {
-    this.pageSize.set(n);
-    this.pageIndex.set(0);
-  }
+  prev(): void { this.pageIndex.update((p) => Math.max(0, p - 1)); }
+  next(): void { this.pageIndex.update((p) => Math.min(this.totalPages() - 1, p + 1)); }
+  setPageSize(n: number): void { this.pageSize.set(n); this.pageIndex.set(0); }
 }

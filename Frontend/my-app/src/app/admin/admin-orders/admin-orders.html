@@ -1,10 +1,11 @@
 <div class="adm-page">
   <h1 class="adm-page-title">Orders &amp; shipping</h1>
   <p class="adm-page-sub">Update fulfillment status; shipping columns show parsed address when available.</p>
-  <app-admin-data-table [columns]="cols" [rowSource]="rows()" [searchKeys]="['id', 'userName', 'status', 'shipLine']">
+  <app-admin-data-table [columns]="cols" [rowSource]="rows()" [searchKeys]="['id', 'userName', 'status', 'shipLine']" [rowClassFn]="rowClass">
     <ng-template #actions let-row>
       <select
         class="adm-select"
+        [class]="'adm-select status-' + row['status']"
         [ngModel]="row['status']"
         (ngModelChange)="changeStatus(row, $event)"
       >
