@@ -1,0 +1,13 @@
+## Visual Studio Temp Files
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.dbmdl
+*.jfm
+
+## OS Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini

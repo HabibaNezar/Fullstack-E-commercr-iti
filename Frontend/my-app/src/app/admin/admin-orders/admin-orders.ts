@@ -1,9 +1,9 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { OrderService } from '../../services/order.service';
+import { OrderService } from '../../core/services/order.service';
 import { OrderStatus } from '../../models/iorder';
-import { AdminDataTableComponent } from '../shared/admin-data-table/admin-data-table';
+import { AdminDataTableComponent } from '../shared/admin-data-table/admin-data-table/admin-data-table';
 
 @Component({
   selector: 'app-admin-orders',
@@ -39,9 +39,9 @@ export class AdminOrders implements OnInit {
       this.rows.set(
         sorted.map((o) => ({
           ...o,
-          total: o.total ?? o.totalPrice ?? 0,
+          total: o.totalPrice ?? 0,
           shipLine: [o.address, o.city, o.phone].filter(Boolean).join(' · ') || o.shippingAddress || '',
-          dateLine: String(o.createdAt ?? o.orderDate ?? ''),
+          dateLine: String(o.orderDate ?? ''),
         })) as unknown as Record<string, unknown>[]
       );
     });
@@ -56,13 +56,13 @@ export class AdminOrders implements OnInit {
         list.map((r) =>
           r['id'] === id
             ? ({
-                ...r,
-                status: updated.status,
-                shipLine: [updated.address, updated.city, updated.phone]
-                  .filter(Boolean)
-                  .join(' · ') || updated.shippingAddress || r['shipLine'],
-                dateLine: String(updated.createdAt ?? updated.orderDate ?? r['dateLine']),
-              } as Record<string, unknown>)
+              ...r,
+              status: updated.status,
+              shipLine: [updated.address, updated.city, updated.phone]
+                .filter(Boolean)
+                .join(' · ') || updated.shippingAddress || r['shipLine'],
+              dateLine: String(updated.orderDate ?? r['dateLine']),
+            } as Record<string, unknown>)
             : r
         )
       );

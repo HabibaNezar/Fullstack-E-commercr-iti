@@ -1,17 +1,17 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { UsersService } from '../../services/user.service';
+import { UsersService } from '../../shared/services/user.service';
 import { IUser } from '../../models/iuser';
 import { AdminLocalPolicyService } from '../services/admin-local-policy.service';
-import { AdminDataTableComponent } from '../shared/admin-data-table/admin-data-table';
+import { AdminDataTableComponent } from '../shared/admin-data-table/admin-data-table/admin-data-table';
 
 @Component({
   selector: 'app-admin-users',
   standalone: true,
   imports: [CommonModule, FormsModule, AdminDataTableComponent],
   templateUrl: './admin-users.html',
-  styleUrls: ['./admin-users.css', '../../components/users/users.css'],
+  styleUrls: ['./admin-users.css'],
 })
 export class AdminUsers implements OnInit {
   private usersService = inject(UsersService);

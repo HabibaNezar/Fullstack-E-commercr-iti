@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminCmsService } from '../services/admin-cms.service';
 import { PromoCode } from '../../models/admin-promo';
-import { AdminDataTableComponent } from '../shared/admin-data-table/admin-data-table';
+import { AdminDataTableComponent } from '../shared/admin-data-table/admin-data-table/admin-data-table';
 
 @Component({
   selector: 'app-admin-promos',
