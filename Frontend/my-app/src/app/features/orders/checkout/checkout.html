@@ -12,52 +12,57 @@
 
     <div class="checkout-error" *ngIf="error">⚠️ {{ error }}</div>
 
+    <!-- ✅ Guest form is OUTSIDE and SEPARATE from the main form -->
+    @if (isGuest) {
+      <div class="card checkout-form-card" style="margin-bottom: 1rem;">
+        <div class="guest-notice">
+          <p>👋 Checkout as Guest</p>
+          <a routerLink="/login" class="link">Log in for faster checkout</a>
+        </div>
+
+        <div [formGroup]="guestForm">
+          <div class="field-group">
+            <label class="field-label">First Name</label>
+            <div class="field-wrap">
+              <span class="field-icon">👤</span>
+              <input class="field-input" formControlName="firstName" placeholder="John" />
+            </div>
+            <span class="field-error" *ngIf="guestForm.get('firstName')?.invalid && guestForm.get('firstName')?.touched">
+              First name is required (min 2 characters).
+            </span>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Last Name</label>
+            <div class="field-wrap">
+              <span class="field-icon">👤</span>
+              <input class="field-input" formControlName="lastName" placeholder="Doe" />
+            </div>
+            <span class="field-error" *ngIf="guestForm.get('lastName')?.invalid && guestForm.get('lastName')?.touched">
+              Last name is required.
+            </span>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Email</label>
+            <div class="field-wrap">
+              <span class="field-icon">📧</span>
+              <input class="field-input" formControlName="email" placeholder="john@example.com" />
+            </div>
+            <span class="field-error" *ngIf="guestForm.get('email')?.invalid && guestForm.get('email')?.touched">
+              Valid email is required.
+            </span>
+          </div>
+        </div>
+      </div>
+    }
+
     <form [formGroup]="form" (ngSubmit)="placeOrder()">
       <div class="checkout-grid">
 
         <!-- ══ LEFT — Delivery Form ══ -->
         <div class="card checkout-form-card">
           <h3 class="form-section-title">📦 Delivery Details</h3>
-
-          @if (isGuest) {
-            <div class="guest-notice">
-              <p>👋 Checkout as Guest</p>
-              <a routerLink="/login" class="link">Log in for faster checkout</a>
-            </div>
-
-            <div class="field-group">
-              <label class="field-label">First Name</label>
-              <div class="field-wrap">
-                <span class="field-icon">👤</span>
-                <input class="field-input" formControlName="firstName" placeholder="John" />
-              </div>
-              <span class="field-error" *ngIf="guestForm.get('firstName')?.invalid && guestForm.get('firstName')?.touched">
-                First name is required (min 2 characters).
-              </span>
-            </div>
-
-            <div class="field-group">
-              <label class="field-label">Last Name</label>
-              <div class="field-wrap">
-                <span class="field-icon">👤</span>
-                <input class="field-input" formControlName="lastName" placeholder="Doe" />
-              </div>
-              <span class="field-error" *ngIf="guestForm.get('lastName')?.invalid && guestForm.get('lastName')?.touched">
-                Last name is required.
-              </span>
-            </div>
-
-            <div class="field-group">
-              <label class="field-label">Email</label>
-              <div class="field-wrap">
-                <span class="field-icon">📧</span>
-                <input class="field-input" formControlName="email" placeholder="john@example.com" />
-              </div>
-              <span class="field-error" *ngIf="guestForm.get('email')?.invalid && guestForm.get('email')?.touched">
-                Valid email is required.
-              </span>
-            </div>
-          }
 
           <div class="field-group">
             <label class="field-label">Street Address</label>
@@ -138,6 +143,7 @@
             <label class="field-label" for="promo-input">Promo code</label>
             @if (!appliedPromo()) {
               <div class="promo-wrap">
+                <!-- ✅ standalone: true — tells Angular this ngModel is NOT part of the formGroup -->
                 <input
                   id="promo-input"
                   class="field-input promo-input"
@@ -145,6 +151,7 @@
                   placeholder="Enter code"
                   [ngModel]="promoInput()"
                   (ngModelChange)="promoInput.set($event)"
+                  [ngModelOptions]="{ standalone: true }"
                 />
                 <button type="button" class="btn btn-outline btn-sm" (click)="applyPromo()">Apply</button>
               </div>

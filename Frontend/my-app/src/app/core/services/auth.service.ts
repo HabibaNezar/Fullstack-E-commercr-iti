@@ -27,7 +27,8 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  private apiUrl = `${environment.apiUrl}/Account`;
+  // ✅ Matches backend controller spelling exactly (single 'c' — backend typo)
+  private apiUrl = `${environment.apiUrl}/Acount`;
 
   private currentUserSubject = new BehaviorSubject<IUser | null>(this.loadUserFromStorage());
   currentUser$ = this.currentUserSubject.asObservable();
@@ -146,9 +147,6 @@ export class AuthService {
       }
     }
     if (!fromToken && !fromStorage) return null;
-    // Merge token (always fresh from JWT) with storage extras (phone/address/payment
-    // saved locally by the profile edit flow). Storage wins only if it has a non-empty value,
-    // so a stale storage record with empty email is overwritten by the live JWT claim.
     const merged: IUser = { ...(fromToken ?? ({} as IUser)), ...(fromStorage ?? {}) };
     if (fromToken) {
       merged.id = fromStorage?.id ?? fromToken.id;
