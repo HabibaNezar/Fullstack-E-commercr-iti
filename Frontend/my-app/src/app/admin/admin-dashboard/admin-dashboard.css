@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Figtree:wght@400;500;600&display=swap');
+
+.dash {
+  font-family: 'Figtree', sans-serif;
+  max-width: 1100px;
+  padding: 2.5rem 2rem 4rem;
+  background: #f5f4f0;
+  min-height: 100%;
+  box-sizing: border-box;
+  animation: dash-fade 0.35s ease both;
+}
+
+@keyframes dash-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.dash-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e8e6e0;
+}
+
+.dash-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  font-weight: 600;
+  margin: 0;
+  color: #18181b;
+  letter-spacing: -0.01em;
+}
+
+.dash-muted {
+  color: #71717a;
+  font-size: 13px;
+}
+
+/* ── Stat grid ───────────────────────────────────────────── */
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 2.5rem;
+}
+
+/* Plain white card — matches Image 1 */
+.dash-card {
+  background: #ffffff;
+  border: 1px solid #e8e6e0;
+  border-radius: 12px;
+  padding: 1.35rem 1.5rem 1.25rem;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    border-color 0.2s;
+}
+
+.dash-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+  border-color: #ccc9bf;
+}
+
+/* Revenue card — soft blue tint like Image 1 */
+.dash-card-accent {
+  background: #f4f6fb;
+  border-color: #c8d5ea;
+}
+
+.dash-card-accent .dash-label {
+  color: #4a6a94;
+}
+.dash-card-accent .dash-value {
+  color: #1c3a5e;
+}
+
+/* Stagger-in */
+.dash-card:nth-child(1) {
+  animation: dash-pop 0.4s 0.05s ease both;
+}
+.dash-card:nth-child(2) {
+  animation: dash-pop 0.4s 0.1s ease both;
+}
+.dash-card:nth-child(3) {
+  animation: dash-pop 0.4s 0.15s ease both;
+}
+.dash-card:nth-child(4) {
+  animation: dash-pop 0.4s 0.2s ease both;
+}
+.dash-card:nth-child(5) {
+  animation: dash-pop 0.4s 0.25s ease both;
+}
+
+@keyframes dash-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.dash-label {
+  font-size: 11px;
+  color: #52525b;
+  margin: 0 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.dash-value {
+  font-size: 30px;
+  font-weight: 600;
+  margin: 0;
+  color: #18181b;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+/* ── Loading skeleton ────────────────────────────────────── */
+.dash-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 2.5rem;
+}
+
+.dash-skeleton {
+  height: 96px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #eeece7 25%, #e4e2db 50%, #eeece7 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

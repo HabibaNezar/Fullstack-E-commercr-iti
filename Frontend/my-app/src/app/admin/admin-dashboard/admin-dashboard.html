@@ -1,0 +1,43 @@
+<div class="dash">
+  <div class="dash-header">
+    <h1 class="dash-title">Dashboard</h1>
+    @if (!loading()) {
+      <span class="dash-muted">Last updated just now</span>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="dash-skeleton-grid">
+      <div class="dash-skeleton"></div>
+      <div class="dash-skeleton"></div>
+      <div class="dash-skeleton"></div>
+      <div class="dash-skeleton"></div>
+      <div class="dash-skeleton"></div>
+    </div>
+  } @else {
+    <div class="dash-grid">
+      <div class="dash-card">
+        <p class="dash-label">Users</p>
+        <p class="dash-value">{{ userCount() }}</p>
+      </div>
+      <div class="dash-card">
+        <p class="dash-label">Orders</p>
+        <p class="dash-value">{{ orderCount() }}</p>
+      </div>
+      <div class="dash-card">
+        <p class="dash-label">Products</p>
+        <p class="dash-value">{{ productCount() }}</p>
+      </div>
+      <div class="dash-card">
+        <p class="dash-label">Categories</p>
+        <p class="dash-value">{{ categoryCount() }}</p>
+      </div>
+      @if (totalRevenue() != null) {
+        <div class="dash-card dash-card-accent">
+          <p class="dash-label">Total revenue</p>
+          <p class="dash-value">{{ totalRevenue() | currency }}</p>
+        </div>
+      }
+    </div>
+  }
+</div>

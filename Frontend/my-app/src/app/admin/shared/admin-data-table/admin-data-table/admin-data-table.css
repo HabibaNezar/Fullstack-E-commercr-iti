@@ -1,0 +1,192 @@
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap');
+
+/* ── Toolbar ─────────────────────────────────────────────── */
+.adm-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-family: 'Figtree', sans-serif;
+}
+
+.adm-search {
+  flex: 1;
+  min-width: 180px;
+  max-width: 360px;
+  padding: 8px 13px;
+  border: 1px solid #e8e6e0;
+  border-radius: 9px;
+  font-size: 13.5px;
+  font-family: inherit;
+  background: #ffffff;
+  color: #18181b;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+  outline: none;
+}
+
+.adm-search::placeholder {
+  color: #a1a1aa;
+}
+
+.adm-search:focus {
+  border-color: #c5d5e8;
+  box-shadow: 0 0 0 3px rgba(28, 58, 94, 0.08);
+}
+
+.adm-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.adm-label {
+  font-size: 12.5px;
+  color: #52525b;
+  font-family: 'Figtree', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Custom styled select (Per page) ─────────────────────── */
+/* ::ng-deep is required so Angular's ViewEncapsulation doesn't
+   block these styles from reaching the native <select> element  */
+:host ::ng-deep .adm-label select,
+.adm-label select {
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 8px;
+  border: 1.5px solid #dcd9d2;
+  padding: 6px 28px 6px 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: 'Figtree', sans-serif;
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%231c3a5e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  color: #18181b;
+  outline: none;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    background-color 0.15s;
+  min-width: 64px;
+}
+
+:host ::ng-deep .adm-label select:hover,
+.adm-label select:hover {
+  border-color: #a8b8cc;
+  background-color: #f0f4f9;
+}
+
+:host ::ng-deep .adm-label select:focus,
+.adm-label select:focus {
+  border-color: #1c3a5e;
+  background-color: #f0f4f9;
+  box-shadow: 0 0 0 3px rgba(28, 58, 94, 0.1);
+}
+
+.adm-meta {
+  font-size: 12px;
+  color: #71717a;
+  font-family: 'Figtree', sans-serif;
+  white-space: nowrap;
+}
+
+/* ── Table wrap ──────────────────────────────────────────── */
+.adm-table-wrap {
+  overflow: auto;
+  border: 1px solid #e8e6e0;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.adm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-family: 'Figtree', sans-serif;
+}
+
+.adm-table th {
+  padding: 11px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: #f5f4f0;
+  color: #52525b;
+  border-bottom: 1px solid #e8e6e0;
+  white-space: nowrap;
+}
+
+.adm-table td {
+  padding: 11px 14px;
+  text-align: left;
+  border-bottom: 1px solid #f0ede8;
+  color: #18181b;
+  vertical-align: middle;
+  transition: background 0.2s ease;
+}
+
+.adm-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.adm-table tbody tr {
+  transition: background 0.12s;
+}
+.adm-table tbody tr:hover td {
+  filter: brightness(0.97);
+}
+
+.col-actions {
+  width: 1%;
+  white-space: nowrap;
+}
+
+/* ── Pager ───────────────────────────────────────────────── */
+.adm-pager {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  font-size: 13px;
+  color: #52525b;
+  font-family: 'Figtree', sans-serif;
+}
+
+.adm-btn {
+  padding: 6px 16px;
+  border-radius: 8px;
+  border: 1px solid #e8e6e0;
+  background: #ffffff;
+  color: #3f3f46;
+  cursor: pointer;
+  font-size: 12.5px;
+  font-family: inherit;
+  font-weight: 500;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.adm-btn:hover:not(:disabled) {
+  background: #f5f4f0;
+  border-color: #d4d0c8;
+  color: #18181b;
+}
+
+.adm-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

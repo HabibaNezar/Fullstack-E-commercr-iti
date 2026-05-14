@@ -1,0 +1,289 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Figtree:wght@400;500;600&display=swap');
+
+.adm-page {
+  font-family: 'Figtree', sans-serif;
+  max-width: 1000px;
+  padding: 2.5rem 2rem 4rem;
+  background: #f5f4f0;
+  min-height: 100%;
+  box-sizing: border-box;
+  animation: adm-fade 0.3s ease both;
+}
+
+@keyframes adm-fade {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Page head ───────────────────────────────────────────── */
+.adm-page-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #e8e6e0;
+}
+
+.adm-page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 5px;
+  color: #18181b;
+  letter-spacing: -0.01em;
+}
+
+.adm-page-sub {
+  font-size: 13px;
+  color: #52525b;
+  margin: 0;
+}
+
+/* ── API search ──────────────────────────────────────────── */
+.adm-api-search {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #52525b;
+  margin-bottom: 1.25rem;
+  max-width: 380px;
+}
+
+.adm-api-search input {
+  padding: 9px 13px;
+  border-radius: 9px;
+  border: 1px solid #e8e6e0;
+  font-family: inherit;
+  font-size: 14px;
+  color: #18181b;
+  background: #ffffff;
+  outline: none;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.adm-api-search input::placeholder {
+  color: #52525b;
+}
+.adm-api-search input:focus {
+  border-color: #c5d5e8;
+  box-shadow: 0 0 0 3px rgba(28, 58, 94, 0.08);
+}
+
+/* ── Edit panel ──────────────────────────────────────────── */
+.adm-edit-panel {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  background: #ffffff;
+  border: 1px solid #e8e6e0;
+  border-top: 3px solid #1c3a5e;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.adm-form-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0 0 1rem;
+  color: #18181b;
+  letter-spacing: -0.01em;
+}
+
+.adm-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.75rem 1rem;
+}
+
+.adm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #52525b;
+}
+
+.adm-field-wide {
+  grid-column: 1 / -1;
+}
+
+.adm-field input,
+.adm-field select,
+.adm-field textarea {
+  padding: 9px 11px;
+  border-radius: 9px;
+  border: 1px solid #e8e6e0;
+  font-family: inherit;
+  font-size: 14px;
+  color: #18181b;
+  background: #f5f4f0;
+  outline: none;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    box-shadow 0.15s;
+}
+
+.adm-field input:focus,
+.adm-field select:focus,
+.adm-field textarea:focus {
+  border-color: #c5d5e8;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(28, 58, 94, 0.08);
+}
+
+.adm-field textarea {
+  resize: vertical;
+}
+
+.adm-file-name {
+  margin-top: 3px;
+  color: #52525b;
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.adm-form-error {
+  margin: 0.75rem 0 0;
+  color: #c0392b;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.adm-form-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 8px;
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.adm-btn-primary {
+  padding: 9px 20px;
+  border-radius: 9px;
+  border: none;
+  background: #2c2c2a;
+  color: #f1efe8;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.adm-btn-primary:hover {
+  background: #1a1a18;
+}
+.adm-btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.adm-btn-ghost {
+  padding: 9px 20px;
+  border-radius: 9px;
+  border: 1px solid #e8e6e0;
+  background: #ffffff;
+  color: #52525b;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.adm-btn-ghost:hover {
+  background: #f5f4f0;
+  border-color: #d4d0c8;
+}
+
+/* ── Edit button (pill, blue) ────────────────────────────── */
+.adm-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 12px;
+  border-radius: 8px;
+  border: 1px solid #bcd0e8;
+  background: #eff6ff;
+  color: #1c3a5e;
+  cursor: pointer;
+  font-family: 'Figtree', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background 0.12s,
+    border-color 0.12s;
+  margin-right: 4px;
+}
+
+.adm-link:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+  color: #1c3a5e;
+}
+
+.adm-danger {
+  padding: 6px 11px;
+  border-radius: 8px;
+  border: 1px solid #fcc;
+  background: #fff;
+  color: #c0392b;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  transition:
+    background 0.12s,
+    border-color 0.12s;
+}
+
+.adm-danger:hover {
+  background: #fff0f0;
+  border-color: #f5a5a5;
+}
+
+/* ── Custom selects inside form (category dropdown) ──────── */
+/* Both :host ::ng-deep (Angular scoped) and plain class (global fallback) */
+:host ::ng-deep .adm-field select,
+.adm-field select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%231c3a5e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
+:host ::ng-deep .adm-field select:hover,
+.adm-field select:hover {
+  border-color: #a8b8cc;
+  background-color: #eef2f8;
+}
+
+:host ::ng-deep .adm-field select:focus,
+.adm-field select:focus {
+  border-color: #c5d5e8;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(28, 58, 94, 0.08);
+}

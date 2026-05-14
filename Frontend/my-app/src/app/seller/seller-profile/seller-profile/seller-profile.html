@@ -1,0 +1,100 @@
+<div class="seller-profile-page">
+  <div class="page-header">
+    <h2>Seller Profile</h2>
+    <p class="subtitle">Manage your seller account information</p>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <i class="ti ti-loader"></i>
+      <p>Loading profile...</p>
+    </div>
+  } @else if (user()) {
+    <div class="profile-card">
+      <form (ngSubmit)="saveProfile()">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input
+              type="text"
+              id="firstName"
+              [(ngModel)]="user()!.firstName"
+              name="firstName"
+              required
+              minlength="2"
+            />
+            <small class="error-hint" *ngIf="!user()!.firstName">First name is required (min 2 characters).</small>
+          </div>
+
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input
+              type="text"
+              id="lastName"
+              [(ngModel)]="user()!.lastName"
+              name="lastName"
+              required
+            />
+            <small class="error-hint" *ngIf="!user()!.lastName">Last name is required.</small>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              [(ngModel)]="user()!.email"
+              name="email"
+              disabled
+            />
+            <small>Email cannot be changed</small>
+          </div>
+
+          <div class="form-group">
+            <label for="phoneNumber">Phone Number</label>
+            <input
+              type="tel"
+              id="phoneNumber"
+              [(ngModel)]="user()!.phoneNumber"
+              name="phoneNumber"
+              pattern="^(010|011|012|015)\d{8}$"
+            />
+            <small>Phone must start with 010, 011, 012, or 015 followed by 8 digits</small>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="address">Address</label>
+            <textarea
+              id="address"
+              [(ngModel)]="user()!.address"
+              name="address"
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+
+        @if (saveError()) {
+          <p class="error-message">{{ saveError() }}</p>
+        }
+        @if (saveSuccess()) {
+          <p class="success-message">{{ saveSuccess() }}</p>
+        }
+
+        <div class="form-actions">
+          <button type="submit" class="btn-save" [disabled]="saving()">
+            <i class="ti ti-device-floppy"></i>
+            {{ saving() ? 'Saving...' : 'Save Changes' }}
+          </button>
+          <button type="button" class="btn-cancel" (click)="cancel()" [disabled]="saving()">
+            <i class="ti ti-x"></i>
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  } @else {
+    <div class="error-message">
+      Unable to load profile. Please verify your session.
+    </div>
+  }
+</div>
