@@ -1,7 +1,19 @@
 <div class="dash">
-  <h1 class="dash-title">Dashboard</h1>
+  <div class="dash-header">
+    <h1 class="dash-title">Dashboard</h1>
+    @if (!loading()) {
+      <span class="dash-muted">Last updated just now</span>
+    }
+  </div>
+
   @if (loading()) {
-    <p class="dash-muted">Loading statistics…</p>
+    <div class="dash-skeleton-grid">
+      <div class="dash-skeleton"></div>
+      <div class="dash-skeleton"></div>
+      <div class="dash-skeleton"></div>
+      <div class="dash-skeleton"></div>
+      <div class="dash-skeleton"></div>
+    </div>
   } @else {
     <div class="dash-grid">
       <div class="dash-card">

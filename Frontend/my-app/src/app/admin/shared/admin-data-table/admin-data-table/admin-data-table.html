@@ -33,7 +33,7 @@
     </thead>
     <tbody>
       @for (row of pagedRows(); track trackRow(i, row); let i = $index) {
-        <tr>
+        <tr [class]="rowClassFn() ? rowClassFn()!(row) : ''">
           @for (col of columns(); track col.key) {
             <td>{{ cell(row, col.key) }}</td>
           }

@@ -33,6 +33,12 @@ export class AdminOrders implements OnInit {
     { key: 'dateLine', label: 'Date' },
   ];
 
+  /** Adds a CSS class to each row based on order status */
+  readonly rowClass = (row: Record<string, unknown>): string => {
+    const s = String(row['status'] ?? '').toLowerCase();
+    return s ? `row-${s}` : '';
+  };
+
   ngOnInit(): void {
     this.orderService.getAllOrders().subscribe((orders) => {
       const sorted = this.orderService.sortOrdersDesc(orders);
