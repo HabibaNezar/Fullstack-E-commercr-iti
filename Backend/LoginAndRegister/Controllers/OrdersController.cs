@@ -67,10 +67,10 @@ namespace LoginAndRegister.Controllers
                 _context.orderItems.Add(OrderItem);
                 // بنقص الكمية الباقية
                 item.Product.StockQuantity -= item.Quantity;
-                // بعدين نمسح الكارت
-                _context.CartItems.RemoveRange(CartItems);
-                await _context.SaveChangesAsync();
             }
+            // بعدين نمسح الكارت
+            //_context.CartItems.RemoveRange(CartItems);
+            await _context.SaveChangesAsync();
             return Ok(new { Message = "Order Placed Successfully !", OrderId = Order.Id,  Total= GrandTotalPrice });
         }
         #endregion

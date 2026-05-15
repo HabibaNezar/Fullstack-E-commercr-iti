@@ -87,5 +87,42 @@ namespace LoginAndRegister.Controllers
             return Ok(new { items = CartItems, TotalPrice = totalCartPrice });
         }
         #endregion
+
+        #region Remove From Cart
+        [HttpDelete("Remove_Item/{productId}")]
+        public async Task<IActionResult> RemoveFromCart(int productId)
+        {
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var CartItem = await _context.CartItems.FirstOrDefaultAsync(c => c.AppUserId == UserId && c.ProductId == productId);
+            if (CartItem != null)
+            {
+                return NotFound("Items Not Found In Cart !");
+            }
+            _context.CartItems.Remove(CartItem);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Item removed successfully" });
+        }
+        #endregion
+
+        #region Update Cart Quantity
+        [HttpPut("UpdateQuantity")]
+        public async Task<IActionResult> UpdateQuantity(int ProductId, int NewQuantity)
+        {
+            if (NewQuantity <= 0)
+            {
+                return BadRequest("Quantity must be at least 1");
+            }
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var CartItems = await _context.CartItems.FirstOrDefaultAsync(c => c.AppUserId == UserId && c.ProductId == c.ProductId);
+            if (CartItems == null) return NotFound("Item not found");
+            CartItems.Quantity = NewQuantity;
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Quantity updated successfully" });
+        }
+        #endregion
+
+        #region
+
+        #endregion
     }
 }
