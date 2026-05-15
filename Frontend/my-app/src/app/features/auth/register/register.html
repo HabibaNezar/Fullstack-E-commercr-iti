@@ -15,9 +15,7 @@
       </div>
 
       <!-- success message -->
-      <div class="auth-success" *ngIf="successMsg">
-        <span>✅</span> {{ successMsg }}
-      </div>
+      <div class="auth-success" *ngIf="successMsg"><span>✅</span> {{ successMsg }}</div>
 
       <!-- 👇 [formGroup] connects the whole form -->
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
@@ -76,13 +74,48 @@
               />
             </div>
             <span class="field-error" *ngIf="f['email'].invalid && f['email'].touched">
-              <!-- 👇 show DIFFERENT message for each error type -->
               <ng-container *ngIf="f['email'].errors?.['required']">
                 Email is required
               </ng-container>
               <ng-container *ngIf="f['email'].errors?.['email']">
                 Enter a valid email address
               </ng-container>
+            </span>
+          </div>
+
+          <!-- City -->
+          <div class="field-group">
+            <label class="field-label" for="city">City</label>
+            <div class="field-wrap">
+              <span class="field-icon">🏙️</span>
+              <input
+                id="city"
+                type="text"
+                class="field-input"
+                placeholder="Cairo"
+                formControlName="city"
+              />
+            </div>
+            <span class="field-error" *ngIf="f['city'].invalid && f['city'].touched">
+              City is required
+            </span>
+          </div>
+
+          <!-- Address -->
+          <div class="field-group">
+            <label class="field-label" for="address">Address</label>
+            <div class="field-wrap">
+              <span class="field-icon">📍</span>
+              <input
+                id="address"
+                type="text"
+                class="field-input"
+                placeholder="123 Street Name"
+                formControlName="address"
+              />
+            </div>
+            <span class="field-error" *ngIf="f['address'].invalid && f['address'].touched">
+              Address is required
             </span>
           </div>
 
@@ -129,6 +162,10 @@
               </ng-container>
               <ng-container *ngIf="f['password'].errors?.['minlength']">
                 Password must be at least 8 characters
+              </ng-container>
+              <ng-container *ngIf="f['password'].errors?.['pattern']">
+                Password must contain at least one uppercase, one lowercase, one number and one
+                special character.
               </ng-container>
             </span>
             <!-- Strength bar -->
@@ -181,9 +218,7 @@
           </span>
 
           <!-- 👇 Button disabled automatically when form is invalid -->
-          <button type="submit" class="btn-submit" [disabled]="registerForm.invalid">
-            Create account &nbsp;→
-          </button>
+          <button type="submit" class="btn-submit">Create account &nbsp;→</button>
         </div>
       </form>
 

@@ -14,6 +14,10 @@
 /* ════════════════════════
    LEFT — PANEL SIDE
 ════════════════════════ */
+.auth-success{
+  color: green !important;
+}
+
 .auth-panel {
   flex: 0 0 42%;
   background: linear-gradient(155deg, #1a0640 0%, #2d0f6e 55%, #3a0a8c 100%);
