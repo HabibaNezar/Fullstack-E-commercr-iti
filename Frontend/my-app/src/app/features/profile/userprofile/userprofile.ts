@@ -8,6 +8,7 @@ import { ReviewService } from '../../../shared/services/review.service';
 import { ProductService } from '../../../core/services/product.service';
 import { CartService } from '../../../core/services/cart.service';
 import { WishlistService } from '../../../shared/services/wishlist.service';
+import { MyOrders } from '../../orders/my-orders/my-orders';
 import { IUser } from '../../../models/iuser';
 import { IOrder } from '../../../models/iorder';
 import { IReview } from '../../../models/ireview';
@@ -31,7 +32,7 @@ export type ProfileUser = IUser & {
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MyOrders],
   templateUrl: './userprofile.html',
   styleUrl: './userprofile.css'
 })
@@ -43,17 +44,12 @@ export class UserProfile implements OnInit {
 
   activeTab: 'Account' | 'Orders' | 'Wishlist' | 'Reviews' = 'Account';
 
-  userOrders: IOrder[] = [];
   wishlistProducts: IProduct[] = [];
   userReviews: IReview[] = [];
-
-  ordersLoading = false;
-  ordersError = '';
 
   constructor(
     private authService: AuthService,
     private usersService: UsersService,
-    private orderService: OrderService,
     private reviewService: ReviewService,
     private productService: ProductService,
     private cartService: CartService,
@@ -89,51 +85,30 @@ export class UserProfile implements OnInit {
   }
 
   loadTabData(): void {
-    if (this.activeTab === 'Orders') {
-      // Orders API uses JWT token — no user.id needed
-      if (!this.authService.isLoggedIn()) {
-        this.ordersError = 'Please log in to view your orders.';
-        return;
-      }
-
-      this.userOrders = [];
-      this.ordersError = '';
-      this.ordersLoading = true;
-
-      this.orderService
-        .getMyOrdersExtended()
-        .pipe(
-          timeout(8000),
-          catchError((err) => {
-            this.ordersError =
-              err?.name === 'TimeoutError'
-                ? 'The orders service did not respond in time. Please try again.'
-                : 'Could not load orders. Please try again later.';
-            return of([]);
-          }),
-          finalize(() => {
-            this.ordersLoading = false;
-            this.cdr.detectChanges();
-          })
-        )
-        .subscribe({
-          next: (orders) => {
-            this.userOrders = this.orderService.sortOrdersDesc(orders ?? []);
-            this.cdr.detectChanges();
-          },
-        });
-
-    } else if (this.activeTab === 'Wishlist') {
+    if (this.activeTab === 'Wishlist') {
       if (!this.user?.id) return;
       this.wishlistProducts = [];
       if (this.user.wishlist?.length) {
         this.user.wishlist.forEach(id => {
           this.productService.getProductById(id).subscribe(product => {
-            if (product) this.wishlistProducts.push(product);
+            if (product) {
+            this.wishlistProducts.push(product);
+            console.log("Loaded Product Image Path:", product.imagePath); // Log the image path after loading each product
+            }
             this.cdr.detectChanges();
           });
         });
       }
+    // output undefined because the products haven't loaded yet where shuld i put it to show the image path after loading the products? 
+    // You can put the console.log statement inside the subscribe callback after pushing the product to the wishlistProducts array. This way, it will log the image path after each product is loaded. Here's how you can do it:
+    // Inside the subscribe callback for getProductById:
+    // this.productService.getProductById(id).subscribe(product => {
+    //   if (product) {
+    //     this.wishlistProducts.push(product);
+    //     console.log("Loaded Product Image Path:", product.imagePath); // Log the image path after loading each product
+    //   }
+    //   this.cdr.detectChanges();
+    // });
 
     } else if (this.activeTab === 'Reviews') {
       if (!this.user?.id) return;

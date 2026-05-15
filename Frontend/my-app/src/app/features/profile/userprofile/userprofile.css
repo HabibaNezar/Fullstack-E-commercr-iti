@@ -217,6 +217,20 @@
   gap: 2.5rem;
 }
 
+/* Embed Adjustments for MyOrders */
+app-my-orders ::ng-deep .orders-hero {
+  display: none !important;
+}
+
+app-my-orders ::ng-deep .orders-body {
+  padding-top: 0 !important;
+  max-width: 100% !important;
+}
+
+app-my-orders ::ng-deep .orders-page {
+  min-height: auto !important;
+}
+
 .info-field {
   display: flex;
   flex-direction: column;

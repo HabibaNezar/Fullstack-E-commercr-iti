@@ -1,102 +1,151 @@
-/* order-confirmation.css */
+/* ═══════════════════════════════════════════
+   order-confirmation.css — Clean Light Mode
+   ═══════════════════════════════════════════ */
+
+:host {
+  /* Local overrides for Light Mode */
+  --cnf-bg: #f8fafc;
+  --cnf-surface: #ffffff;
+  --cnf-text: #1e293b;
+  --cnf-text-muted: #64748b;
+  --cnf-border: #e2e8f0;
+  --cnf-primary: #6366f1;
+  --cnf-primary-soft: #f5f3ff;
+  --cnf-success: #10b981;
+  --cnf-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
 
 .conf-page {
+  background: var(--cnf-bg);
   min-height: 100vh;
+  color: var(--cnf-text);
+  padding-bottom: 80px;
 }
 
-/* ── Hero override ─────────────────────────── */
-.conf-hero-inner {
+/* ── Success Hero ───────────────────────────── */
+.conf-hero {
+  background: white;
+  padding: 80px 5vw 60px;
+  border-bottom: 1px solid var(--cnf-border);
   text-align: center;
+  margin-bottom: 40px;
+}
+
+.conf-check-icon {
+  width: 80px;
+  height: 80px;
+  background: #ecfdf5;
+  color: var(--cnf-success);
+  border-radius: 50%;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  margin: 0 auto 24px;
+  border: 4px solid white;
+  box-shadow: 0 0 0 1px #bbf7d0;
 }
 
-.conf-check {
-  font-size: 3.5rem;
-  margin-bottom: var(--space-md);
+.conf-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  margin-bottom: 12px;
+  text-transform: uppercase;
 }
 
-.conf-sub {
-  font-size: 1.05rem;
-  color: var(--clr-text-2);
-  margin-top: var(--space-sm);
-  max-width: 480px;
+.conf-hero p {
+  color: var(--cnf-text-muted);
+  font-size: 1.15rem;
 }
 
-/* ── Body ──────────────────────────────────── */
-.conf-body {
+/* ── Container ──────────────────────────────── */
+.conf-container {
   max-width: 1100px;
   margin: 0 auto;
+  padding: 0 5vw;
 }
 
+/* ── Main Grid ───────────────────────────────── */
 .conf-grid {
   display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: var(--space-lg);
+  grid-template-columns: 1fr 400px;
+  gap: 40px;
   align-items: start;
 }
 
-/* ── Card ──────────────────────────────────── */
+/* ── Card Styles ─────────────────────────────── */
 .conf-card {
-  padding: var(--space-lg) var(--space-xl);
+  background: var(--cnf-surface);
+  border: 1px solid var(--cnf-border);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: var(--cnf-shadow);
+  margin-bottom: 24px;
 }
 
 .conf-card-title {
-  font-size: 1rem;
+  font-size: 1.15rem;
   font-weight: 700;
-  color: var(--clr-brand);
-  margin-bottom: var(--space-md);
-  padding-bottom: var(--space-sm);
-  border-bottom: 1px solid var(--clr-border);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--cnf-text);
 }
 
-/* ── Items ─────────────────────────────────── */
-.conf-items {
+/* ── Items List ──────────────────────────────── */
+.conf-items-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: 16px;
 }
 
 .conf-item {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-.conf-thumb {
-  width: 60px;
-  height: 60px;
-  object-fit: contain;
-  border-radius: var(--radius-sm);
-  background: var(--clr-surface-2);
-  border: 1px solid var(--clr-border);
+.conf-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.conf-item-thumb {
+  width: 64px;
+  height: 64px;
+  background: #f8fafc;
+  border-radius: 12px;
   padding: 4px;
-  flex-shrink: 0;
+  border: 1px solid var(--cnf-border);
+  object-fit: contain;
+}
+
+.conf-item-details {
+  flex: 1;
 }
 
 .conf-item-name {
-  font-size: 0.9rem;
   font-weight: 600;
-  color: var(--clr-text);
+  font-size: 0.95rem;
+  margin-bottom: 2px;
 }
 
 .conf-item-meta {
-  font-size: 0.8rem;
-  color: var(--clr-muted);
-  margin-top: 2px;
+  font-size: 0.875rem;
+  color: var(--cnf-text-muted);
 }
 
-/* ── Info rows ─────────────────────────────── */
+/* ── Info Rows ──────────────────────────────── */
 .info-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--clr-border-glow);
-  font-size: 0.88rem;
-  color: var(--clr-text-2);
-  gap: var(--space-sm);
+  padding: 10px 0;
+  border-bottom: 1px dotted var(--cnf-border);
+  font-size: 0.95rem;
 }
 
 .info-row:last-child {
@@ -104,71 +153,98 @@
 }
 
 .info-label {
-  color: var(--clr-muted);
+  color: var(--cnf-text-muted);
   font-weight: 600;
-  min-width: 70px;
 }
 
-/* ── Total card ────────────────────────────── */
+.info-val {
+  font-weight: 700;
+  text-align: right;
+}
+
+/* ── Total Card ─────────────────────────────── */
 .conf-total-card {
-  margin-top: var(--space-sm);
+  background: #f8fafc;
+  border: 1px solid var(--cnf-border);
 }
 
-.conf-total-row {
+.total-display {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--clr-text);
 }
 
-.conf-total-amount {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  color: var(--clr-price);
-  text-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
+.total-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--cnf-text-muted);
 }
 
-/* ── Actions ───────────────────────────────── */
-.conf-right {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
+.total-amount {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--cnf-primary);
 }
 
+/* ── Actions ────────────────────────────────── */
 .conf-actions {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 16px;
+  margin-top: 8px;
 }
 
-.conf-actions .btn {
-  justify-content: center;
-  width: 100%;
+.btn-main {
+  padding: 16px;
+  border-radius: 14px;
+  font-weight: 800;
+  text-align: center;
+  font-size: 1rem;
+  transition: all 0.2s;
 }
 
-/* ── Share card ────────────────────────────── */
-.conf-share-sub {
-  margin: 0 0 var(--space-sm);
-  color: var(--clr-muted);
+.btn-primary-cnf {
+  background: var(--cnf-primary);
+  color: white;
+}
+
+.btn-primary-cnf:hover {
+  background: #4f46e5;
+  transform: translateY(-2px);
+}
+
+.btn-outline-cnf {
+  background: white;
+  border: 1.5px solid var(--cnf-border);
+  color: var(--cnf-text);
+}
+
+.btn-outline-cnf:hover {
+  border-color: var(--cnf-primary);
+  color: var(--cnf-primary);
+}
+
+/* ── Share Section ──────────────────────────── */
+.share-card {
+  text-align: center;
+}
+
+.share-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.btn-share {
+  padding: 10px;
+  border-radius: 10px;
   font-size: 0.85rem;
+  font-weight: 700;
 }
 
-.conf-share-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.conf-share-actions .btn {
-  flex: 1 1 calc(50% - 0.5rem);
-  min-width: 110px;
-  justify-content: center;
-}
-
-/* ── Responsive ────────────────────────────── */
-@media (max-width: 900px) {
+/* ── Responsive ──────────────────────────────── */
+@media (max-width: 1024px) {
   .conf-grid {
     grid-template-columns: 1fr;
   }

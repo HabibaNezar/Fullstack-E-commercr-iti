@@ -1,101 +1,104 @@
-<div class="state-loading section" *ngIf="loading">Loading your order…</div>
+<div class="state-loading section" *ngIf="loading">
+  <i class="ti ti-loader animate-spin"></i>
+  <p>Loading your order confirmation...</p>
+</div>
 
 <div class="conf-page section" *ngIf="error">
-  <div class="state-empty">⚠️ {{ error }}</div>
+  <div class="checkout-error">
+    <i class="ti ti-alert-circle"></i>
+    <span>{{ error }}</span>
+  </div>
+  <a routerLink="/my-orders" class="btn-main btn-outline-cnf" style="display:inline-block; margin-top:20px;">
+    Go to My Orders
+  </a>
 </div>
 
 <div class="conf-page" *ngIf="!loading && !error && order">
-
-  <div class="page-hero">
-    <div class="hero-orb"></div>
-    <div class="page-hero-inner conf-hero-inner">
-      <div class="conf-check">✅</div>
-      <h1>Order Confirmed!</h1>
-      <p class="conf-sub">
-        Your order <strong>#{{ order.id }}</strong> has been placed.
-      </p>
+  <header class="conf-hero">
+    <div class="conf-check-icon">
+      <i class="ti ti-check"></i>
     </div>
-  </div>
+    <h1>Order Confirmed!</h1>
+    <p>Thank you for your purchase. Your order <strong>#{{ order.id }}</strong> is being processed.</p>
+  </header>
 
-  <div class="section conf-body">
+  <main class="conf-container">
     <div class="conf-grid">
-
-      <!-- Items -->
-      <div class="card conf-card">
-        <h3 class="conf-card-title">🛍️ Items Ordered</h3>
-        <ul class="conf-items">
-          <li class="conf-item" *ngFor="let item of order.items || []">
-            <img class="conf-thumb" [src]="item.thumbnail || ''" [alt]="item.productName" />
-            <div class="conf-item-info">
-              <p class="conf-item-name">{{ item.productName }}</p>
-              <p class="conf-item-meta">
-                Qty: {{ item.quantity }} · ${{ item.price * item.quantity | number:'1.2-2' }}
-              </p>
+      <!-- LEFT: Items & Details -->
+      <div class="conf-main">
+        <section class="conf-card">
+          <h3 class="conf-card-title"><i class="ti ti-package"></i> Items Ordered</h3>
+          <div class="conf-items-list">
+            <div class="conf-item" *ngFor="let item of order.items || []">
+              <img class="conf-item-thumb" [src]="item.thumbnail || 'assets/images/placeholder.png'" [alt]="item.productName" />
+              <div class="conf-item-details">
+                <p class="conf-item-name">{{ item.productName }}</p>
+                <p class="conf-item-meta">Quantity: {{ item.quantity }} · Price: ${{ item.price | number:'1.2-2' }}</p>
+              </div>
+              <div class="conf-item-total">
+                <strong>${{ item.price * item.quantity | number:'1.2-2' }}</strong>
+              </div>
             </div>
-          </li>
-        </ul>
+          </div>
+        </section>
+
+        <section class="conf-card">
+          <h3 class="conf-card-title"><i class="ti ti-truck"></i> Delivery Information</h3>
+          <div class="info-row">
+            <span class="info-label">Shipping Address</span>
+            <span class="info-val">{{ order.address }}, {{ order.city }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Phone Number</span>
+            <span class="info-val">{{ order.phone }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Payment Method</span>
+            <span class="info-val">{{ order.paymentMethod === 'cash' ? 'Cash on Delivery' : 'Credit Card' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Order Date</span>
+            <span class="info-val">{{ order.orderDate | date:'medium' }}</span>
+          </div>
+        </section>
       </div>
 
-      <div class="conf-right">
-
-        <div class="card conf-card">
-          <h3 class="conf-card-title">📦 Delivery Info</h3>
-          <div class="info-row">
-            <span class="info-label">Address</span>
-            <span>{{ order.address }}, {{ order.city }}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Phone</span>
-            <span>{{ order.phone }}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Payment</span>
-            <span>{{ order.paymentMethod === 'cash' ? '💵 Cash on Delivery' : '💳 Credit Card' }}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Status</span>
-            <span class="tag tag--orange">⏳ {{ order.status | titlecase }}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Date</span>
-            <span>{{ order.orderDate | date:'medium' }}</span>
-          </div>
-        </div>
-
-        <div class="card conf-card conf-total-card">
-          <div class="conf-total-row">
-            <span>Order Total</span>
-            <span class="conf-total-amount">${{ order.totalPrice | number:'1.2-2' }}</span>
+      <!-- RIGHT: Summary & Actions -->
+      <aside class="conf-sidebar">
+        <div class="conf-card conf-total-card">
+          <div class="total-display">
+            <span class="total-label">Total Amount</span>
+            <span class="total-amount">${{ order.totalPrice | number:'1.2-2' }}</span>
           </div>
         </div>
 
         <div class="conf-actions">
-          <a routerLink="/my-orders" class="btn btn-primary">📋 View My Orders</a>
-          <a [routerLink]="['/order', order.id, 'tracking']"
-             [state]="{ order: order }"
-             class="btn btn-outline">📍 Track Order</a>
-          <a routerLink="/home" class="btn btn-outline">🏠 Continue Shopping</a>
+          <a [routerLink]="['/order', order.id, 'tracking']" [state]="{ order: order }" class="btn-main btn-primary-cnf">
+            <i class="ti ti-map-pin"></i> Track Your Order
+          </a>
+          <a routerLink="/my-orders" class="btn-main btn-outline-cnf">
+            <i class="ti ti-list"></i> View All Orders
+          </a>
+          <a routerLink="/home" class="btn-main btn-outline-cnf">
+            <i class="ti ti-shopping-cart"></i> Continue Shopping
+          </a>
         </div>
 
-        <div class="card conf-card conf-share-card">
-          <h3 class="conf-card-title">📣 Share Your Purchase</h3>
-          <p class="conf-share-sub">Let your friends know what you got.</p>
-          <div class="conf-share-actions">
+        <div class="conf-card share-card">
+          <h3 class="conf-card-title"><i class="ti ti-share"></i> Spread the Word</h3>
+          <p class="conf-share-sub">Tell your friends about your new find!</p>
+          <div class="share-btns">
             @if (shareSupported) {
-              <button type="button" class="btn btn-outline btn-sm" (click)="shareNative()">
-                📤 Share…
-              </button>
+              <button (click)="shareNative()" class="btn-main btn-outline-cnf btn-share">Share</button>
             }
-            <a class="btn btn-outline btn-sm" [href]="shareTwitter()" target="_blank" rel="noopener noreferrer">🐦 Twitter</a>
-            <a class="btn btn-outline btn-sm" [href]="shareFacebook()" target="_blank" rel="noopener noreferrer">📘 Facebook</a>
-            <a class="btn btn-outline btn-sm" [href]="shareWhatsApp()" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
-            <button type="button" class="btn btn-outline btn-sm" (click)="copyLink()">
-              {{ copied() ? '✅ Copied!' : '🔗 Copy link' }}
+            <a [href]="shareTwitter()" target="_blank" class="btn-main btn-outline-cnf btn-share">Twitter</a>
+            <a [href]="shareFacebook()" target="_blank" class="btn-main btn-outline-cnf btn-share">Facebook</a>
+            <button (click)="copyLink()" class="btn-main btn-outline-cnf btn-share">
+              {{ copied() ? 'Copied!' : 'Copy Link' }}
             </button>
           </div>
         </div>
-
-      </div>
+      </aside>
     </div>
-  </div>
+  </main>
 </div>
