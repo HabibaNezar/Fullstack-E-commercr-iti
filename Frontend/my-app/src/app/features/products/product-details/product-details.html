@@ -1,0 +1,72 @@
+<div class="product-details-container">
+  @if (loading) {
+    <div class="loading-state">
+      <i class="ti ti-loader" aria-hidden="true"></i>
+      <p>Loading product details...</p>
+    </div>
+  } @else if (error) {
+    <div class="error-state">
+      <i class="ti ti-alert-circle" aria-hidden="true"></i>
+      <p>{{ error }}</p>
+      <button class="btn-back" (click)="goBack()">Back to Products</button>
+    </div>
+  } @else if (product) {
+    <div class="product-details-content">
+      <div class="image-section">
+        <button class="btn-back-floating" (click)="goBack()" aria-label="Go back">
+          <i class="ti ti-arrow-left"></i>
+        </button>
+        <img [src]="productImageUrl()" [alt]="product.name" class="product-image" />
+      </div>
+
+      <div class="info-section">
+        <nav class="breadcrumb">
+          <a routerLink="/home">Home</a>
+          <i class="ti ti-chevron-right"></i>
+          <a routerLink="/products">Products</a>
+          <i class="ti ti-chevron-right"></i>
+          <span>{{ product.categoryName }}</span>
+        </nav>
+
+        <h1 class="product-name">{{ product.name }}</h1>
+        <p class="product-price">${{ product.price | decimal }}</p>
+
+        <div class="product-description">
+          <h3>Description</h3>
+          <p>{{ product.description }}</p>
+        </div>
+
+        <div class="product-meta">
+          <p class="availability">
+            Status:
+            <span [class]="product.stockQuantity > 0 ? 'in-stock' : 'out-of-stock'">
+              {{ product.stockQuantity > 0 ? 'In Stock (' + product.stockQuantity + ' available)' : 'Out of Stock' }}
+            </span>
+          </p>
+          <p class="category">Category: <span>{{ product.categoryName }}</span></p>
+        </div>
+
+        @if (product.stockQuantity > 0) {
+          <div class="purchase-section">
+            <div class="quantity-selector">
+              <button (click)="decreaseQuantity()" [disabled]="quantity <= 1">
+                <i class="ti ti-minus"></i>
+              </button>
+              <span>{{ quantity }}</span>
+              <button (click)="increaseQuantity()" [disabled]="quantity >= product.stockQuantity">
+                <i class="ti ti-plus"></i>
+              </button>
+            </div>
+
+            <button class="btn-add-to-cart" (click)="onAddToCart()">
+              <i class="ti ti-shopping-bag"></i>
+              Add to Cart
+            </button>
+          </div>
+        } @else {
+          <p class="sold-out-message">This product is currently unavailable.</p>
+        }
+      </div>
+    </div>
+  }
+</div>

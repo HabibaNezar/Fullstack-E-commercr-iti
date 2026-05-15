@@ -14,7 +14,7 @@
       @for (p of filteredProducts; track p.id) {
         <div class="product-card" [class.out-of-stock]="p.stockQuantity === 0">
           <!-- Image -->
-          <div class="card-image-wrapper">
+          <div class="card-image-wrapper" [routerLink]="['/products', p.id]" style="cursor: pointer;">
             <img
               [src]="productImageUrl(p)"
               [alt]="p.name"
@@ -31,7 +31,7 @@
             <button
               class="btn-favorite"
               [class.is-favorite]="isInWishlist(p.id)"
-              (click)="toggleWishlist(p.id)"
+              (click)="toggleWishlist(p.id); $event.stopPropagation()"
               [attr.aria-label]="isInWishlist(p.id) ? 'Remove from wishlist' : 'Add to wishlist'"
             >
               <i [class]="isInWishlist(p.id) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
@@ -40,16 +40,16 @@
 
           <!-- Content -->
           <div class="card-content">
-            <h3 class="card-title" [appHighLight]="true">{{ p.name }}</h3>
+            <h3 class="card-title" [appHighLight]="true" [routerLink]="['/products', p.id]" style="cursor: pointer;">{{ p.name }}</h3>
             <p class="card-description">{{ p.description | truncateWords }}</p>
 
             <!-- Admin/Seller actions -->
             @if (canManageProducts()) {
               <div class="card-actions">
-                <button class="btn-edit" (click)="onEdit(p)">
+                <button class="btn-edit" (click)="onEdit(p); $event.stopPropagation()">
                   <i class="ti ti-edit" aria-hidden="true"></i> Edit
                 </button>
-                <button class="btn-delete" (click)="onDelete(p.id)">
+                <button class="btn-delete" (click)="onDelete(p.id); $event.stopPropagation()">
                   <i class="ti ti-trash" aria-hidden="true"></i> Delete
                 </button>
               </div>
@@ -57,12 +57,12 @@
 
             <!-- Cart button -->
             @if (!isLoggedIn()) {
-              <button class="btn-login" (click)="goToLogin()">
+              <button class="btn-login" (click)="goToLogin(); $event.stopPropagation()">
                 <i class="ti ti-lock" aria-hidden="true"></i>
                 Sign in to add to cart
               </button>
             } @else {
-              <button class="btn-cart" (click)="onAddToCart(p)" [disabled]="p.stockQuantity === 0">
+              <button class="btn-cart" (click)="onAddToCart(p); $event.stopPropagation()" [disabled]="p.stockQuantity === 0">
                 <i class="ti ti-shopping-bag" aria-hidden="true"></i>
                 {{ p.stockQuantity === 0 ? 'Out of stock' : 'Add to cart' }}
               </button>

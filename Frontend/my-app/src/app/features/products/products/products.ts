@@ -21,13 +21,13 @@ import { IProduct } from '../../../models/iproduct';
 import { CartService } from '../../../core/services/cart.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { DecimalPipe } from '../../../shared/pipes/decimal-pipe';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { WishlistService } from '../../../shared/services/wishlist.service';
 import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-products',
-  imports: [CommonModule, HighLight, TruncateWordsPipe, ZoomImageDirective, DecimalPipe],
+  imports: [CommonModule, HighLight, TruncateWordsPipe, ZoomImageDirective, DecimalPipe, RouterModule],
   templateUrl: './products.html',
   styleUrl: './products.css',
   standalone: true,

@@ -3,11 +3,10 @@
   <a routerLink="/home" class="logo">ShopHub</a>
 
   <!-- CATEGORIES -->
-  @if (authService.isLoggedIn()) {
-    <div class="nav-categories">
-      <a routerLink="/home">Home</a>
-    </div>
-  }
+  <div class="nav-categories">
+    <a routerLink="/home" routerLinkActive="active">Home</a>
+    <a routerLink="/products" routerLinkActive="active">Products</a>
+  </div>
 
   <!-- GUEST -->
   @if (!authService.isLoggedIn()) {

@@ -15,6 +15,11 @@ export const routes: Routes = [
       import('./features/products/master-product/master-product').then((m) => m.MasterProducts),
   },
   {
+    path: 'products/:id',
+    loadComponent: () =>
+      import('./features/products/product-details/product-details').then((m) => m.ProductDetails),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./features/auth/login/login').then((m) => m.LoginComponent),
   },
