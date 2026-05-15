@@ -36,9 +36,17 @@ namespace LoginAndRegister.Controllers
             {
                 return Unauthorized(new { message = "Log in First !!" });
             }
-
+            //   نجيب بيانات المنتج عشان نشوف المخزن 
+            var product = await _context.Products.FindAsync(ProductId);
+            if (product == null) return NotFound(new { message = "Product not found" });
             // نشوف لو المنتج دا موجود فى ال cart قبل كدا
-            var ExistingItem = _context.CartItems.FirstOrDefault(p => p.AppUserId == UserId && p.ProductId == ProductId);
+            var ExistingItem = await _context.CartItems.FirstOrDefaultAsync(p => p.AppUserId == UserId && p.ProductId == ProductId);
+            //نشوف الاول لو الكمية المتحه تكفى
+            int currentInCart = ExistingItem?.Quantity ?? 0;
+            if (product.StockQuantity < (currentInCart + Quantity))
+            {
+                return BadRequest(new { message = $"No enough stock. Available: {product.StockQuantity}" });
+            }
             if (ExistingItem != null)
             {
                 // لو موجود هنزود الكمية 
