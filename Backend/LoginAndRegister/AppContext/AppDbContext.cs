@@ -18,6 +18,7 @@ namespace LoginAndRegister.AppContext
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> orderItems { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Wishlist> Wishlist { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
