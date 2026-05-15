@@ -12,6 +12,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize, catchError, EMPTY } from 'rxjs';
 import { CartService } from '../../../core/services/cart.service';
 import { OrderService, PaymentMethod } from '../../../core/services/order.service';
+import { OrderNotificationService } from '../../../core/services/order-notification.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { AdminCmsService } from '../../../admin/services/admin-cms.service';
 import { PromoCode } from '../../../models/admin-promo';
@@ -48,6 +49,7 @@ export class Checkout implements OnInit {
   private readonly cartService = inject(CartService);
   private readonly orderService = inject(OrderService);
   private readonly authService = inject(AuthService);
+  private readonly orderNotification = inject(OrderNotificationService);
   private readonly cms = inject(AdminCmsService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
@@ -179,9 +181,8 @@ export class Checkout implements OnInit {
       .subscribe({
         next: (created) => {
           this.cartService.clearCart();
-          this.router.navigate(['/order', created.id, 'confirmation'], {
-            state: { order: created },
-          });
+          this.orderNotification.notifyOrderPlaced(created);
+          this.router.navigate(['/my-orders']);
         },
       });
   }

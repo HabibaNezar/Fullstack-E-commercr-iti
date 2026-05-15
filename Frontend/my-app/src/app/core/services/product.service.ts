@@ -29,13 +29,22 @@ function asRecord(raw: unknown): Record<string, unknown> {
 function normalizeProduct(raw: unknown): IProduct {
   const o = asRecord(raw);
 
-  const imagePath = pick<string>(o, [
+  let imagePath = pick<string>(o, [
     'imagePath', 'ImagePath',
     'image', 'Image',
     'imageUrl', 'ImageUrl',
     'thumbnail', 'Thumbnail',
     'photo', 'Photo',
   ]);
+
+  // ─── كود الإصلاح المضاف ───
+  if (imagePath && imagePath.includes('http')) {
+    // إذا كان الرابط يحتوي على رابطين مدمجين بسبب الباك إند
+    if (imagePath.includes('localhost:') && imagePath.lastIndexOf('http') > 0) {
+      // سنأخذ الرابط الحقيقي فقط الذي يبدأ من ثاني http
+      imagePath = imagePath.substring(imagePath.lastIndexOf('http'));
+    }
+  }
 
   return {
     id: Number(pick(o, ['id', 'Id', 'productId', 'ProductId']) ?? 0),
@@ -44,7 +53,7 @@ function normalizeProduct(raw: unknown): IProduct {
     price: Number(pick(o, ['price', 'Price', 'unitPrice', 'UnitPrice']) ?? 0),
     actualPrice: pick<number>(o, ['actualPrice', 'ActualPrice', 'currentPrice', 'CurrentPrice', 'discountedPrice', 'DiscountedPrice']),
     stockQuantity: Number(pick(o, ['stockQuantity', 'StockQuantity', 'stock', 'Stock', 'quantity', 'Quantity']) ?? 0),
-    imagePath,
+    imagePath, // سيحتوي الآن على الرابط النظيف التابع لـ cdn.dummyjson.com
     image: imagePath,
     categoryId: Number(pick(o, ['categoryId', 'CategoryId']) ?? 0),
     categoryName: pick<string>(o, ['categoryName', 'CategoryName', 'category', 'Category']),
