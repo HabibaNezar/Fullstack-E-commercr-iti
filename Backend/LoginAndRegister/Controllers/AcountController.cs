@@ -37,9 +37,10 @@ namespace LoginAndRegister.Controllers
             {
                 AppUser appUser = new()
                 {
-                    UserName = user.Email,
+                    UserName = user.Email, // يفضل يكون كدا عشان اللوجن
                     FirstName = user.FirstName,
                     LastName = user.LastName,
+                    DisplayName = user.FirstName + " " + user.LastName,
                     Email = user.Email,
                     Address = user.Address,
                     PhoneNumber = user.PhoneNumber,

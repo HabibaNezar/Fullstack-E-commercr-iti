@@ -112,21 +112,23 @@ namespace LoginAndRegister.Controllers
             }
             // عشان نرجع ال reviews
             var products = await Query
-                .Select(p => new ProductViewDto
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    StockQuantity = p.StockQuantity,
-                    CategoryName = p.Category.Name,
-                    ImageUrl = $"{Request.Scheme}://{Request.Host}/{p.ImagePath}",
-                    AverageRating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0,
-                    ReviewsCount = p.Reviews.Count(),
-                    // عشان لو الريفيوز بnull ميضربش ايرور 
-                    reviews = new List<ReviewReturnDto>()
-                })
-            .ToListAsync();
+           .Select(p => new ProductViewDto
+           {
+               Id = p.Id,
+               Name = p.Name,
+               Description = p.Description,
+               Price = p.Price,
+               StockQuantity = p.StockQuantity,
+               // استخدام ?. بيمنع الـ Null لو مفيش Category
+               CategoryName = p.Category != null ? p.Category.Name : "General",
+               ImageUrl = $"{Request.Scheme}://{Request.Host}/{p.ImagePath}",
+               AverageRating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0,
+               ReviewsCount = p.Reviews.Count(),
+               // بنرجع لستة فاضية هنا عشان نوفر الـ Data
+               reviews = new List<ReviewReturnDto>()
+           })
+           .ToListAsync();
+
             return Ok(products);
         }
         #endregion
@@ -137,14 +139,12 @@ namespace LoginAndRegister.Controllers
         {
             var product = await _context.Products
                 .Include(p => p.Category)
-                .Include(p => p.Reviews) // نجيب الريفويهات 
-                .ThenInclude(r => r.AppUser) // نجيب اسماء اليوزرز اللى عملو ريفيوهات
+                .Include(p => p.Reviews)
+                    .ThenInclude(r => r.AppUser)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
-            if (product == null)
-            {
-                return NotFound("Product Not Found !");
-            }
+            if (product == null) return NotFound("Product Not Found !");
+
             var productDto = new ProductViewDto
             {
                 Id = product.Id,
@@ -152,21 +152,20 @@ namespace LoginAndRegister.Controllers
                 Description = product.Description,
                 Price = product.Price,
                 StockQuantity = product.StockQuantity,
-                CategoryName = product.Category.Name,
+                CategoryName = product.Category?.Name ?? "General",
                 ImageUrl = $"{Request.Scheme}://{Request.Host}/{product.ImagePath}",
-                // حساب المتوسط وعدد التقييمات
                 AverageRating = product.Reviews.Any() ? product.Reviews.Average(r => r.Rating) : 0,
                 ReviewsCount = product.Reviews.Count(),
-                // تحويل الريفيوهات لشكل بسيط
+                // هنا بنسحب الريفيوهات باليوزرز بتوعها
                 reviews = product.Reviews.Select(r => new ReviewReturnDto
                 {
-                    UserName = r.AppUser.UserName,
+                    UserName = r.AppUser?.DisplayName ?? "Anonymous",
                     Comment = r.Comment,
                     Rating = r.Rating,
                     CreatedAt = r.CreatedAt
                 }).ToList()
-
             };
+
             return Ok(productDto);
         }
         #endregion

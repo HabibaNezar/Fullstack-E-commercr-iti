@@ -8,7 +8,8 @@ namespace LoginAndRegister.Models
         public string LastName { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
-        public string? ProfilePicture { get; set; } 
+        public string? ProfilePicture { get; set; }
+        public string DisplayName { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         // Relation With CartItem

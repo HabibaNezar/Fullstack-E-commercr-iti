@@ -39,7 +39,7 @@ namespace LoginAndRegister.Controllers
                 Rating = reviewDto.Rating,
                 Comment = reviewDto.Comment,
                 ProductId = reviewDto.ProductId,
-                UserId = UserId
+                AppUserId = UserId
             };
             _context.Reviews.Add(review);
             await _context.SaveChangesAsync();

@@ -14,7 +14,7 @@ namespace LoginAndRegister.Models
         public Product Product { get; set; }
 
         // Relation With User
-        public string UserId { get; set; }
-        public AppUser AppUser { get; set; }
+        public string AppUserId { get; set; }
+        public  AppUser AppUser { get; set; }
     }
 }
