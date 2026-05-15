@@ -110,7 +110,23 @@ namespace LoginAndRegister.Controllers
                     _ => Query.OrderBy(p => p.Name)
                 };
             }
-            var products = await Query.ToListAsync();
+            // عشان نرجع ال reviews
+            var products = await Query
+                .Select(p => new ProductViewDto
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    StockQuantity = p.StockQuantity,
+                    CategoryName = p.Category.Name,
+                    ImageUrl = $"{Request.Scheme}://{Request.Host}/{p.ImagePath}",
+                    AverageRating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0,
+                    ReviewsCount = p.Reviews.Count(),
+                    // عشان لو الريفيوز بnull ميضربش ايرور 
+                    reviews = new List<ReviewReturnDto>()
+                })
+            .ToListAsync();
             return Ok(products);
         }
         #endregion
@@ -120,7 +136,10 @@ namespace LoginAndRegister.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var product = await _context.Products
-                .Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == id);
+                .Include(p => p.Category)
+                .Include(p => p.Reviews) // نجيب الريفويهات 
+                .ThenInclude(r => r.AppUser) // نجيب اسماء اليوزرز اللى عملو ريفيوهات
+                .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
             {
@@ -134,7 +153,19 @@ namespace LoginAndRegister.Controllers
                 Price = product.Price,
                 StockQuantity = product.StockQuantity,
                 CategoryName = product.Category.Name,
-                ImageUrl = $"{Request.Scheme}://{Request.Host}/{product.ImagePath}"
+                ImageUrl = $"{Request.Scheme}://{Request.Host}/{product.ImagePath}",
+                // حساب المتوسط وعدد التقييمات
+                AverageRating = product.Reviews.Any() ? product.Reviews.Average(r => r.Rating) : 0,
+                ReviewsCount = product.Reviews.Count(),
+                // تحويل الريفيوهات لشكل بسيط
+                reviews = product.Reviews.Select(r => new ReviewReturnDto
+                {
+                    UserName = r.AppUser.UserName,
+                    Comment = r.Comment,
+                    Rating = r.Rating,
+                    CreatedAt = r.CreatedAt
+                }).ToList()
+
             };
             return Ok(productDto);
         }

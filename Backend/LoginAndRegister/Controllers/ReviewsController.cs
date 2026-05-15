@@ -21,6 +21,8 @@ namespace LoginAndRegister.Controllers
             _context = context;
             _userManager = userManager;
         }
+
+        #region Add Review
         [HttpPost("AddReview")]
         public async Task<IActionResult> AddReview(ReviewDto reviewDto)
         {
@@ -43,5 +45,6 @@ namespace LoginAndRegister.Controllers
             await _context.SaveChangesAsync();
             return Ok("Review added successfully");
         }
+        #endregion
     }
 }

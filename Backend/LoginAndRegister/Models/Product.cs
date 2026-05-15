@@ -25,5 +25,7 @@ namespace LoginAndRegister.Models
         public virtual Category Category { get; set; }
         [ForeignKey("SellerId")]
         public virtual AppUser Seller {  get; set; }
+        // Relation With Review 
+        public ICollection<Review> Reviews { get; set; } = new HashSet<Review>();
     }
 }
