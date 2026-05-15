@@ -121,8 +121,17 @@ namespace LoginAndRegister.Controllers
         }
         #endregion
 
-        #region
-
+        #region Clear Cart
+        [HttpDelete("ClearMyCart")]
+        public async Task<IActionResult>ClearMyCart()
+        {
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var CartItems =await  _context.CartItems.Where(c => c.AppUserId == UserId ).ToListAsync();
+            if (!CartItems.Any()) return BadRequest("Cart is already empty");
+            _context.CartItems.RemoveRange(CartItems);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Cart cleared successfully" });
+        }
         #endregion
     }
 }
