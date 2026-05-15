@@ -16,8 +16,8 @@ export interface RegisterRequest {
   lastName: string;
   password: string;
   email: string;
-  address?: string;
+  address: string;
+  city: string;
   phoneNumber?: string;
-  city?: string;
   role?: 'Customer' | 'Seller';
 }

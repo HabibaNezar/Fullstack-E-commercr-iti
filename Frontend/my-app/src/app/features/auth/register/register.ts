@@ -43,8 +43,15 @@ export class Register implements OnInit {
         firstName: new FormControl('', [Validators.required, Validators.minLength(2)]),
         lastName: new FormControl('', [Validators.required]),
         email: new FormControl('', [Validators.required, Validators.email]),
+        city: new FormControl('', [Validators.required]),
+        address: new FormControl('', [Validators.required]),
         role: new FormControl('', [Validators.required]),
-        password: new FormControl('', [Validators.required, Validators.minLength(8)]),
+        password: new FormControl('', [
+          Validators.required, 
+          Validators.minLength(8),
+          // Pattern بيجبر المستخدم يكتب حرف كابيتال، حرف سمول، رقم، ورمز خاص
+          Validators.pattern(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])/)
+        ]),
         confirmPassword: new FormControl('', [Validators.required]),
         agreed: new FormControl(false, [Validators.requiredTrue]),
       },
@@ -106,13 +113,15 @@ export class Register implements OnInit {
     this.errorMsg = '';
     this.successMsg = '';
 
-    const { firstName, lastName, email, password, role } = this.registerForm.value;
+    const { firstName, lastName, email, password, role, city, address } = this.registerForm.value;
     const req: RegisterRequest = {
       firstName,
       lastName,
       email,
       password,
       role,
+      city,
+      address,
     };
 
     this.authService.register(req).subscribe({
@@ -126,6 +135,7 @@ export class Register implements OnInit {
         }, 3000);
       },
       error: (err) => {
+        console.error('🔥 إيرور الباك إند بالتفصيل:', err.error);
         this.errorMsg = AuthService.registerErrorMessage(err);
         this.isLoading = false;
         this.cdr.detectChanges();
