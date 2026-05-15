@@ -1,9 +1,11 @@
 ﻿using LoginAndRegister.AppContext;
+using LoginAndRegister.DTO;
 using LoginAndRegister.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LoginAndRegister.Controllers
 {
@@ -19,6 +21,27 @@ namespace LoginAndRegister.Controllers
             _context = context;
             _userManager = userManager;
         }
-
+        [HttpPost("AddReview")]
+        public async Task<IActionResult> AddReview(ReviewDto reviewDto)
+        {
+            // أول حاجه هنجيب ال id بتاع اليوزر
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // نتأكد الاول ان المنتج موجود
+            var product = _context.Products.FindAsync(reviewDto.ProductId);
+            if (product == null)
+            {
+                return NotFound("Product not found");
+            }
+            var review = new Review
+            {
+                Rating = reviewDto.Rating,
+                Comment = reviewDto.Comment,
+                ProductId = reviewDto.ProductId,
+                UserId = UserId
+            };
+            _context.Reviews.Add(review);
+            await _context.SaveChangesAsync();
+            return Ok("Review added successfully");
+        }
     }
 }

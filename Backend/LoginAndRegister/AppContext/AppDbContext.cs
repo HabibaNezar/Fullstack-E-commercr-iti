@@ -17,6 +17,7 @@ namespace LoginAndRegister.AppContext
         public DbSet<CartItems> CartItems { get; set; } 
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> orderItems { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
