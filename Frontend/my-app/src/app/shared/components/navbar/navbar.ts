@@ -21,6 +21,7 @@ export class Navbar implements OnInit {
 
   cartItemCount = 0;
   currentUser: IUser | null = null;
+  isMobileMenuOpen = false;
 
   private destroyRef = inject(DestroyRef);
   private cdr = inject(ChangeDetectorRef);
@@ -58,5 +59,14 @@ export class Navbar implements OnInit {
 
   logout(): void {
     this.authService.logout();
+    this.closeMobileMenu();
+  }
+
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.isMobileMenuOpen = false;
   }
 }
