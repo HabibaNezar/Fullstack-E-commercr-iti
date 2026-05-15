@@ -29,7 +29,7 @@ namespace LoginAndRegister.Controllers
             // أول حاجه هنجيب ال id بتاع اليوزر
             var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             // نتأكد الاول ان المنتج موجود
-            var product = _context.Products.FindAsync(reviewDto.ProductId);
+            var product = await _context.Products.FindAsync(reviewDto.ProductId);
             if (product == null)
             {
                 return NotFound("Product not found");
