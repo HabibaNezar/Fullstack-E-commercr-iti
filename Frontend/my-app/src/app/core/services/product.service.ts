@@ -82,36 +82,7 @@ export class ProductService {
   private http = inject(HttpClient);
   private baseUrl = `${environment.apiUrl}/Products`;
 
-  /** Spec API */
-  getAll(filter?: ProductFilter): Observable<Product[]> {
-    return this.http
-      .get<unknown>(`${this.baseUrl}/Get_All_Products`, { params: filterToParams(filter) })
-      .pipe(map((raw) => asArrayFromEnvelope(raw).map(normalizeProduct) as unknown as Product[]));
-  }
 
-  /** Spec API */
-  getById(id: number): Observable<Product> {
-    return this.http
-      .get<unknown>(`${this.baseUrl}/${id}`)
-      .pipe(map((raw) => normalizeProduct(raw) as unknown as Product));
-  }
-
-  /** Spec API — uses FormData; never set Content-Type. */
-  create(data: FormData): Observable<any> {
-    return this.http.post<unknown>(`${this.baseUrl}/Add_New_Product`, data);
-  }
-
-  /** Spec API — uses FormData; never set Content-Type. */
-  update(id: number, data: FormData): Observable<any> {
-    return this.http.put<unknown>(`${this.baseUrl}/${id}`, data);
-  }
-
-  /** Spec API */
-  delete(id: number): Observable<any> {
-    return this.http.delete<unknown>(`${this.baseUrl}/${id}`);
-  }
-
-  // --- Legacy/compatibility helpers used by existing components ---
 
   getProducts(query?: ProductQueryParams): Observable<IProduct[]> {
     let params = new HttpParams();
@@ -126,7 +97,14 @@ export class ProductService {
   }
 
   getProductById(id: number): Observable<IProduct> {
-    return this.http.get<unknown>(`${this.baseUrl}/${id}`).pipe(map(normalizeProduct));
+    return this.http.get<unknown>(`${this.baseUrl}/${id}`).pipe(
+      map((raw) => {
+        const o = asRecord(raw);
+        // Check for common wrappers like { "data": ... } or { "product": ... }
+        const inner = o['product'] ?? o['Product'] ?? o['data'] ?? o['Data'] ?? raw;
+        return normalizeProduct(inner);
+      })
+    );
   }
 
   createProduct(formData: FormData): Observable<IProduct> {
