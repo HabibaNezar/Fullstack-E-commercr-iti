@@ -9,4 +9,4 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   templateUrl: './admin-layout.html',
   styleUrl: './admin-layout.css',
 })
-export class AdminLayout {}
+export class AdminLayout { }
