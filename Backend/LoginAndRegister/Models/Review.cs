@@ -10,8 +10,8 @@ namespace LoginAndRegister.Models
         public string Comment  { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         // Relation with Product
-        public int ProductId { get; set; }
-        public Product Product { get; set; }
+        public int? ProductId { get; set; }
+        public Product? Product { get; set; }
 
         // Relation With User
         public string AppUserId { get; set; }

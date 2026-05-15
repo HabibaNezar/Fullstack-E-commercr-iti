@@ -2,6 +2,11 @@
 
 namespace LoginAndRegister.Models
 {
+    public enum PaymentMethod
+    {
+        COD,
+        Card
+    }
     public class Order
     {
         public int Id { get; set; }
@@ -11,6 +16,8 @@ namespace LoginAndRegister.Models
         public decimal TotalPrice { get; set; }
         public string ShppingAddress { get; set; }
         public string AppUserId { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
+        public string? PaymentIntentId { get; set; }
         // العلاقة مع المشترى
         [ForeignKey("AppUserId")]
         public virtual AppUser User { get; set; }

@@ -39,6 +39,26 @@ namespace LoginAndRegister.AppContext
             builder.Entity<Product>().HasQueryFilter(p => !p.IsDeleted);
             // فلتر تلقائي لليوزرز
             builder.Entity<AppUser>().HasQueryFilter(u => !u.IsDeleted);
+
+            builder.Entity<CartItems>()
+           .HasOne(c => c.User)
+           .WithMany()
+           .HasForeignKey(c => c.AppUserId)
+           .IsRequired(false); // كدة بقت اختيارية تماماً
+
+            // 4. علاقة اليوزر بالأوردر 
+            builder.Entity<Order>()
+                   .HasOne(o => o.User)
+                   .WithMany()
+                   .HasForeignKey(o => o.AppUserId)
+                   .IsRequired(false);
+
+            // 5. علاقة اليوزر بالـ Review 
+            builder.Entity<Review>()
+                   .HasOne(r => r.AppUser)
+                   .WithMany()
+                   .HasForeignKey(r => r.AppUserId)
+                   .IsRequired(false);
         }
     }
 }

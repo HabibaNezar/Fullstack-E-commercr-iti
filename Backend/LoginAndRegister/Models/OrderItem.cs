@@ -6,7 +6,7 @@ namespace LoginAndRegister.Models
     {
         public int Id { get; set; }
         public int OrderId { get; set; }
-        public int ProductId { get; set; }
+        public int? ProductId { get; set; }
         public int Quantity { get; set; }
         [Column(TypeName = "decimal(18,2))")]
         public decimal PriceAtPurchase { get; set; } // دا السعر وقت الشراء 
@@ -16,6 +16,6 @@ namespace LoginAndRegister.Models
         public virtual Order Order { get; set; }
         // Relation with Product 
         [ForeignKey("ProductId")]
-        public virtual Product Product { get; set; }   
+        public virtual Product? Product { get; set; }   
     }
 }

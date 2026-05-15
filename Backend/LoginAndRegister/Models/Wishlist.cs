@@ -3,11 +3,11 @@
     public class Wishlist
     {
         public int Id { get; set; }
-        public int ProductId { get; set; }
-        public string AppUserId { get; set; }
+        public int? ProductId { get; set; }
+        public string? AppUserId { get; set; }
         //Relation With Product
-        public Product Product { get; set; }
+        public Product? Product { get; set; }
         //Relation With User
-        public AppUser AppUser { get; set; }
+        public AppUser? AppUser { get; set; }
     }
 }

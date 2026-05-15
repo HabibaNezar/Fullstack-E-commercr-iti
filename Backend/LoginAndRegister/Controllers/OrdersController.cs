@@ -1,6 +1,7 @@
 ﻿using LoginAndRegister.AppContext;
 using LoginAndRegister.DTO;
 using LoginAndRegister.Models;
+using LoginAndRegister.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,43 +16,41 @@ namespace LoginAndRegister.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly AppDbContext _context;
-        public OrdersController(AppDbContext context)
+        private readonly IPaymentService _paymentService;
+        public OrdersController(AppDbContext context , IPaymentService paymentService)
         {
             _context = context; 
+            _paymentService = paymentService;
         }
         #region Check Out End Point
         [HttpPost("CheckOut")]
-        public async Task<IActionResult> CheckOut(string shippingAddress)
+        public async Task<IActionResult> CheckOut(string shippingAddress, string paymentMethod)
         {
-            // هنا هجيب اليوزر
-            var UserId = User.FindFirstValue (ClaimTypes.NameIdentifier);
-            // هنجيب محتويات الكارت بتاع اليوزر
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             var CartItems = await _context.CartItems
                 .Where(c => c.AppUserId == UserId)
                 .Include(c => c.Product).ToListAsync();
-            // بتأكد ان الكارت فيه محتوى
+
             if (CartItems == null || !CartItems.Any())
             {
                 return BadRequest(new { message = "Cart Is Empty !!" });
             }
-            // نحسب اجمالى سعر الاوردر كله
             decimal GrandTotalPrice = CartItems.Sum(item => item.Quantity * item.Product.ActualPrice);
-            // نعمل الاوردر نفسه بقا 
             var Order = new Order
             {
                 AppUserId = UserId,
                 OrderDate = DateTime.Now,
                 OrderStatus = "Pending",
                 TotalPrice = GrandTotalPrice,
-                ShppingAddress = shippingAddress
+                ShppingAddress = shippingAddress,
+                PaymentMethod = paymentMethod == "Card" ? PaymentMethod.Card : PaymentMethod.COD
             };
-            // نضيف بقا الاوردر ف الجدول
-            _context.Orders.Add(Order);
-            // عملنا سيف هنا بدرى عشان عشان الاوردر يتسيف فى الداتا بيز وياخد id 
-            await _context.SaveChangesAsync();
 
-            // تفكيك السله وتحويل محتوياتها الى items
-            foreach (var item in CartItems) 
+            _context.Orders.Add(Order);
+            await _context.SaveChangesAsync();
+            // 1. لفي على كل المنتجات وضيفيهم كـ OrderItems الأول
+            foreach (var item in CartItems)
             {
                 if (item.Product.StockQuantity < item.Quantity)
                 {
@@ -62,16 +61,43 @@ namespace LoginAndRegister.Controllers
                     OrderId = Order.Id,
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
-                    PriceAtPurchase = item.Product.ActualPrice // عشان اخلى سعر الاوردر ثابت حتى لو اتغير بعد كدا
+                    PriceAtPurchase = item.Product.ActualPrice
                 };
                 _context.orderItems.Add(OrderItem);
-                // بنقص الكمية الباقية
-                item.Product.StockQuantity -= item.Quantity;
+                // لو كاش، بننقص المخزن دلوقتي
+                if (paymentMethod == "COD")
+                {
+                    item.Product.StockQuantity -= item.Quantity;
+                }
             }
-            // بعدين نمسح الكارت
-            //_context.CartItems.RemoveRange(CartItems);
+            // 2. هنا بقى بنسيف كل الـ OrderItems اللي اتضافت فوق مرة واحدة
             await _context.SaveChangesAsync();
-            return Ok(new { Message = "Order Placed Successfully !", OrderId = Order.Id,  Total= GrandTotalPrice });
+            if (paymentMethod == "COD")
+            {
+                _context.CartItems.RemoveRange(CartItems); // مسح السلة
+                await _context.SaveChangesAsync();
+                return Ok(new { Message = "Order Placed (Cash)!", OrderId = Order.Id });
+            }
+            else
+            {
+                // طلب الـ Secret من Stripe
+                var clientSecret = await _paymentService.CreateOrUpdatePaymentIntent(UserId);
+                //   هنقص الـ PaymentIntentId من الـ clientSecret
+                if (!string.IsNullOrEmpty(clientSecret))
+                {
+                    // بناخد النص اللي قبل كلمة "_secret_"
+                    Order.PaymentIntentId = clientSecret.Split("_secret_")[0];
+                }
+                // نسيف الأوردر بعد ما حطينا فيه الـ ID بتاع Stripe
+                await _context.SaveChangesAsync();
+                // ملاحظة: مش بنمسح السلة هنا، بنسيبها للـ Webhook
+                return Ok(new
+                {
+                    Message = "Order Created. Complete payment via Stripe...",
+                    OrderId = Order.Id,
+                    ClientSecret = clientSecret
+                });
+            }
         }
         #endregion
 
@@ -93,9 +119,8 @@ namespace LoginAndRegister.Controllers
                     ShippingAddress = o.ShppingAddress,
                     Items = o.OrderItem.Select(oi => new OrderItemViewDto
                     {
-                        ProductId = oi.ProductId,
-                        ProductName = oi.Product.Name,
-                        Quantity = oi.Quantity,
+                        ProductId = oi.ProductId ?? 0,
+                        ProductName = oi.Product != null ? oi.Product.Name : "Unknown Product", // حماية إضافية لو المنتج ممسوح                        Quantity = oi.Quantity,
                         PriceAtPurchase = oi.PriceAtPurchase
                     }).ToList()
                 }).OrderByDescending(o => o.OrderDate).ToListAsync();

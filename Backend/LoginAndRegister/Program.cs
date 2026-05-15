@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using LoginAndRegister.Services;
+using Stripe;
 
 namespace LoginAndRegister
 {
@@ -23,6 +24,9 @@ namespace LoginAndRegister
             // Add DbContext
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Stripe
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
 
             #region Email Confirmation & Identity Configuration
             builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
@@ -98,6 +102,13 @@ namespace LoginAndRegister
             });
             #endregion
 
+            #region Stripe Configuration
+            // قراءة الإعدادات من appsettings
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+            // تفعيل السيكريت كي في المكتبة
+            StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe")["SecretKey"];
+            #endregion
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -130,7 +141,6 @@ namespace LoginAndRegister
                         await roleManager.CreateAsync(new IdentityRole(roleName));
                     }
                 }
-
                 // 2. إنشاء يوزر أدمن افتراضي (محدث بالبيانات المطلوبة)
                 var adminEmail = "admin@ecommerce.com";
                 var adminUser = await userManager.FindByEmailAsync(adminEmail);
