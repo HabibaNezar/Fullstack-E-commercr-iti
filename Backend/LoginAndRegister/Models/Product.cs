@@ -17,6 +17,7 @@ namespace LoginAndRegister.Models
         public string? ImagePath { get; set; }
         public int CategoryId { get; set; }
         public string SellerId { get; set; }
+        public bool IsDeleted { get; set; } = false;
         // هنا بقوله لو فى كود خصم استخدمة لو مفيش ابعتلى السعر الحقيقى
         public decimal ActualPrice => DiscountPrice.HasValue ? DiscountPrice.Value : Price;
 

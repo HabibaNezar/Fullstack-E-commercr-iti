@@ -11,6 +11,7 @@ namespace LoginAndRegister.Models
         public string? ProfilePicture { get; set; }
         public string DisplayName { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public bool IsDeleted { get; set; } = false;
 
         // Relation With CartItem
         public virtual ICollection<CartItems> CartItems{ get; set; } = new HashSet<CartItems>();   

@@ -31,7 +31,14 @@ namespace LoginAndRegister.AppContext
                    .WithMany() 
                    .HasForeignKey(p => p.SellerId)
                    // فى السطر دا بقوله متعملش مسح تلقائى
-                   .OnDelete(DeleteBehavior.Restrict); 
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            // الجزء دا مهم عشان ال soft delete
+            // عشان بشكل تلقائى يعرض المنتجات اللى موجود بس 
+            // فلتر تلقائي للمنتجات
+            builder.Entity<Product>().HasQueryFilter(p => !p.IsDeleted);
+            // فلتر تلقائي لليوزرز
+            builder.Entity<AppUser>().HasQueryFilter(u => !u.IsDeleted);
         }
     }
 }

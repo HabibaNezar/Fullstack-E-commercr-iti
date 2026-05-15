@@ -182,17 +182,20 @@ namespace LoginAndRegister.Controllers
                 return NotFound("Product Not Found");
             }
             // مسح المنتج من الهارد ديسك
-            if (!string.IsNullOrEmpty(product.ImagePath))
-            {
-                string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "Images", product.ImagePath);
-                // هنا بتأكد ان الفايل موجود عشان لو راح ملقهاش ميضربش ايرور
-                if (System.IO.File.Exists(filePath))
-                {
-                    System.IO.File.Delete(filePath);
-                }
-            }
+            //if (!string.IsNullOrEmpty(product.ImagePath))
+            //{
+            //    string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "Images", product.ImagePath);
+            //    // هنا بتأكد ان الفايل موجود عشان لو راح ملقهاش ميضربش ايرور
+            //    if (System.IO.File.Exists(filePath))
+            //    {
+            //        System.IO.File.Delete(filePath);
+            //    }
+            //}
             // مسح المنتج من الداتا بيز 
-            _context.Products.Remove(product);
+            //_context.Products.Remove(product);
+
+            // Soft Delete
+            product.IsDeleted = true;
             await _context.SaveChangesAsync();
             return Ok(new { message = " Product Deleted successfully !" });
         }

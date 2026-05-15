@@ -137,6 +137,11 @@ namespace LoginAndRegister.Controllers
                         {
                             return BadRequest("Confirm Your Email First!");
                         }
+                        // لو اليوزر موجود بس معمول له Soft Delete نرفض الدخول
+                        if (user != null && user.IsDeleted)
+                        {
+                            return BadRequest(new { message = "This account has been deleted/disabled." });
+                        }
 
                         var claims = new List<Claim>
                 {

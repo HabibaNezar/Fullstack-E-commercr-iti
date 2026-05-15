@@ -55,6 +55,19 @@ namespace LoginAndRegister.Controllers
         }
         #endregion
 
+        #region Disable User (Admin Only)
+        [HttpDelete("Disable_User/{userId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DisableUser(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return NotFound();
+            user.IsDeleted = true;
+            await _userManager.UpdateAsync(user);
+            return Ok(new { message = "User account disabled successfully" });
+        }
+        #endregion
+
         #region All Orders For Admin Panel 
         [Authorize(Roles = "Admin")]
         [HttpGet("AllOrders")]
