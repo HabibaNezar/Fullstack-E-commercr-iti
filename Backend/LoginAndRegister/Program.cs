@@ -17,19 +17,19 @@ namespace LoginAndRegister
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddControllers();
+            // Add services to the container.
+            builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
 
-            // Add DbContext
-            builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            // Add DbContext
+            builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            // Stripe
-            builder.Services.AddScoped<IPaymentService, PaymentService>();
+            // Stripe
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
 
-            #region Email Confirmation & Identity Configuration
-            builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+            #region Email Confirmation & Identity Configuration
+            builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
             {
                 options.SignIn.RequireConfirmedEmail = true;
                 options.User.RequireUniqueEmail = true;
@@ -38,36 +38,36 @@ namespace LoginAndRegister
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
             })
-            .AddEntityFrameworkStores<AppDbContext>()
-            .AddDefaultTokenProviders();
+      .AddEntityFrameworkStores<AppDbContext>()
+      .AddDefaultTokenProviders();
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
-            #endregion
+            #endregion
 
-            #region JWT Authentication
-            builder.Services.AddAuthentication(options =>
+            #region JWT Authentication
+            builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-                };
-            });
-            #endregion
+      .AddJwtBearer(options =>
+      {
+          options.TokenValidationParameters = new TokenValidationParameters
+          {
+              ValidateIssuer = true,
+              ValidateAudience = true,
+              ValidateLifetime = true,
+              ValidateIssuerSigningKey = true,
+              ValidIssuer = builder.Configuration["Jwt:Issuer"],
+              ValidAudience = builder.Configuration["Jwt:Audience"],
+              IssuerSigningKey = new SymmetricSecurityKey(
+              Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+          };
+      });
+            #endregion
 
-            #region Swagger Configuration
-            builder.Services.AddSwaggerGen(options =>
+            #region Swagger Configuration
+            builder.Services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
@@ -86,33 +86,33 @@ namespace LoginAndRegister
                 });
 
                 options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-                {
-                    {
-                        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-                        {
-                            Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                            {
-                                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        new string[] {}
-                    }
-                });
+        {
+          {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+              Reference = new Microsoft.OpenApi.Models.OpenApiReference
+              {
+                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                Id = "Bearer"
+              }
+            },
+            new string[] {}
+          }
+        });
             });
-            #endregion
+            #endregion
 
-            #region Stripe Configuration
-            // قراءة الإعدادات من appsettings
-            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
-            // تفعيل السيكريت كي في المكتبة
-            StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe")["SecretKey"];
-            #endregion
+            #region Stripe Configuration
+            // قراءة الإعدادات من appsettings
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+            // تفعيل السيكريت كي في المكتبة
+            StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe")["SecretKey"];
+            #endregion
 
-            var app = builder.Build();
+            var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
@@ -120,74 +120,114 @@ namespace LoginAndRegister
 
             app.UseHttpsRedirection();
             app.UseStaticFiles(); // يفضل وضعها قبل Authentication
-            app.UseAuthentication();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
 
-            #region Identity Seeding (Roles & Admin User)
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-                var userManager = services.GetRequiredService<UserManager<AppUser>>();
-
-                // 1. إنشاء الأدوار
-                string[] roleNames = { "Admin", "Customer", "Seller" };
-                foreach (var roleName in roleNames)
-                {
-                    if (!await roleManager.RoleExistsAsync(roleName))
-                    {
-                        await roleManager.CreateAsync(new IdentityRole(roleName));
-                    }
-                }
-                // 2. إنشاء يوزر أدمن افتراضي (محدث بالبيانات المطلوبة)
-                var adminEmail = "admin@ecommerce.com";
-                var adminUser = await userManager.FindByEmailAsync(adminEmail);
-                if (adminUser == null)
-                {
-                    var newAdmin = new AppUser
-                    {
-                        UserName = "SuperAdmin",
-                        Email = adminEmail,
-                        EmailConfirmed = true,
-                        Address = "Main Admin Office",
-                        City = "Cairo",
-                        PhoneNumber = "0123456789",
-                        // الحقول التي كانت تسبب الخطأ:
-                        FirstName = "Admin",
-                        LastName = "System",
-                        CreatedAt = DateTime.Now
-                    };
-
-                    var createAdminResult = await userManager.CreateAsync(newAdmin, "Admin@123");
-                    if (createAdminResult.Succeeded)
-                    {
-                        await userManager.AddToRoleAsync(newAdmin, "Admin");
-                    }
-                }
-            }
-            #endregion
-
-            #region Adding Dummy Data
-            using (var scope = app.Services.CreateScope())
+            #region Identity & Dummy Data Seeding
+            using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<AppDbContext>();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
                 var userManager = services.GetRequiredService<UserManager<AppUser>>();
                 try
                 {
-                    // تأكدي أن هذا الـ Seed يرسل FirstName و LastName أيضاً للمستخدمين
-                    await StoreContextSeed.SeedAsync(context, userManager);
+                    // 1. إنشاء الأدوار في قاعدة البيانات
+                    string[] roleNames = { "Admin", "Customer", "Seller" };
+                    foreach (var roleName in roleNames)
+                    {
+                        if (!await roleManager.RoleExistsAsync(roleName))
+                        {
+                            await roleManager.CreateAsync(new IdentityRole(roleName));
+                        }
+                    }
+                    // 2. إنشاء حساب الأدمن
+                    var adminEmail = "admin@test.com";
+                    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+                    if (adminUser == null)
+                    {
+                        var newAdmin = new AppUser
+                        {
+                            UserName = "EmanGenedy",
+                            Email = adminEmail,
+                            EmailConfirmed = true,
+                            Address = "Alex",
+                            City = "Alex",
+                            PhoneNumber = "01030862334",
+                            FirstName = "Eman",
+                            LastName = "Genedy",
+                            DisplayName = "Eman Genedy",
+                            CreatedAt = DateTime.Now
+                        };
+                        var createAdminResult = await userManager.CreateAsync(newAdmin, "Admin@123");
+                        if (createAdminResult.Succeeded)
+                        {
+                            await userManager.AddToRoleAsync(newAdmin, "Admin");
+                        }
+                    }
+                    // 3. إنشاء حساب البائع (Seller)
+                    var sellerEmail = "seller@test.com";
+                    var sellerUser = await userManager.FindByEmailAsync(sellerEmail);
+                    if (sellerUser == null)
+                    {
+                        var newSeller = new AppUser
+                        {
+                            UserName = "EsraaShiref",
+                            Email = sellerEmail,
+                            EmailConfirmed = true,
+                            Address = "Cairo",
+                            City = "Cairo",
+                            PhoneNumber = "01029496150",
+                            FirstName = "Esraa",
+                            LastName = "Shiref",
+                            DisplayName = "Esraa Shiref",
+                            CreatedAt = DateTime.Now
+                        };
+                        var createSellerResult = await userManager.CreateAsync(newSeller, "Seller@123");
+                        if (createSellerResult.Succeeded)
+                        {
+                            await userManager.AddToRoleAsync(newSeller, "Seller");
+                        }
+                    }
+                    // 4. إنشاء حساب العميل (Customer)
+                    var customerEmail = "customer@test.com";
+                    var customerUser = await userManager.FindByEmailAsync(customerEmail);
+                    if (customerUser == null)
+                    {
+                        var newCustomer = new AppUser
+                        {
+                            UserName = "HabibaNezar",
+                            Email = customerEmail,
+                            EmailConfirmed = true,
+                            Address = "Tanta",
+                            City = "Tanta",
+                            PhoneNumber = "01271601623",
+                            FirstName = "Habiba",
+                            LastName = "Nezar",
+                            DisplayName = "Habiba Nezar",
+                            CreatedAt = DateTime.Now
+                        };
+
+                        var createCustomerResult = await userManager.CreateAsync(newCustomer, "Customer@123");
+                        if (createCustomerResult.Succeeded)
+                        {
+                            await userManager.AddToRoleAsync(newCustomer, "Customer");
+                        }
+                    }
+
+                    // 5. استدعاء البيانات الوهمية للمتجر (Dummy Data)
+                    await StoreContextSeed.SeedAsync(context, userManager);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Seeding Error: {ex.Message}");
                 }
             }
-            #endregion
+            #endregion
 
-            app.Run();
+            app.Run();
         }
     }
 }

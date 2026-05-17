@@ -13,7 +13,7 @@ namespace LoginAndRegister.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public bool IsDeleted { get; set; } = false;
 
-        // Relation With CartItem
-        public virtual ICollection<CartItems> CartItems{ get; set; } = new HashSet<CartItems>();   
+        // Relation With CartItem
+        public virtual ICollection<CartItems> CartItems { get; set; } = new HashSet<CartItems>();
     }
 }

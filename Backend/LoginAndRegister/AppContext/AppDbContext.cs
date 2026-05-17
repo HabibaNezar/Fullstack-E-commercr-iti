@@ -1,20 +1,16 @@
 ﻿using LoginAndRegister.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 namespace LoginAndRegister.AppContext
 {
     public class AppDbContext : IdentityDbContext<AppUser>
     {
-        // Connection With DB
-        public AppDbContext(DbContextOptions<AppDbContext> options) 
-            : base(options)
-        {
-        }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<CartItems> CartItems { get; set; } 
+        public DbSet<CartItems> CartItems { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> orderItems { get; set; }
         public DbSet<Review> Reviews { get; set; }
@@ -22,43 +18,50 @@ namespace LoginAndRegister.AppContext
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            // هنا انا بقوله انا عندى جدول منتجات 
-            // الجدول دا ليه سيلر واحد بس وفيه كذا مستخدم ممكن يشترى منه
-            // فلو مسحنا يوزر وفى نفس الوقت اليوزر دا كان سيلر متمسحش كل المنتجات بتاعته
             base.OnModelCreating(builder);
+
+            // 1. البائع
             builder.Entity<Product>()
                    .HasOne(p => p.Seller)
-                   .WithMany() 
+                   .WithMany()
                    .HasForeignKey(p => p.SellerId)
-                   // فى السطر دا بقوله متعملش مسح تلقائى
                    .OnDelete(DeleteBehavior.Restrict);
 
-            // الجزء دا مهم عشان ال soft delete
-            // عشان بشكل تلقائى يعرض المنتجات اللى موجود بس 
-            // فلتر تلقائي للمنتجات
+            // 2. الـ Soft Delete
             builder.Entity<Product>().HasQueryFilter(p => !p.IsDeleted);
-            // فلتر تلقائي لليوزرز
             builder.Entity<AppUser>().HasQueryFilter(u => !u.IsDeleted);
 
+            // 3. السلة والمستخدم (حل الـ Shadow State والـ Filter)
             builder.Entity<CartItems>()
-           .HasOne(c => c.User)
-           .WithMany()
-           .HasForeignKey(c => c.AppUserId)
-           .IsRequired(false); // كدة بقت اختيارية تماماً
+                   .HasOne(c => c.AppUser)
+                   .WithMany(u => u.CartItems)
+                   .HasForeignKey(c => c.AppUserId)
+                   .IsRequired(false)
+                   .OnDelete(DeleteBehavior.Cascade);
 
-            // 4. علاقة اليوزر بالأوردر 
+            // 4. السلة والمنتج
+            builder.Entity<CartItems>()
+                   .HasOne(c => c.Product)
+                   .WithMany()
+                   .HasForeignKey(c => c.ProductId)
+                   .IsRequired(false)
+                   .OnDelete(DeleteBehavior.Cascade);
+
+            // 5. الأوردر
             builder.Entity<Order>()
                    .HasOne(o => o.User)
                    .WithMany()
                    .HasForeignKey(o => o.AppUserId)
-                   .IsRequired(false);
+                   .IsRequired(false)
+                   .OnDelete(DeleteBehavior.SetNull);
 
-            // 5. علاقة اليوزر بالـ Review 
+            // 6. الـ Review
             builder.Entity<Review>()
                    .HasOne(r => r.AppUser)
                    .WithMany()
                    .HasForeignKey(r => r.AppUserId)
-                   .IsRequired(false);
+                   .IsRequired(false)
+                   .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
