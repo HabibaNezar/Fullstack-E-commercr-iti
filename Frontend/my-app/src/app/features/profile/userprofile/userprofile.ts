@@ -1,6 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { UsersService } from '../../../shared/services/user.service';
 import { OrderService } from '../../../core/services/order.service';
@@ -13,6 +14,7 @@ import { IUser } from '../../../models/iuser';
 import { IOrder } from '../../../models/iorder';
 import { IReview } from '../../../models/ireview';
 import { IProduct } from '../../../models/iproduct';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { timeout, catchError, finalize, of } from 'rxjs';
 
 /** UI-only fields used by userprofile.html (beyond IUser). */
@@ -47,6 +49,9 @@ export class UserProfile implements OnInit {
   wishlistProducts: IProduct[] = [];
   userReviews: IReview[] = [];
 
+  private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
+
   constructor(
     private authService: AuthService,
     private usersService: UsersService,
@@ -59,6 +64,16 @@ export class UserProfile implements OnInit {
 
   ngOnInit(): void {
     this.loadUser();
+
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(params => {
+        const tab = (params['tab'] ?? '').toLowerCase();
+        if (tab === 'wishlist') {
+          this.activeTab = 'Wishlist';
+          this.loadTabData();
+        }
+      });
   }
 
   loadUser(): void {
@@ -86,30 +101,18 @@ export class UserProfile implements OnInit {
 
   loadTabData(): void {
     if (this.activeTab === 'Wishlist') {
-      if (!this.user?.id) return;
       this.wishlistProducts = [];
-      if (this.user.wishlist?.length) {
-        this.user.wishlist.forEach(id => {
+      const ids = this.user?.wishlist;
+      if (ids?.length) {
+        ids.forEach(id => {
           this.productService.getProductById(id).subscribe(product => {
             if (product) {
-            this.wishlistProducts.push(product);
-            console.log("Loaded Product Image Path:", product.imagePath); // Log the image path after loading each product
+              this.wishlistProducts.push(product);
             }
             this.cdr.detectChanges();
           });
         });
       }
-    // output undefined because the products haven't loaded yet where shuld i put it to show the image path after loading the products? 
-    // You can put the console.log statement inside the subscribe callback after pushing the product to the wishlistProducts array. This way, it will log the image path after each product is loaded. Here's how you can do it:
-    // Inside the subscribe callback for getProductById:
-    // this.productService.getProductById(id).subscribe(product => {
-    //   if (product) {
-    //     this.wishlistProducts.push(product);
-    //     console.log("Loaded Product Image Path:", product.imagePath); // Log the image path after loading each product
-    //   }
-    //   this.cdr.detectChanges();
-    // });
-
     } else if (this.activeTab === 'Reviews') {
       if (!this.user?.id) return;
       this.userReviews = [];

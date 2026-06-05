@@ -1,10 +1,10 @@
-import { Component, OnInit, inject, DestroyRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
 import { IProduct } from '../../../models/iproduct';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, EMPTY, finalize, map, switchMap, timeout } from 'rxjs';
+import { catchError, map, switchMap, timeout, of, distinctUntilChanged } from 'rxjs';
 import { CartService } from '../../../core/services/cart.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { DecimalPipe } from '../../../shared/pipes/decimal-pipe';
@@ -18,9 +18,21 @@ import { environment } from '../../../../environments/environment';
   styleUrl: './product-details.css',
 })
 export class ProductDetails implements OnInit {
-  private readonly cdr = inject(ChangeDetectorRef);
+  constructor() {
+    console.log('💎 ProductDetails instance created:', Math.random());
+  }
   product: IProduct | null = null;
-  loading = true;
+  private _loading = false;
+
+  get loading(): boolean {
+    return this._loading;
+  }
+
+  set loading(val: boolean) {
+    console.trace('🔴 loading set to:', val);
+    this._loading = val;
+  }
+
   error = '';
   quantity = 1;
 
@@ -32,88 +44,96 @@ export class ProductDetails implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
-    console.log('ProductDetails Component Initialized');
-    
     this.route.paramMap
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        map(params => {
-          const idParam = params.get('id');
-          console.log('Route ID Parameter:', idParam);
-          return Number(idParam);
-        }),
+        map(params => Number(params.get('id'))),
+        distinctUntilChanged(),
         switchMap(id => {
           if (isNaN(id) || id === 0) {
-            console.error('Invalid ID');
-            this.error = 'Invalid product ID';
-            this.loading = false;
-            this.product = null;
-            return EMPTY;
+            return of({ status: 'invalid' as const });
           }
-
-          this.loading = true;
+          this.product = null;
           this.error = '';
+          this.loading = true;
+
           return this.productService.getProductById(id).pipe(
-            timeout(10000), // 10 seconds timeout
-            catchError((err) => {
-              console.error('API Error details:', err);
-              this.error = 'Failed to load product details. Please try again later.';
-              return EMPTY;
+            timeout(10000),
+            map(product => {
+              console.log('🟡 raw product from service:', product);
+              console.log('🟡 product truthy?', !!product);
+              return { status: 'success' as const, product };
             }),
-            finalize(() => {
-              this.loading = false;
-              this.cdr.detectChanges();
+            catchError(err => {
+              console.error('🔴 API Error:', err);
+              return of({ status: 'error' as const });
             })
           );
         })
       )
       .subscribe({
-        next: (product) => {
-          console.log('Product data received:', product);
-          this.product = product;
-          this.quantity = 1;
-          this.cdr.detectChanges();
+        next: (result) => {
+          console.log('🟢 next() called, result:', result);
+          switch (result.status) {
+            case 'success':
+              console.log('🟢 SUCCESS — setting product:', result.product);
+              this.product = result.product;
+              this.quantity = 1;
+              this.error = '';
+              this.loading = false;
+              console.log('🟢 after success: loading=', this.loading, '| product=', this.product);
+              break;
+
+            case 'error':
+              console.log('🟢 ERROR case');
+              this.product = null;
+              this.error = 'Failed to load product details. Please try again later.';
+              this.loading = false;
+              break;
+
+            case 'invalid':
+              console.log('🟢 INVALID case');
+              this.product = null;
+              this.error = 'Invalid product ID';
+              this.loading = false;
+              break;
+          }
         },
         error: (err) => {
-          console.error('Subscription error:', err);
+          console.error('🔴 Unexpected subscription error:', err);
           this.loading = false;
           this.error = 'An unexpected error occurred.';
         }
       });
   }
 
-
   productImageUrl(): string {
-  const rawImage = this.product?.image || (this.product as any)?.imagePath;
-  if (!rawImage || typeof rawImage !== 'string') {
-    return 'assets/placeholder.png';
-  }
-  
-  let trimmed = rawImage.trim();
-
-  // حل سحري: لو الرابط جواه مسار اللوكال هوست متبوع بـ http تانية، هنقص اللوكال هوست خالص
-  if (trimmed.includes('localhost') && trimmed.includes('http', 5)) {
-    // هيدور على الـ http التانية وياخد الرابط من أولها
-    const actualUrlStart = trimmed.indexOf('http', 5); 
-    if (actualUrlStart !== -1) {
-      trimmed = trimmed.substring(actualUrlStart);
+    const rawImage = this.product?.image || (this.product as any)?.imagePath;
+    if (!rawImage || typeof rawImage !== 'string') {
+      return 'assets/placeholder.png';
     }
-  }
 
-  // فحص لو الرابط بقى يبدأ بـ http صريحة ونظيفة
-  if (/^https?:\/\//i.test(trimmed)) {
-    return trimmed;
+    let trimmed = rawImage.trim();
+
+    if (trimmed.includes('localhost') && trimmed.includes('http', 5)) {
+      const actualUrlStart = trimmed.indexOf('http', 5);
+      if (actualUrlStart !== -1) {
+        trimmed = trimmed.substring(actualUrlStart);
+      }
+    }
+
+    if (/^https?:\/\//i.test(trimmed)) {
+      return trimmed;
+    }
+
+    const env = environment as { apiUrl: string; apiServerOrigin?: string };
+    const base = env.apiUrl.startsWith('http')
+      ? env.apiUrl.replace(/\/api\/?$/, '')
+      : (env.apiServerOrigin ?? '').replace(/\/$/, '');
+
+    if (!base) return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+    return trimmed.startsWith('/') ? `${base}${trimmed}` : `${base}/${trimmed}`;
   }
-  
-  // لو مش رابط كامل، بنحط الـ Localhost والـ Base Url العادي بتاعنا
-  const env = environment as { apiUrl: string; apiServerOrigin?: string };
-  const base = env.apiUrl.startsWith('http')
-    ? env.apiUrl.replace(/\/api\/?$/, '')
-    : (env.apiServerOrigin ?? '').replace(/\/$/, '');
-    
-  if (!base) return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
-  return trimmed.startsWith('/') ? `${base}${trimmed}` : `${base}/${trimmed}`;
-}
 
   increaseQuantity(): void {
     if (this.product && this.quantity < this.product.stockQuantity) {

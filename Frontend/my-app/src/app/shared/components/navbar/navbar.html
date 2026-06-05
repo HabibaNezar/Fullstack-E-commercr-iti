@@ -1,118 +1,186 @@
-<nav class="navbar" [class.mobile-open]="isMobileMenuOpen">
+<!-- ===== TOP ANNOUNCEMENT BAR ===== -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <span class="top-bar-promo">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>
+      </svg>
+      Free shipping on orders over $50
+    </span>
+    <div class="top-bar-right">
+      <span class="top-bar-secure">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        Secure Checkout
+      </span>
+      <span class="top-bar-phone">Call us: 1-800-SHOP</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN NAVBAR ===== -->
+<nav class="navbar" [class.mobile-open]="isMobileMenuOpen" (mouseleave)="closeMegaMenu()">
   <!-- LOGO -->
   <a routerLink="/home" class="logo" (click)="closeMobileMenu()">ShopHub</a>
 
   <!-- Hamburger Button -->
   <button class="mobile-toggle" (click)="toggleMobileMenu()" aria-label="Toggle navigation">
-    <i [class]="isMobileMenuOpen ? 'ti ti-x' : 'ti ti-menu-2'"></i>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      @if (!isMobileMenuOpen) {
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      } @else {
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      }
+    </svg>
   </button>
 
+  <!-- DESKTOP NAV CONTENT -->
   <div class="nav-content" [class.show]="isMobileMenuOpen">
-    <!-- CATEGORIES -->
-    <div class="nav-categories">
-      <a routerLink="/home" routerLinkActive="active" (click)="closeMobileMenu()">Home</a>
-      <a routerLink="/products" routerLinkActive="active" (click)="closeMobileMenu()">Products</a>
+
+    <!-- CATEGORIES / MEGA MENU (Desktop) -->
+    <div class="nav-categories"
+      (mouseenter)="openMegaMenu()"
+      [class.mega-open]="isMegaMenuOpen"
+    >
+      <button class="cat-trigger">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+        Categories
+      </button>
+      <a routerLink="/products" routerLinkActive="active" (click)="closeMobileMenu()" class="nav-cat-link">All Products</a>
+      @if (categories.length > 0) {
+        <div class="mega-menu" [class.show]="isMegaMenuOpen" (mouseenter)="openMegaMenu()" (mouseleave)="closeMegaMenu()">
+          <div class="mega-menu-inner">
+            <div class="mega-columns">
+              @for (cat of categories; track cat.id) {
+                <a
+                  [routerLink]="['/products']"
+                  [queryParams]="{CategoryId: cat.id}"
+                  class="mega-item"
+                  (click)="closeMobileMenu(); closeMegaMenu()"
+                >
+                  <span class="mega-item-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                  </span>
+                  <span class="mega-item-text">{{ cat.name }}</span>
+                </a>
+              }
+            </div>
+            <div class="mega-featured">
+              <span class="mega-featured-label">Featured</span>
+              <a routerLink="/products" class="mega-featured-link" (click)="closeMobileMenu(); closeMegaMenu()">
+                View All Products
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- MOBILE CATEGORIES (inside drawer) -->
+    <div class="mobile-categories">
+      <span class="mobile-section-label">Categories</span>
+      <a routerLink="/products" routerLinkActive="active" (click)="closeMobileMenu()">All Products</a>
+      @for (cat of categories; track cat.id) {
+        <a
+          [routerLink]="['/products']"
+          [queryParams]="{CategoryId: cat.id}"
+          (click)="closeMobileMenu()"
+        >{{ cat.name }}</a>
+      }
     </div>
 
     <div class="nav-right">
-      <!-- GUEST -->
-      @if (!authService.isLoggedIn()) {
-        <div class="nav-links guest">
-          <a routerLink="/login" (click)="closeMobileMenu()">Sign in</a>
-          <a routerLink="/register" (click)="closeMobileMenu()">Get started</a>
-        </div>
-      }
+      <!-- WISHLIST -->
+      <a routerLink="/profile" [queryParams]="{tab: 'wishlist'}" class="icon-btn wishlist-btn" aria-label="Wishlist" (click)="closeMobileMenu()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+        @if (wishlistCount > 0) {
+          <span class="wishlist-badge">{{ wishlistCount }}</span>
+        }
+        <span class="mobile-only-text">Wishlist</span>
+      </a>
 
-      <!-- LOGGED IN -->
-      @if (authService.isLoggedIn()) {
-        <div class="nav-links">
-          <a
-            routerLink="/my-orders"
-            routerLinkActive="active"
-            class="orders-link"
-            aria-label="My Orders"
-            (click)="closeMobileMenu()"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path
-                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
-              />
-              <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-              <line x1="12" y1="22.08" x2="12" y2="12" />
-            </svg>
-            <span class="mobile-only-text">My Orders</span>
-          </a>
-          <!-- Cart -->
-          <a routerLink="/cart" class="cart-link" aria-label="Cart" (click)="closeMobileMenu()">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            >
-              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <path d="M16 10a4 4 0 0 1-8 0" />
-            </svg>
-            @if (cartItemCount > 0) {
-              <span class="cart-badge">{{ cartItemCount }}</span>
+      <!-- ACCOUNT DROPDOWN -->
+      <div class="account-dropdown-wrap">
+        <button class="icon-btn account-btn" (click)="toggleAccountDropdown()" aria-label="Account">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span class="mobile-only-text">Account</span>
+        </button>
+
+        <div class="account-dropdown" [class.show]="isAccountDropdownOpen" (mouseleave)="closeAccountDropdown()">
+          @if (!authService.isLoggedIn()) {
+            <div class="dropdown-header">Welcome, Guest</div>
+            <a routerLink="/login" class="dropdown-item" (click)="closeAccountDropdown(); closeMobileMenu()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+              Sign In
+            </a>
+            <a routerLink="/register" class="dropdown-item" (click)="closeAccountDropdown(); closeMobileMenu()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+              Register
+            </a>
+          } @else {
+            <div class="dropdown-header">
+              Hello, {{ currentUser?.firstName || 'User' }}
+            </div>
+            <a routerLink="/profile" class="dropdown-item" (click)="closeAccountDropdown(); closeMobileMenu()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              My Profile
+            </a>
+            <a routerLink="/my-orders" class="dropdown-item" (click)="closeAccountDropdown(); closeMobileMenu()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+              My Orders
+            </a>
+            <a routerLink="/profile" class="dropdown-item" (click)="closeAccountDropdown(); closeMobileMenu()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              Wishlist
+            </a>
+            <div class="dropdown-divider"></div>
+            @if (authService.isSeller()) {
+              <a routerLink="/seller/dashboard" class="dropdown-item" (click)="closeAccountDropdown(); closeMobileMenu()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                Seller Dashboard
+              </a>
             }
-            <span class="mobile-only-text">Cart</span>
-          </a>
-
-          <!-- Profile -->
-          <a routerLink="/profile" class="profile-link" aria-label="Account" (click)="closeMobileMenu()">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            >
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-            <span class="mobile-only-text">Profile</span>
-          </a>
-
-          <!-- SELLER -->
-          @if (authService.isSeller()) {
-            <div class="nav-divider"></div>
-            <div class="admin-links">
-              <a routerLink="/seller/dashboard" routerLinkActive="active" (click)="closeMobileMenu()">📊 Seller Dashboard</a>
-              <a routerLink="/seller/products" routerLinkActive="active" (click)="closeMobileMenu()">📦 Products</a>
-              <a routerLink="/seller/orders" routerLinkActive="active" (click)="closeMobileMenu()">📋 Orders</a>
-            </div>
+            @if (authService.isAdmin()) {
+              <a routerLink="/admin/dashboard" class="dropdown-item" (click)="closeAccountDropdown(); closeMobileMenu()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Admin Dashboard
+              </a>
+            }
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item dropdown-logout" (click)="logout()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Logout
+            </button>
           }
-
-          <!-- ADMIN -->
-          @if (authService.isAdmin()) {
-            <div class="nav-divider"></div>
-            <div class="admin-links">
-              <a routerLink="/admin/users" routerLinkActive="active" (click)="closeMobileMenu()">👥 Users</a>
-              <a routerLink="/admin/dashboard" routerLinkActive="active" (click)="closeMobileMenu()">📊 Dashboard</a>
-            </div>
-          }
-
-          <div class="nav-divider"></div>
-
-          <button class="btn-logout" (click)="logout()">Logout</button>
         </div>
-      }
+      </div>
+
+      <!-- CART -->
+      <a routerLink="/cart" class="cart-link" aria-label="Cart" (click)="closeMobileMenu()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        @if (cartItemCount > 0) {
+          <span class="cart-badge">{{ cartItemCount }}</span>
+        }
+        <span class="mobile-only-text">Cart</span>
+      </a>
     </div>
   </div>
 </nav>
