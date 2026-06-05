@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 import { IProduct } from '../../../models/iproduct';
 import { AuthService } from '../../../core/services/auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 import { catchError, EMPTY, finalize } from 'rxjs';
 
 @Component({
@@ -49,6 +50,7 @@ export class MasterProducts implements OnInit {
   private readonly categoryService = inject(CategoryService);
   private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
 
   ngOnInit(): void {
     this.categoriesLoading = true;
@@ -69,8 +71,38 @@ export class MasterProducts implements OnInit {
       .subscribe({
         next: (cats: ICategory[]) => {
           this.catList = cats ?? [];
+          this.applyQueryParams();
         },
       });
+
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        if (this.catList.length > 0) {
+          this.applyQueryParams();
+        }
+      });
+  }
+
+  private applyQueryParams(): void {
+    const params = this.route.snapshot.queryParams;
+    this.searchQuery = params['Search'] ?? params['search'] ?? '';
+
+    const catId = params['CategoryId'] ?? params['categoryId'] ?? null;
+    if (catId != null) {
+      const id = Number(catId);
+      if (!isNaN(id) && id > 0) {
+        this.selectedCategoryId = id;
+        const match = this.catList.find(c => c.id === id);
+        this.selectedCategory = match ? match.name : 'All';
+      } else {
+        this.selectedCategoryId = null;
+        this.selectedCategory = 'All';
+      }
+    } else {
+      this.selectedCategoryId = null;
+      this.selectedCategory = 'All';
+    }
   }
 
   clearAll(): void {

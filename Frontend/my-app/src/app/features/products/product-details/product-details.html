@@ -40,10 +40,16 @@
           <p class="availability">
             Status:
             <span [class]="product.stockQuantity > 0 ? 'in-stock' : 'out-of-stock'">
-              {{ product.stockQuantity > 0 ? 'In Stock (' + product.stockQuantity + ' available)' : 'Out of Stock' }}
+              {{
+                product.stockQuantity > 0
+                  ? 'In Stock (' + product.stockQuantity + ' available)'
+                  : 'Out of Stock'
+              }}
             </span>
           </p>
-          <p class="category">Category: <span>{{ product.categoryName }}</span></p>
+          <p class="category">
+            Category: <span>{{ product.categoryName }}</span>
+          </p>
         </div>
 
         @if (product.stockQuantity > 0) {
